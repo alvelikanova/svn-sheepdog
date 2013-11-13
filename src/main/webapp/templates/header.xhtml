@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:p="http://primefaces.org/ui">
+<h:head />
+<h:body>
+	<ui:composition>
+		<div>
+			<div id="navBarItem">
+				<h:form>
+					<p:tabMenu activeIndex="4">
+					    <p:menuitem value="Dashboard" url="/protected/dashboard.xhtml" icon="ui-icon-star"/>
+					    <p:menuitem value="Students" url="/protected/students/students.xhtml" icon="ui-icon-star"/>
+					    <p:menuitem value="Hello" url="/protected/hello.xhtml" icon="ui-icon-search" />
+					</p:tabMenu>
+				</h:form>
+			</div>
+		</div>
+
+		<div id="pageHeader" style="clear: both;">
+			<ui:insert name="pageHeader" />
+		</div>
+	</ui:composition>
+</h:body>
+</html>
