@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+<h:head />
+<h:body>
+	<ui:composition>
+		<p:dialog id="new_student_dialog" header="Create new student"
+			modal="true" widgetVar="#{dialogs.new_student_dialog}">
+
+			<ui:param name="student" value="#{studentsBean.newStudent}" />
+			<ui:param name="user" value="#{student.user}"></ui:param>
+
+			<p:panelGrid>
+				<p:row>
+					<p:column>
+						<h:outputText value="First name:" />
+					</p:column>
+					<p:column>
+						<p:inputText value="#{user.firstName}" />
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column>
+						<h:outputText value="Last name:" />
+					</p:column>
+					<p:column>
+						<p:inputText value="#{user.lastName}" />
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column>
+						<h:outputText value="Birthday:" />
+					</p:column>
+					<p:column>
+						<p:calendar value="#{user.birthday}" />
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column>
+						<h:outputText value="E-mail:" />
+					</p:column>
+					<p:column>
+						<p:inputText value="#{user.email}" />
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column>
+						<h:outputText value="Password:" />
+					</p:column>
+					<p:column>
+						<p:inputText value="#{user.password}" />
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column>
+						<h:outputText value="Student no:" />
+					</p:column>
+					<p:column>
+						<p:inputText value="#{student.studentNo}" />
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column>
+						<p:commandButton ajax="true" value="Create"
+							action="#{studentsBean.saveNewStudent}" oncomplete="#{dialogs.new_student_dialog}.hide()" />
+					</p:column>
+				</p:row>
+			</p:panelGrid>
+		</p:dialog>
+	</ui:composition>
+</h:body>
+</html>
