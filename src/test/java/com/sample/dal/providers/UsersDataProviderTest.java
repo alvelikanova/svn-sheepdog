@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import com.sample.utils.CollectionUtils;
 import com.sample.utils.HsqlDatabase;
 import com.sample.utils.TestConstants;
 
+@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:testApplicationContext.xml" })
 public class UsersDataProviderTest {

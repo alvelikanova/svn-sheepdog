@@ -45,7 +45,7 @@
 		</dependency>
 
 		<!-- JSF -->
-		<dependency>
+		<!-- dependency>
 			<groupId>com.sun.faces</groupId>
 			<artifactId>jsf-api</artifactId>
 			<version>${mojarra.version}</version>
@@ -54,7 +54,7 @@
 			<groupId>com.sun.faces</groupId>
 			<artifactId>jsf-impl</artifactId>
 			<version>${mojarra.version}</version>
-		</dependency>
+		</dependency -->
 		<dependency>
 			<groupId>org.primefaces</groupId>
 			<artifactId>primefaces</artifactId>
@@ -96,7 +96,7 @@
 		<dependency>
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
-			<version>3.0.4</version>
+			<version>3.0.7</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hsqldb</groupId>
@@ -156,7 +156,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>maven-quickstart</finalName>
+		<finalName>svn-sheepdog</finalName>
 
 		<resources>
 			<resource>
@@ -224,20 +224,20 @@
 			</activation>
 			<properties>
 				<jdbc.driver.class.name>org.hsqldb.jdbc.JDBCDriver</jdbc.driver.class.name>
-				<jdbc.url>jdbc:hsqldb:hsql://localhost/testdb</jdbc.url>
+				<jdbc.url>jdbc:hsqldb:hsql://localhost/sheepdog</jdbc.url>
 				<jdbc.username>SA</jdbc.username>
 				<jdbc.password></jdbc.password>
 				<hibernate.dialect>org.hibernate.dialect.HSQLDialect</hibernate.dialect>
 			</properties>
 		</profile>
 		<profile>
-			<id>postgres</id>
+			<id>cloudbees</id>
 			<properties>
-				<jdbc.driver.class.name>org.postgresql.Driver</jdbc.driver.class.name>
-				<jdbc.url>jdbc:postgresql://localhost:5432/testdb</jdbc.url>
-				<jdbc.username>user</jdbc.username>
-				<jdbc.password>user</jdbc.password>
-				<hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
+				<jdbc.driver.class.name>SomeDriver</jdbc.driver.class.name>
+				<jdbc.url>linkToDB</jdbc.url>
+				<jdbc.username>name</jdbc.username>
+				<jdbc.password>pass</jdbc.password>
+				<hibernate.dialect>Dialect</hibernate.dialect>
 			</properties>
 		</profile>
 	</profiles>

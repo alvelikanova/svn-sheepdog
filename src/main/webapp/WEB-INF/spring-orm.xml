@@ -8,22 +8,30 @@
 
 	<bean id="appDataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
+		<property name="driverClassName" value="org.hsqldb.jdbc.JDBCDriver" />
+		<property name="url" value="jdbc:hsqldb:hsql://localhost/testdb" />
+		<property name="username" value="SA" />
+		<property name="password" value="" />
+	</bean>
+	
+	<!-- bean id="appDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
 		<property name="driverClassName" value="${jdbc.driver.class.name}" />
 		<property name="url" value="${jdbc.url}" />
 		<property name="username" value="${jdbc.username}" />
 		<property name="password" value="${jdbc.password}" />
-	</bean>
+	</bean  -->
 
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="appDataSource" />
 		<property name="hibernateProperties">
 			<props>
-				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
-				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
 			</props>
 		</property>
-		<property name="packagesToScan" value="${hibernate.packages.to.scan}" />
+		<property name="packagesToScan" value="com.sample.dal.entities" />
 	</bean>
 
 	<bean id="transactionManager"
