@@ -2,6 +2,7 @@ package com.sample.business.services;
 
 import java.util.UUID;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import com.sample.utils.TestConstants;
 import com.sample.utils.annotations.DefaultProfile;
 import com.sample.utils.annotations.UnitTestProfile;
 
+@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:testApplicationContext.xml" })
 @ActiveProfiles("unit-test")

@@ -3,6 +3,9 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
     http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-	<!-- This initial version includes tables for svn-sheepdog project -->
+	<include file="versions/initial/changelog_00.xml" relativeToChangelogFile="true" />
+	<include file="versions/v1.0/changelog_00.xml" relativeToChangelogFile="true" />
+	<include file="versions/v1.0/changelog_01.xml" relativeToChangelogFile="true" />
+	<include file="versions/v1.1/changelog.xml" relativeToChangelogFile="true" />
 
 </databaseChangeLog>
