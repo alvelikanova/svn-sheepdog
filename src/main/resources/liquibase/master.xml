@@ -4,5 +4,7 @@
     http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
 	<include file="versions/initial/changelog_00.xml" relativeToChangelogFile="true" />
+	
+	<include file="versions/initial/test_data/changelog_test_data_00.xml" relativeToChangelogFile="true" />
 
 </databaseChangeLog>

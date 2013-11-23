@@ -5,4 +5,52 @@
 
 	<!-- This initial version includes tables for svn-sheepdog project -->
 
+	<changeSet id="user_table_init" author="ivan.spread" context="initial">
+
+		<createTable tableName="User">
+			<column name="id" autoIncrement="true" type="int">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+
+			<column name="login" type="varchar(128)">
+				<constraints nullable="false" unique="true" />
+			</column>
+
+			<column name="first_name" type="varchar(128)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="last_name" type="varchar(256)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="email" type="varchar(128)">
+				<constraints nullable="false" unique="true" />
+			</column>
+
+			<column name="password" type="varchar(2048)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+	</changeSet>
+
+	<changeSet id="sucsription_table_init" author="ivan.spread"
+		context="initial">
+
+		<createTable tableName="Subscription">
+			<column name="id" autoIncrement="true" type="int">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+
+			<column name="file_id" type="int">
+				<constraints nullable="false" foreignKeyName="FK_subscription_file" />
+			</column>
+
+			<column name="user_id" type="int">
+				<constraints nullable="false" foreignKeyName="FK_subscription_user" />
+			</column>
+		</createTable>
+	</changeSet>
+
 </databaseChangeLog>
