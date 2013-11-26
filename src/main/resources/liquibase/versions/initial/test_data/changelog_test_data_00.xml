@@ -23,7 +23,7 @@
 			<column name="first_name">Velikanova</column>
 			<column name="last_name">Alena</column>
 			<column name="email">velikanova.alenka@gmail.com</column>
-			<column name="password">PASSWORD</column>
+			<column name="password">dm4pf4MS7zu8</column>
 		</insert>
 
 		<insert tableName="User">
@@ -41,7 +41,7 @@
 			<column name="first_name">Shemetova</column>
 			<column name="last_name">Lubov</column>
 			<column name="email">slastena.pro@gmail.com</column>
-			<column name="password">PASSWORD</column>
+			<column name="password">Tc9wP9qz7pT4</column>
 		</insert>
 
 		<insert tableName="User">
@@ -91,14 +91,16 @@
 		<insert tableName="project">
 			<column name="id">1</column>
 			<column name="name">SVN-Sheepdog</column>
-			<column name="url">https://svn-sheepdog.googlecode.com/svn/trunk/</column>
+			<column name="url">https://svn-sheepdog.googlecode.com/svn/trunk/
+			</column>
 			<column name="user_id">1</column>
 		</insert>
 
 		<insert tableName="project">
 			<column name="id">2</column>
 			<column name="name">BookStore</column>
-			<column name="url">https://bookstore.googlecode.com/svn/trunk/</column>
+			<column name="url">https://bookstore.googlecode.com/svn/trunk/
+			</column>
 			<column name="user_id">1</column>
 		</insert>
 
@@ -108,15 +110,16 @@
 			<column name="url">https://smth.googlecode.com/svn/trunk/</column>
 			<column name="user_id">1</column>
 		</insert>
-		
+
 	</changeSet>
-	
-		<changeSet id="file_table_test_data" author="velikanova.alenka"
+
+	<changeSet id="file_table_test_data" author="velikanova.alenka"
 		context="initial">
 		<insert tableName="file">
 			<column name="id">1</column>
 			<column name="name">sqltool.rc</column>
-			<column name="qualified_name">https://svn-sheepdog.googlecode.com/svn/trunk/support/hsqldb_bat/sqltool.rc</column>
+			<column name="qualified_name">https://svn-sheepdog.googlecode.com/svn/trunk/support/hsqldb_bat/sqltool.rc
+			</column>
 			<column name="creator_name">Bichev</column>
 			<column name="revision_id">1</column>
 			<column name="project_id">1</column>
@@ -125,7 +128,8 @@
 		<insert tableName="file">
 			<column name="id">2</column>
 			<column name="name">pom.xml</column>
-			<column name="qualified_name">https://svn-sheepdog.googlecode.com/svn/trunk/pom.xml</column>
+			<column name="qualified_name">https://svn-sheepdog.googlecode.com/svn/trunk/pom.xml
+			</column>
 			<column name="creator_name">Bichev</column>
 			<column name="revision_id">1</column>
 			<column name="project_id">1</column>
@@ -134,15 +138,16 @@
 		<insert tableName="file">
 			<column name="id">3</column>
 			<column name="name">sheepdog_relations.png</column>
-			<column name="qualified_name">https://svn-sheepdog.googlecode.com/svn/trunk/support/sheepdog_relations.png</column>
+			<column name="qualified_name">https://svn-sheepdog.googlecode.com/svn/trunk/support/sheepdog_relations.png
+			</column>
 			<column name="creator_name">Bichev</column>
 			<column name="revision_id">1</column>
 			<column name="project_id">1</column>
 		</insert>
-		
+
 	</changeSet>
-	
-	
+
+
 	<changeSet id="tweet_table_test_data" author="slastena.pro"
 		context="initial">
 		<insert tableName="tweet">
@@ -165,9 +170,9 @@
 			<column name="tweet">first file changed user name</column>
 			<column name="revision_id">1</column>
 		</insert>
-		
+
 	</changeSet>
-	
+
 	<changeSet id="revision_table_test_data" author="slastena.pro"
 		context="initial">
 		<insert tableName="revision">
@@ -193,7 +198,7 @@
 			<column name="comment">Change DB version</column>
 			<column name="project_id">1</column>
 		</insert>
-		
+
 	</changeSet>
-	
+
 </databaseChangeLog>
