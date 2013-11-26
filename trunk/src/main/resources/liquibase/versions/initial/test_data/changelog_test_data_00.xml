@@ -142,4 +142,58 @@
 		
 	</changeSet>
 	
+	
+	<changeSet id="tweet_table_test_data" author="slastena.pro"
+		context="initial">
+		<insert tableName="tweet">
+			<column name="id">1</column>
+			<column name="author">Shemetova</column>
+			<column name="tweet">first file</column>
+			<column name="revision_id">1</column>
+		</insert>
+
+		<insert tableName="tweet">
+			<column name="id">2</column>
+			<column name="author">Velikanova</column>
+			<column name="tweet">first file changed file name</column>
+			<column name="revision_id">1</column>
+		</insert>
+
+		<insert tableName="tweet">
+			<column name="id">3</column>
+			<column name="author">Arkhipov</column>
+			<column name="tweet">first file changed user name</column>
+			<column name="revision_id">1</column>
+		</insert>
+		
+	</changeSet>
+	
+	<changeSet id="revision_table_test_data" author="slastena.pro"
+		context="initial">
+		<insert tableName="revision">
+			<column name="id">1</column>
+			<column name="revision_no">1</column>
+			<column name="author">Bichev</column>
+			<column name="comment">first version project</column>
+			<column name="project_id">1</column>
+		</insert>
+
+		<insert tableName="revision">
+			<column name="id">2</column>
+			<column name="revision_no">2</column>
+			<column name="author">Bichev</column>
+			<column name="comment">Change version project</column>
+			<column name="project_id">1</column>
+		</insert>
+
+		<insert tableName="revision">
+			<column name="id">3</column>
+			<column name="revision_no">3</column>
+			<column name="author">Nazin</column>
+			<column name="comment">Change DB version</column>
+			<column name="project_id">1</column>
+		</insert>
+		
+	</changeSet>
+	
 </databaseChangeLog>
