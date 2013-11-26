@@ -52,107 +52,113 @@
 			</column>
 		</createTable>
 	</changeSet>
-	
-	
-	<changeSet id="project_table_init" author="velikanova.alenka" context="initial">
-        
-        <createTable tableName="project">
-        
-            <column name="id" autoIncrement="true" type="int"> 
-        		<constraints primaryKey="true" />
-      		</column>
-      		
-            <column name="name" type="varchar(256)">
-                <constraints nullable="false"/>
-            </column>
-            
-            <column name="url" type="varchar(2048)">
-                <constraints nullable="false"/>
-            </column>
-            
-            <column name="user_id" type="int">
+
+
+	<changeSet id="project_table_init" author="velikanova.alenka"
+		context="initial">
+
+		<createTable tableName="project">
+
+			<column name="id" autoIncrement="true" type="int">
+				<constraints primaryKey="true" />
+			</column>
+
+			<column name="name" type="varchar(256)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="url" type="varchar(2048)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="user_id" type="int">
 				<constraints nullable="false" foreignKeyName="FK_project_user" />
 			</column>
-			
-        </createTable>
-        
-        <addUniqueConstraint constraintName="project_uc"
-                            columnNames="id, name, url" tableName="project"/>
-    </changeSet>
-    
-    <changeSet id="file_table_init" author="velikanova.alenka" context="initial">
-        
-        <createTable tableName="file">
-        
-            <column name="id" autoIncrement="true" type="int"> 
-        		<constraints primaryKey="true" primaryKeyName="PK_file" />
-      		</column>
-      		
-            <column name="name" type="varchar(256)">
-                <constraints nullable="false"/>
-            </column>
-            
-            <column name="qualified_name" type="varchar(2048)">
-                <constraints nullable="false"/>
-            </column>
-            
-            <column name="creator_name" type="varchar(128)">
-                <constraints nullable="false"/>
-            </column>
-            
-            <column name="revision_id" type="int">
+
+		</createTable>
+
+		<addUniqueConstraint constraintName="project_uc"
+			columnNames="id, name, url" tableName="project" />
+	</changeSet>
+
+	<changeSet id="file_table_init" author="velikanova.alenka"
+		context="initial">
+
+		<createTable tableName="file">
+
+			<column name="id" autoIncrement="true" type="int">
+				<constraints primaryKey="true" primaryKeyName="PK_file" />
+			</column>
+
+			<column name="name" type="varchar(256)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="qualified_name" type="varchar(2048)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="creator_name" type="varchar(128)">
+				<constraints nullable="false" />
+			</column>
+
+			<column name="revision_id" type="int">
 				<constraints nullable="false" foreignKeyName="FK_file_revision" />
 			</column>
-			
+
 			<column name="project_id" type="int">
 				<constraints nullable="false" foreignKeyName="FK_file_project" />
 			</column>
-			
-        </createTable> 
-        
-        <addUniqueConstraint constraintName="file_uc"
-        	columnNames="id, qualified_name" tableName="file"/> 
-        	
-    </changeSet>
-    
-	<changeSet id="tweet_table_init" author="slastena.pro" context="initial">
+
+		</createTable>
+
+		<addUniqueConstraint constraintName="file_uc"
+			columnNames="id, qualified_name" tableName="file" />
+
+	</changeSet>
+
+	<changeSet id="tweet_table_init" author="slastena.pro"
+		context="initial">
 
 		<createTable tableName="Tweet">
 			<column name="id" autoIncrement="true" type="int">
 				<constraints nullable="false" primaryKey="true" />
 			</column>
-			
+
 			<column name="author" type="varchar(128)">
-				<constraints nullable="false"  />
+				<constraints nullable="false" />
 			</column>
 
 			<column name="tweet" type="varchar(2048)">
 				<constraints nullable="false" />
 			</column>
-			
+
 			<column name="revision_id" type="int">
 				<constraints nullable="false" foreignKeyName="FK_tweet_revision" />
 			</column>
+		</createTable>
+	</changeSet>
 
-		<changeSet id="revision_table_init" author="slastena.pro" context="initial">
+	<changeSet id="revision_table_init" author="slastena.pro"
+		context="initial">
 
 		<createTable tableName="Revision">
 			<column name="id" autoIncrement="true" type="int">
 				<constraints nullable="false" primaryKey="true" />
 			</column>
-			
+
 			<column name="revision_no" type="int">
-				<constraints nullable="false"  />
+				<constraints nullable="false" />
 			</column>
 
 			<column name="author" type="varchar(128)">
 				<constraints nullable="false" />
-			</column>	
-			
+			</column>
+
 			<column name="comment" type="varchar(2048)">
 				<constraints nullable="false" />
-			</column>	
-			
+			</column>
+
 			<column name="project_id" type="int">
 				<constraints nullable="false" foreignKeyName="FK_revision_project" />
 			</column>
