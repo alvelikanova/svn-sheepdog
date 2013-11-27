@@ -83,6 +83,34 @@
 
 	</changeSet>
 
+	<changeSet id="revision_table_test_data" author="slastena.pro"
+		context="initial">
+		<insert tableName="revision">
+			<column name="id">1</column>
+			<column name="revision_no">1</column>
+			<column name="author">Bichev</column>
+			<column name="comment">first version project</column>
+			<column name="project_id">1</column>
+		</insert>
+
+		<insert tableName="revision">
+			<column name="id">2</column>
+			<column name="revision_no">2</column>
+			<column name="author">Bichev</column>
+			<column name="comment">Change version project</column>
+			<column name="project_id">1</column>
+		</insert>
+
+		<insert tableName="revision">
+			<column name="id">3</column>
+			<column name="revision_no">3</column>
+			<column name="author">Nazin</column>
+			<column name="comment">Change DB version</column>
+			<column name="project_id">1</column>
+		</insert>
+
+	</changeSet>
+	
 	<changeSet id="file_table_test_data" author="velikanova.alenka"
 		context="initial">
 		<insert tableName="file">
@@ -91,9 +119,8 @@
 			<column name="qualified_name">https://svn-sheepdog.googlecode.com/svn/trunk/support/hsqldb_bat/sqltool.rc
 			</column>
 			<column name="creator_name">Bichev</column>
-	<!--  	<column name="revision_id">1</column>-->	
+	  		<column name="revision_id">1</column>	
 			<column name="project_id">1</column>
-			<column name="subscription_id">1</column>
 		</insert>
 
 		<insert tableName="file">
@@ -102,9 +129,8 @@
 			<column name="qualified_name">https://svn-sheepdog.googlecode.com/svn/trunk/pom.xml
 			</column>
 			<column name="creator_name">Bichev</column>
-			<!--  	<column name="revision_id">1</column>-->
+			<column name="revision_id">1</column>
 			<column name="project_id">1</column>
-			<column name="subscription_id">1</column>
 		</insert>
 
 		<insert tableName="file">
@@ -113,9 +139,8 @@
 			<column name="qualified_name">https://svn-sheepdog.googlecode.com/svn/trunk/support/sheepdog_relations.png
 			</column>
 			<column name="creator_name">Bichev</column>
-			<!--  	<column name="revision_id">1</column>-->
+		  	<column name="revision_id">1</column>
 			<column name="project_id">1</column>
-			<column name="subscription_id">1</column>
 		</insert>
 
 	</changeSet>
@@ -176,32 +201,6 @@
 
 	</changeSet>
 
-	<changeSet id="revision_table_test_data" author="slastena.pro"
-		context="initial">
-		<insert tableName="revision">
-			<column name="id">1</column>
-			<column name="revision_no">1</column>
-			<column name="author">Bichev</column>
-			<column name="comment">first version project</column>
-			<column name="project_id">1</column>
-		</insert>
 
-		<insert tableName="revision">
-			<column name="id">2</column>
-			<column name="revision_no">2</column>
-			<column name="author">Bichev</column>
-			<column name="comment">Change version project</column>
-			<column name="project_id">1</column>
-		</insert>
-
-		<insert tableName="revision">
-			<column name="id">3</column>
-			<column name="revision_no">3</column>
-			<column name="author">Nazin</column>
-			<column name="comment">Change DB version</column>
-			<column name="project_id">1</column>
-		</insert>
-
-	</changeSet>
 
 </databaseChangeLog>
