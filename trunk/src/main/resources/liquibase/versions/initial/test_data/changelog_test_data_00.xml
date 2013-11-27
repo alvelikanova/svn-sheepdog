@@ -56,36 +56,6 @@
 	</changeSet>
 
 
-	<changeSet id="subscription_table_test_data" author="ivan.spread"
-		context="initial">
-		<insert tableName="subscription">
-			<column name="id">1</column>
-			<column name="file_id">1</column>
-			<column name="user_id">3</column>
-		</insert>
-
-		<insert tableName="subscription">
-			<column name="id">2</column>
-			<column name="file_id">2</column>
-			<column name="user_id">1</column>
-		</insert>
-
-		<insert tableName="subscription">
-			<column name="id">3</column>
-			<column name="file_id">2</column>
-			<column name="user_id">5</column>
-		</insert>
-
-		<insert tableName="subscription">
-			<column name="id">4</column>
-			<column name="file_id">1</column>
-			<column name="user_id">2</column>
-		</insert>
-
-
-	</changeSet>
-
-
 	<changeSet id="project_table_test_data" author="velikanova.alenka"
 		context="initial">
 		<insert tableName="project">
@@ -149,6 +119,36 @@
 		</insert>
 
 	</changeSet>
+
+	<changeSet id="subscription_table_test_data" author="ivan.spread"
+		context="initial">
+		<insert tableName="subscription">
+			<column name="id">1</column>
+			<column name="file_id">1</column>
+			<column name="user_id">3</column>
+		</insert>
+
+		<insert tableName="subscription">
+			<column name="id">2</column>
+			<column name="file_id">2</column>
+			<column name="user_id">1</column>
+		</insert>
+
+		<insert tableName="subscription">
+			<column name="id">3</column>
+			<column name="file_id">2</column>
+			<column name="user_id">5</column>
+		</insert>
+
+		<insert tableName="subscription">
+			<column name="id">4</column>
+			<column name="file_id">1</column>
+			<column name="user_id">2</column>
+		</insert>
+
+
+	</changeSet>
+
 
 
 	<changeSet id="tweet_table_test_data" author="slastena.pro"
