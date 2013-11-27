@@ -7,7 +7,7 @@
 
 	<changeSet id="user_table_init" author="ivan.spread" context="initial">
 
-		<createTable tableName="User">
+		<createTable tableName="user">
 			<column name="id" autoIncrement="true" type="int">
 				<constraints nullable="false" primaryKey="true" />
 			</column>
@@ -38,7 +38,7 @@
 	<changeSet id="sucsription_table_init" author="ivan.spread"
 		context="initial">
 
-		<createTable tableName="Subscription">
+		<createTable tableName="subscription">
 			<column name="id" autoIncrement="true" type="int">
 				<constraints nullable="false" primaryKey="true" />
 			</column>
@@ -60,25 +60,25 @@
 		<createTable tableName="project">
 
 			<column name="id" autoIncrement="true" type="int">
-				<constraints primaryKey="true" />
+				<constraints primaryKey="true" primaryKeyName="PK_project"/>
 			</column>
 
 			<column name="name" type="varchar(256)">
-				<constraints nullable="false" />
+				<constraints nullable="false" unique="true" 
+				uniqueConstraintName="UQ_project_name"/>
 			</column>
 
 			<column name="url" type="varchar(2048)">
-				<constraints nullable="false" />
+				<constraints nullable="false" unique="true"
+				uniqueConstraintName="UQ_project_url"/>
 			</column>
 
 			<column name="user_id" type="int">
-				<constraints nullable="false" foreignKeyName="FK_project_user" />
+			<constraints nullable="false" foreignKeyName="FK_project_user"
+					referencedTableName="user" referencedColumnNames="id" />
 			</column>
 
 		</createTable>
-
-		<addUniqueConstraint constraintName="project_uc"
-			columnNames="id, name, url" tableName="project" />
 	</changeSet>
 
 	<changeSet id="file_table_init" author="velikanova.alenka"
@@ -95,7 +95,8 @@
 			</column>
 
 			<column name="qualified_name" type="varchar(2048)">
-				<constraints nullable="false" />
+				<constraints nullable="false" unique="true"
+				uniqueConstraintName="UQ_file_qualified_name"/>
 			</column>
 
 			<column name="creator_name" type="varchar(128)">
@@ -103,24 +104,26 @@
 			</column>
 
 			<column name="revision_id" type="int">
-				<constraints nullable="false" foreignKeyName="FK_file_revision" />
+				<constraints nullable="false" foreignKeyName="FK_file_revision" 
+					referencedTableName="user" referencedColumnNames="id" />
 			</column>
 
 			<column name="project_id" type="int">
-				<constraints nullable="false" foreignKeyName="FK_file_project" />
+				<constraints nullable="false" foreignKeyName="FK_file_project" 
+				referencedTableName="project" referencedColumnNames="id" />
 			</column>
-
+			
+			<column name="subscription_id" type="int">
+				<constraints nullable="false" foreignKeyName="FK_file_subscription" 
+				referencedTableName="subscription" referencedColumnNames="id" />
+			</column>
 		</createTable>
-
-		<addUniqueConstraint constraintName="file_uc"
-			columnNames="id, qualified_name" tableName="file" />
-
 	</changeSet>
 
 	<changeSet id="tweet_table_init" author="slastena.pro"
 		context="initial">
 
-		<createTable tableName="Tweet">
+		<createTable tableName="tweet">
 			<column name="id" autoIncrement="true" type="int">
 				<constraints nullable="false" primaryKey="true" />
 			</column>
@@ -142,7 +145,7 @@
 	<changeSet id="revision_table_init" author="slastena.pro"
 		context="initial">
 
-		<createTable tableName="Revision">
+		<createTable tableName="revision">
 			<column name="id" autoIncrement="true" type="int">
 				<constraints nullable="false" primaryKey="true" />
 			</column>
