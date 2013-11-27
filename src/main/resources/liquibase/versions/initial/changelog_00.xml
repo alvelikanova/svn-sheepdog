@@ -105,7 +105,7 @@
 
 			<column name="revision_id" type="int">
 				<constraints nullable="false" foreignKeyName="FK_file_revision" 
-					referencedTableName="user" referencedColumnNames="id" />
+					referencedTableName="revision" referencedColumnNames="id" />
 			</column>
 
 			<column name="project_id" type="int">
