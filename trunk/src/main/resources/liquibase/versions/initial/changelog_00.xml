@@ -134,7 +134,7 @@
 
 		<createTable tableName="tweet">
 			<column name="id" autoIncrement="true" type="int">
-				<constraints nullable="false" primaryKey="true" />
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_id" />
 			</column>
 
 			<column name="author" type="varchar(128)">
@@ -146,7 +146,8 @@
 			</column>
 
 			<column name="revision_id" type="int">
-				<constraints nullable="false" foreignKeyName="FK_tweet_revision" />
+				<constraints nullable="false" foreignKeyName="FK_tweet_revision" 
+					referencedTableName="revision" referencedColumnNames="id"/>
 			</column>
 		</createTable>
 	</changeSet>
@@ -156,7 +157,7 @@
 
 		<createTable tableName="revision">
 			<column name="id" autoIncrement="true" type="int">
-				<constraints nullable="false" primaryKey="true" />
+				<constraints nullable="false" primaryKey="true" primaryKeyName="PK_id"/>
 			</column>
 
 			<column name="revision_no" type="int">
@@ -172,7 +173,8 @@
 			</column>
 
 			<column name="project_id" type="int">
-				<constraints nullable="false" foreignKeyName="FK_revision_project" />
+				<constraints nullable="false" foreignKeyName="FK_revision_project" 
+					referencedTableName="project" referencedColumnNames="id"/>
 			</column>
 		</createTable>
 
