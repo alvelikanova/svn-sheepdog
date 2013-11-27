@@ -121,7 +121,7 @@
 			<column name="qualified_name">https://svn-sheepdog.googlecode.com/svn/trunk/support/hsqldb_bat/sqltool.rc
 			</column>
 			<column name="creator_name">Bichev</column>
-			<column name="revision_id">1</column>
+	<!--  	<column name="revision_id">1</column>-->	
 			<column name="project_id">1</column>
 			<column name="subscription_id">1</column>
 		</insert>
@@ -132,7 +132,7 @@
 			<column name="qualified_name">https://svn-sheepdog.googlecode.com/svn/trunk/pom.xml
 			</column>
 			<column name="creator_name">Bichev</column>
-			<column name="revision_id">1</column>
+			<!--  	<column name="revision_id">1</column>-->
 			<column name="project_id">1</column>
 			<column name="subscription_id">1</column>
 		</insert>
@@ -143,7 +143,7 @@
 			<column name="qualified_name">https://svn-sheepdog.googlecode.com/svn/trunk/support/sheepdog_relations.png
 			</column>
 			<column name="creator_name">Bichev</column>
-			<column name="revision_id">1</column>
+			<!--  	<column name="revision_id">1</column>-->
 			<column name="project_id">1</column>
 			<column name="subscription_id">1</column>
 		</insert>
