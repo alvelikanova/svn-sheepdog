@@ -104,6 +104,11 @@
 			<version>2.3.0</version>
 		</dependency>
 		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.27</version>
+		</dependency>
+		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>9.2-1003-jdbc4</version>
@@ -233,11 +238,11 @@
 		<profile>
 			<id>cloudbees</id>
 			<properties>
-				<jdbc.driver.class.name>SomeDriver</jdbc.driver.class.name>
-				<jdbc.url>linkToDB</jdbc.url>
-				<jdbc.username>name</jdbc.username>
-				<jdbc.password>pass</jdbc.password>
-				<hibernate.dialect>Dialect</hibernate.dialect>
+				<jdbc.driver.class.name>com.mysql.jdbc.Driver</jdbc.driver.class.name>
+				<jdbc.url>jdbc:mysql://ec2-176-34-253-124.eu-west-1.compute.amazonaws.com:3306/svnsheepdogdb</jdbc.url>
+				<jdbc.username>svn-sheepdog</jdbc.username>
+				<jdbc.password>Vaiph0ch</jdbc.password>
+				<hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
 			</properties>
 		</profile>
 	</profiles>
