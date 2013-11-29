@@ -51,12 +51,12 @@
 				<constraints primaryKey="true" primaryKeyName="PK_project"/>
 			</column>
 
-			<column name="name" type="varchar(256)">
+			<column name="name" type="varchar(255)">
 				<constraints nullable="false" unique="true" 
 				uniqueConstraintName="UQ_project_name"/>
 			</column>
 
-			<column name="url" type="varchar(2048)">
+			<column name="url" type="varchar(255)">
 				<constraints nullable="false" unique="true"
 				uniqueConstraintName="UQ_project_url"/>
 			</column>
@@ -109,7 +109,7 @@
 				<constraints nullable="false" />
 			</column>
 
-			<column name="qualified_name" type="varchar(2048)">
+			<column name="qualified_name" type="varchar(255)">
 				<constraints nullable="false" unique="true"
 				uniqueConstraintName="UQ_file_qualified_name"/>
 			</column>
