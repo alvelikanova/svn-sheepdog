@@ -8,6 +8,8 @@
 	<name>SVN sheepdog webapp</name>
 	<url>https://code.google.com/p/java-quickstart</url>
 
+	<!-- If you are changing the pom.xml, delete this comment-->
+	
 	<properties>
 		<spring.version>3.2.4.RELEASE</spring.version>
 		<mojarra.version>2.2.4</mojarra.version>
