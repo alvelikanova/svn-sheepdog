@@ -11,6 +11,7 @@
 	<logger name="com.sample" level="TRACE" />
 
 
+
 	<root level="trace">
 		<appender-ref ref="STDOUT" />
 	</root>
