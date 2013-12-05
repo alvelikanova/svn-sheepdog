@@ -8,6 +8,8 @@
 	<context:property-placeholder location="classpath:*.properties" />
 
 	<context:component-scan base-package="com.sample" />
+	
+	<context:component-scan base-package="com.sheepdog" />
 
 	<!-- ORM -->
 
