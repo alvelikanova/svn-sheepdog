@@ -10,6 +10,7 @@
 
 	<logger name="com.sample" level="TRACE" />
 
+	<logger name="com.sheepdog.business.services.svn.impl" level="INFO" />
 
 	<root level="warn">
 		<appender-ref ref="STDOUT" />

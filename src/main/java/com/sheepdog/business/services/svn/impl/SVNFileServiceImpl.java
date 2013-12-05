@@ -28,8 +28,7 @@ public class SVNFileServiceImpl implements SVNFileService {
 	 * Пока что без спринга.
 	 */
 	private SVNProvider provider;
-	
-	
+
 	public SVNFileServiceImpl(SVNProvider provider) {
 		super();
 		this.provider = provider;
@@ -76,8 +75,9 @@ public class SVNFileServiceImpl implements SVNFileService {
 						.getChangedPaths().get(iterator.next());
 				if (entryPath.getType() == 'D')
 					continue;
-				
-				files.add(new File(entryPath.getPath(), entryPath.getCopyPath(), null, false));  
+
+				files.add(new File(entryPath.getPath(),
+						entryPath.getCopyPath(), null, false));
 
 			}
 		}
@@ -90,8 +90,20 @@ public class SVNFileServiceImpl implements SVNFileService {
 		return null;
 	}
 
+	/**
+	 * Recursive method to traverse the repository tree starting at a particular
+	 * path.
+	 * 
+	 * @param repo
+	 *            SVNRepository object of needed project.
+	 * @param path
+	 *            Particular path.
+	 * @param outputList
+	 *            Result list of File object.
+	 * @throws SVNException
+	 */
 	private void getEntries(SVNRepository repo, String path,
-			List<File> outputLIst) throws SVNException {
+			List<File> outputList) throws SVNException {
 		Collection entries = repo.getDir(path, -1, null, (Collection) null);
 
 		Iterator iterator = entries.iterator();
@@ -102,13 +114,13 @@ public class SVNFileServiceImpl implements SVNFileService {
 			File file = new File();
 			file.setName(entry.getName());
 
-			// можно дополнительно забить поля файла
+			file.setQualifiedName(entry.getURL().getPath());
 
-			outputLIst.add(file);
+			outputList.add(file);
 
 			if (entry.getKind() == SVNNodeKind.DIR) {
 				getEntries(repo, (path.equals("")) ? entry.getName() : path
-						+ "/" + entry.getName(), outputLIst);
+						+ "/" + entry.getName(), outputList);
 			}
 
 		}
