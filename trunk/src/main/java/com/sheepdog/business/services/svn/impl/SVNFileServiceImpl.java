@@ -2,11 +2,14 @@ package com.sheepdog.business.services.svn.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNLogEntry;
@@ -21,17 +24,21 @@ import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.exceptions.InvalidURLException;
 import com.sheepdog.business.services.svn.SVNFileService;
 import com.sheepdog.business.services.svn.SVNProvider;
+import com.sheepdog.business.services.svn.SVNRevisionService;
 
 public class SVNFileServiceImpl implements SVNFileService {
 
-	/*
-	 * Пока что без спринга.
-	 */
+	// @Autowired
 	private SVNProvider provider;
 
-	public SVNFileServiceImpl(SVNProvider provider) {
+	// @Autowired
+	private SVNRevisionService revisionService;
+
+	public SVNFileServiceImpl(SVNProvider provider,
+			SVNRevisionService revisionService) {
 		super();
 		this.provider = provider;
+		this.revisionService = revisionService;
 	}
 
 	@Override
@@ -44,9 +51,10 @@ public class SVNFileServiceImpl implements SVNFileService {
 	}
 
 	@Override
-	public Set<File> getFilesByRevision(Project project, Revision revision) {
+	public Map<File, String> getFilesByRevision(Project project,
+			Revision revision) {
 
-		Set<File> files = new HashSet<>();
+		Map<File, String> files = new HashMap<>();
 
 		Collection logEntries = null;
 
@@ -73,21 +81,35 @@ public class SVNFileServiceImpl implements SVNFileService {
 
 				SVNLogEntryPath entryPath = (SVNLogEntryPath) logEntry
 						.getChangedPaths().get(iterator.next());
-				if (entryPath.getType() == 'D')
-					continue;
 
-				files.add(new File(entryPath.getPath(),
-						entryPath.getCopyPath(), null, false));
+				files.put(
+						(new File(entryPath.getPath(), entryPath.getCopyPath(),
+								null, false)), "" + entryPath.getType());
 
 			}
 		}
-		return null;
+		return files;
 	}
 
 	@Override
-	public Set<File> getFilesByCreator(Project project, User user) {
-		// TODO Auto-generated method stub
-		return null;
+	public Set<File> getFilesByCreator(Project project, User user)
+			throws InvalidURLException, SVNException {
+
+		Set<File> authFiles = new HashSet<>();
+
+		Set<Revision> revisions = revisionService.getRevisions(project, 0, -1);
+		Map<File, String> files;
+
+		for (Revision r : revisions)
+			if (user.getName().equals(r.getAuthor())) {
+				files = getFilesByRevision(project, r);
+				for (File f : files.keySet())
+					if ("A".equals(files.get(f))) {
+						f.setCreatorName(user.getName());
+						authFiles.add(f);
+					}
+			}
+		return authFiles;
 	}
 
 	/**
