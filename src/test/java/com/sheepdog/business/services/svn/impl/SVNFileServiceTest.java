@@ -1,14 +1,19 @@
 package com.sheepdog.business.services.svn.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.text.StrBuilder;
+import org.hsqldb.lib.HashSet;
 import org.slf4j.LoggerFactory;
 import org.tmatesoft.svn.core.SVNException;
 
 import com.sheepdog.business.domain.entities.File;
 import com.sheepdog.business.domain.entities.Project;
+import com.sheepdog.business.domain.entities.Revision;
 import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.exceptions.InvalidURLException;
 import com.sheepdog.business.services.svn.SVNFileService;
@@ -24,11 +29,11 @@ public class SVNFileServiceTest {
 	public static void main(String[] args) {
 		SVNFileServiceTest test = new SVNFileServiceTest();
 
-		test.getAllFiles();
+		test.allTests();
 
 	}
 
-	public void getAllFiles() {
+	public void allTests() {
 		SVNProvider provider = new SVNProviderImpl();
 
 		Project project = new Project();
@@ -38,6 +43,8 @@ public class SVNFileServiceTest {
 		User user = new User();
 		user.setName("ivan.spread@gmail.com");
 		user.setPassword("fc9uy8NM5dK8");
+
+		long time = System.currentTimeMillis();
 
 		try {
 			provider.addSVNProject(project, user);
@@ -49,7 +56,24 @@ public class SVNFileServiceTest {
 			LOG.error(e1.toString());
 		}
 
-		SVNFileService fileService = new SVNFileServiceImpl(provider);
+		LOG.info("Time init SVNRepository: "
+				+ (System.currentTimeMillis() - time));
+
+		// testGetAllFiles(provider, project, user);
+		//
+		// testGetFileByRevision(provider, project, user);
+
+		testGetFilesByCreator(provider, project, user);
+
+	}
+
+	private void testGetAllFiles(SVNProvider provider, Project project,
+			User user) {
+
+		long time = System.currentTimeMillis();
+
+		SVNFileService fileService = new SVNFileServiceImpl(provider,
+				new SVNRevisionServiceImpl(provider));
 
 		List<File> files = new ArrayList<>();
 
@@ -63,5 +87,56 @@ public class SVNFileServiceTest {
 			LOG.info(f.getQualifiedName());
 		}
 
+		LOG.info("Time print repo tree: " + (System.currentTimeMillis() - time));
+
 	}
+
+	private void testGetFileByRevision(SVNProvider provider, Project project,
+			User user) {
+
+		SVNFileService fileService = new SVNFileServiceImpl(provider,
+				new SVNRevisionServiceImpl(provider));
+
+		long time = System.currentTimeMillis();
+
+		Map<File, String> files2 = new HashMap<File, String>();
+
+		files2 = fileService.getFilesByRevision(project, new Revision(7, null,
+				null, null));
+
+		for (File f : files2.keySet()) {
+			LOG.info(f.getName());
+		}
+
+		LOG.info("Time getFilesByRevision: "
+				+ (System.currentTimeMillis() - time));
+
+	}
+
+	private void testGetFilesByCreator(SVNProvider provider, Project project,
+			User user) {
+
+		SVNFileService fileService = new SVNFileServiceImpl(provider,
+				new SVNRevisionServiceImpl(provider));
+
+		long time = System.currentTimeMillis();
+
+		Set<File> files = new java.util.HashSet<>();
+
+		try {
+			files = fileService.getFilesByCreator(project, user);
+		} catch (InvalidURLException e) {
+			LOG.error("InvalidURLException : " + e.getUrl());
+		} catch (SVNException e) {
+			LOG.error(e.toString());
+		}
+
+		for (File f : files) {
+			LOG.info(f.getName());
+		}
+
+		LOG.info("Time getFilesByCreator: "
+				+ (System.currentTimeMillis() - time));
+	}
+
 }

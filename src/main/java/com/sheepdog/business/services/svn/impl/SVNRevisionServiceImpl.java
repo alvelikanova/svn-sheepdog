@@ -60,7 +60,7 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 
 		Collection logEntries = null;
 
-		// Parameters of 'log' method are recommended by official guide
+		
 		logEntries = provider.getRepository(project).log(new String[] { "" },
 				null, startRevision, endRevision, true, true);
 

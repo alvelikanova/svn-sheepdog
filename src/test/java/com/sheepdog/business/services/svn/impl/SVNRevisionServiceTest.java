@@ -58,6 +58,8 @@ public class SVNRevisionServiceTest {
 			LOG.error(e1.toString());
 		}
 
+		long time = System.currentTimeMillis();
+
 		SVNRevisionService revService = new SVNRevisionServiceImpl(provider);
 
 		Set<Revision> revisions = new HashSet<Revision>();
@@ -85,6 +87,8 @@ public class SVNRevisionServiceTest {
 
 			LOG.info(sb.toString());
 		}
+
+		LOG.info("Time getAllRevision: " + (System.currentTimeMillis() - time));
 
 		// ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -121,7 +125,6 @@ public class SVNRevisionServiceTest {
 		}
 
 	}
-
 	// public SVNProvider getProvider() {
 	// return provider;
 	// }
