@@ -10,6 +10,8 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNLogEntry;
 import org.tmatesoft.svn.core.SVNProperties;
@@ -21,14 +23,14 @@ import com.sheepdog.business.domain.entities.File;
 import com.sheepdog.business.domain.entities.Project;
 import com.sheepdog.business.domain.entities.Revision;
 import com.sheepdog.business.exceptions.InvalidURLException;
-import com.sheepdog.business.services.svn.SVNProvider;
+import com.sheepdog.business.services.svn.SVNProjectFacade;
 import com.sheepdog.business.services.svn.SVNRevisionService;
 
+@Service
 public class SVNRevisionServiceImpl implements SVNRevisionService {
-	// Пока что без спринга.
 
-	// @Autowired
-	private SVNProvider provider;
+	@Autowired
+	SVNProjectFacade projectFacade;
 
 	/**
 	 * Logger object.
@@ -41,10 +43,10 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 	 */
 	public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 
-	public SVNRevisionServiceImpl(SVNProvider provider) {
-		super();
-		this.provider = provider;
-	}
+	 public SVNRevisionServiceImpl(SVNProjectFacade projectFacade) {
+	 super();
+	 this.projectFacade = projectFacade;
+	 }
 
 	/*
 	 * (non-Javadoc)
@@ -60,9 +62,9 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 
 		Collection logEntries = null;
 
-		
-		logEntries = provider.getRepository(project).log(new String[] { "" },
-				null, startRevision, endRevision, true, true);
+		logEntries = projectFacade.getRepository(project).log(
+				new String[] { "" }, null, startRevision, endRevision, true,
+				true);
 
 		for (Iterator entries = logEntries.iterator(); entries.hasNext();) {
 			SVNLogEntry logEntry = (SVNLogEntry) entries.next();
@@ -87,9 +89,13 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 
 		Set<Revision> revisions = new HashSet<>();
 
-		Collection revisionCollection = provider.getRepository(project)
-				.getFileRevisions(file.getQualifiedName(), null, 0,
-						provider.getRepository(project).getLatestRevision());
+		Collection revisionCollection = projectFacade.getRepository(project)
+				.getFileRevisions(
+						file.getQualifiedName(),
+						null,
+						0,
+						projectFacade.getRepository(project)
+								.getLatestRevision());
 
 		for (Iterator iterator = revisionCollection.iterator(); iterator
 				.hasNext();) {
@@ -133,12 +139,12 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 		return new Revision(0, author, message, date);
 	}
 
-	public SVNProvider getProvider() {
-		return provider;
+	public SVNProjectFacade getProjectFacade() {
+		return projectFacade;
 	}
 
-	public void setProvider(SVNProvider provider) {
-		this.provider = provider;
+	public void setProjectFacade(SVNProjectFacade projectFacade) {
+		this.projectFacade = projectFacade;
 	}
 
 }

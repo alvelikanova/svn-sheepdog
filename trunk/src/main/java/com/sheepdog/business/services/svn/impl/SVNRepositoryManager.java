@@ -1,7 +1,7 @@
 package com.sheepdog.business.services.svn.impl;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -16,55 +16,62 @@ import org.tmatesoft.svn.core.wc.SVNWCUtil;
 import com.sheepdog.business.domain.entities.Project;
 import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.exceptions.InvalidURLException;
-import com.sheepdog.business.services.svn.SVNProvider;
 
-@Service("SVNProviderService")
+/**
+ * Singleton provides connection to repositories.
+ * 
+ * @author Ivan Arkhipov
+ * 
+ */
+@Service
 @Scope("singleton")
-public class SVNProviderImpl implements SVNProvider
-
-{
+public class SVNRepositoryManager {
 
 	/**
-	 * Map of URL string and SVNRepository object.
+	 * Map containing SVNRepository object of Project object.
 	 */
-	private Map<String, SVNRepository> svnConnections = new ConcurrentHashMap<>();
+	private Map<Project, SVNRepository> repositories = new HashMap<Project, SVNRepository>();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Create and setup new repository connection.
 	 * 
-	 * @see
-	 * com.sheepdog.business.services.svn.SVNProvider#addSVNProject(com.sheepdog
-	 * .business.domain.entities.Project,
-	 * com.sheepdog.business.domain.entities.User)
+	 * @param project
+	 *            Project object containing URL of repository.
+	 * @param user
+	 *            User object containing authentication info.
+	 * @return Success flag.
+	 * @throws InvalidURLException
+	 *             - if URL of repository is not correct or protocol is not
+	 *             supported.
+	 * @throws SVNException
 	 */
-	@Override
 	public boolean addSVNProject(Project project, User user)
 			throws SVNException, InvalidURLException {
 
-		if (svnConnections.get(project.getUrl()) != null)
+		if (repositories.get(project.getUrl()) != null)
 			return true;
 
 		SVNRepository repo = createSVNProject(project, user);
 
 		repo.testConnection();
 
-		svnConnections.put(project.getUrl(), repo);
+		repositories.put(project, repo);
 
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Get existing SVNRepository object by Project object.
 	 * 
-	 * @see
-	 * com.sheepdog.business.services.svn.SVNProvider#getRepository(com.sheepdog
-	 * .business.domain.entities.Project)
+	 * @param project
+	 *            Project object containing URL of repository.
+	 * @return SVNRepository object.
+	 * @throws InvalidURLException
+	 *             - if URL of repository is not correct.
 	 */
-	@Override
-	public SVNRepository getRepository(Project project)
-			throws InvalidURLException {
+	public SVNRepository getRepository(Project project) {
 
-		SVNRepository repo = svnConnections.get(project.getUrl());
+		SVNRepository repo = repositories.get(project);
 
 		if (repo == null)
 			new InvalidURLException(project.getUrl());
@@ -81,12 +88,13 @@ public class SVNProviderImpl implements SVNProvider
 	 * @param user
 	 *            User object containing authentication info.
 	 * @return Configured SVNRepository object.
+	 * @throws SVNException
 	 * @throws InvalidURLException
 	 *             - if URL of repository is not correct or protocol is not
 	 *             supported.
 	 */
 	private SVNRepository createSVNProject(Project project, User user)
-			throws SVNException, InvalidURLException {
+			throws SVNException {
 
 		connectionSetup(project.getUrl());
 
@@ -111,19 +119,23 @@ public class SVNProviderImpl implements SVNProvider
 	 */
 	private void connectionSetup(String url) {
 		if (url == null || url.length() < 6)
-			new InvalidURLException(url);
+			throw new InvalidURLException(url);
 
-		if (url.startsWith("http://") || url.startsWith("https://"))
+		if (url.startsWith("http://") || url.startsWith("https://")) {
 			DAVRepositoryFactory.setup();
+			return;
+		}
 
-		if (url.startsWith("svn://") || url.startsWith("svn+"))
+		if (url.startsWith("svn://") || url.startsWith("svn+")) {
 			DAVRepositoryFactory.setup();
-
-		if (url.startsWith("file://"))
+			return;
+		}
+		if (url.startsWith("file://")) {
 			DAVRepositoryFactory.setup();
+			return;
+		}
 
-		new InvalidURLException(url);
-
+		throw new InvalidURLException(url);
 	}
 
 }

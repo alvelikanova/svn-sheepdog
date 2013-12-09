@@ -22,5 +22,6 @@ public interface SVNFileService {
 
 	public Set<File> getFilesByCreator(Project project, User user)
 			throws InvalidURLException, SVNException;
+	
 
 }

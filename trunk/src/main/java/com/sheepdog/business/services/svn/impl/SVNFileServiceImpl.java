@@ -23,21 +23,21 @@ import com.sheepdog.business.domain.entities.Revision;
 import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.exceptions.InvalidURLException;
 import com.sheepdog.business.services.svn.SVNFileService;
-import com.sheepdog.business.services.svn.SVNProvider;
+import com.sheepdog.business.services.svn.SVNProjectFacade;
 import com.sheepdog.business.services.svn.SVNRevisionService;
 
 public class SVNFileServiceImpl implements SVNFileService {
 
 	// @Autowired
-	private SVNProvider provider;
+	private SVNProjectFacade projectFacade;
 
 	// @Autowired
 	private SVNRevisionService revisionService;
 
-	public SVNFileServiceImpl(SVNProvider provider,
+	public SVNFileServiceImpl(SVNProjectFacade projectFacade,
 			SVNRevisionService revisionService) {
 		super();
-		this.provider = provider;
+		this.projectFacade = projectFacade;
 		this.revisionService = revisionService;
 	}
 
@@ -45,7 +45,7 @@ public class SVNFileServiceImpl implements SVNFileService {
 	public List<File> getAllFiles(Project project) throws SVNException {
 		List<File> files = new ArrayList<>();
 
-		getEntries(provider.getRepository(project), "", files);
+		getEntries(projectFacade.getRepository(project), "", files);
 
 		return files;
 	}
@@ -59,7 +59,7 @@ public class SVNFileServiceImpl implements SVNFileService {
 		Collection logEntries = null;
 
 		try {
-			logEntries = provider.getRepository(project).log(
+			logEntries = projectFacade.getRepository(project).log(
 					new String[] { "" }, null, revision.getRevision_no(),
 					revision.getRevision_no(), true, true);
 		} catch (InvalidURLException e) {

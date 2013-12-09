@@ -1,13 +1,18 @@
 package com.sheepdog.business.services.svn;
 
+import java.util.Set;
+
+import org.springframework.stereotype.Service;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.io.SVNRepository;
 
 import com.sheepdog.business.domain.entities.Project;
+import com.sheepdog.business.domain.entities.Revision;
 import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.exceptions.InvalidURLException;
 
-public interface SVNProvider {
+@Service
+public interface SVNProjectFacade {
 
 	/**
 	 * Create new repository connection.
@@ -36,5 +41,8 @@ public interface SVNProvider {
 	 */
 	public SVNRepository getRepository(Project project)
 			throws InvalidURLException;
+
+	public boolean checkUpdates(Project project, Revision latestRevision)
+			throws SVNException;
 
 }
