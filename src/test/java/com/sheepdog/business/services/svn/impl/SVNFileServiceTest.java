@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.text.StrBuilder;
-import org.hsqldb.lib.HashSet;
 import org.slf4j.LoggerFactory;
 import org.tmatesoft.svn.core.SVNException;
 
@@ -17,7 +16,7 @@ import com.sheepdog.business.domain.entities.Revision;
 import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.exceptions.InvalidURLException;
 import com.sheepdog.business.services.svn.SVNFileService;
-import com.sheepdog.business.services.svn.SVNProvider;
+import com.sheepdog.business.services.svn.SVNProjectFacade;
 
 import ch.qos.logback.classic.Logger;
 
@@ -34,7 +33,8 @@ public class SVNFileServiceTest {
 	}
 
 	public void allTests() {
-		SVNProvider provider = new SVNProviderImpl();
+		SVNProjectFacade projectFacade = new SVNProjectFacadeImpl(
+				new SVNRepositoryManager());
 
 		Project project = new Project();
 		project.setUrl("https://svn-sheepdog.googlecode.com/svn/trunk/");
@@ -47,7 +47,7 @@ public class SVNFileServiceTest {
 		long time = System.currentTimeMillis();
 
 		try {
-			provider.addSVNProject(project, user);
+			projectFacade.addSVNProject(project, user);
 		} catch (InvalidURLException e1) {
 			StrBuilder sb = new StrBuilder("InvalidURLException by URL :");
 			sb.append(e1.getUrl());
@@ -63,17 +63,17 @@ public class SVNFileServiceTest {
 		//
 		// testGetFileByRevision(provider, project, user);
 
-		testGetFilesByCreator(provider, project, user);
+		testGetFilesByCreator(projectFacade, project, user);
 
 	}
 
-	private void testGetAllFiles(SVNProvider provider, Project project,
-			User user) {
+	private void testGetAllFiles(SVNProjectFacade projectFacade,
+			Project project, User user) {
 
 		long time = System.currentTimeMillis();
 
-		SVNFileService fileService = new SVNFileServiceImpl(provider,
-				new SVNRevisionServiceImpl(provider));
+		SVNFileService fileService = new SVNFileServiceImpl(projectFacade,
+				new SVNRevisionServiceImpl(null));
 
 		List<File> files = new ArrayList<>();
 
@@ -91,11 +91,11 @@ public class SVNFileServiceTest {
 
 	}
 
-	private void testGetFileByRevision(SVNProvider provider, Project project,
-			User user) {
+	private void testGetFileByRevision(SVNProjectFacade projectFacade,
+			Project project, User user) {
 
-		SVNFileService fileService = new SVNFileServiceImpl(provider,
-				new SVNRevisionServiceImpl(provider));
+		SVNFileService fileService = new SVNFileServiceImpl(projectFacade,
+				new SVNRevisionServiceImpl(projectFacade));
 
 		long time = System.currentTimeMillis();
 
@@ -113,11 +113,11 @@ public class SVNFileServiceTest {
 
 	}
 
-	private void testGetFilesByCreator(SVNProvider provider, Project project,
-			User user) {
+	private void testGetFilesByCreator(SVNProjectFacade projectFacade,
+			Project project, User user) {
 
-		SVNFileService fileService = new SVNFileServiceImpl(provider,
-				new SVNRevisionServiceImpl(provider));
+		SVNFileService fileService = new SVNFileServiceImpl(projectFacade,
+				new SVNRevisionServiceImpl(projectFacade));
 
 		long time = System.currentTimeMillis();
 
