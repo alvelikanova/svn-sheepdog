@@ -94,6 +94,7 @@ public class SVNFileServiceImpl implements SVNFileService {
 
 		Set<File> authFiles = new HashSet<>();
 
+		//TODO for Ivan get revisons from db
 		Set<Revision> revisions = revisionService.getRevisions(project, 0, -1);
 		Map<File, String> files;
 
