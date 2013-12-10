@@ -50,7 +50,7 @@ public class SVNFileServiceImpl implements SVNFileService {
 		return files;
 	}
 
-	//TODO что значит Map<File, String> и зачем, надо определиться List<File> или Map<File, String> или Set<File>
+	//TODO For Ivan что значит Map<File, String> и зачем, надо определиться List<File> или Map<File, String> или Set<File>
 	@Override
 	public Map<File, String> getFilesByRevision(Project project,
 			Revision revision) {
@@ -80,7 +80,7 @@ public class SVNFileServiceImpl implements SVNFileService {
 
 				SVNLogEntryPath entryPath = (SVNLogEntryPath) logEntry.getChangedPaths().get(iterator.next());
 
-				//TODO set Revision also
+				//TODO For Ivan set Revision also
 				files.put((new File(project, null, entryPath.getPath(), entryPath.getCopyPath(), null, false)), 
 						"" + entryPath.getType());
 			}
@@ -133,9 +133,9 @@ public class SVNFileServiceImpl implements SVNFileService {
 			File file = new File();
 			file.setName(entry.getName());
 			file.setQualifiedName(entry.getURL().getPath());
-			//TODO file.setCreatorName(Имя пользователя создавшего файл);
+			//TODO For Ivan file.setCreatorName(Имя пользователя создавшего файл);
 			//Set<Revision> revisions = revisionService.getRevisions(project, 0, -1);
-			//TODO setRevision(Revision) - подумать как лучше сделать
+			//TODO For Ivan setRevision(Revision) - подумать как лучше сделать
 			file.setProject(project);
 			
 			outputList.add(file);
