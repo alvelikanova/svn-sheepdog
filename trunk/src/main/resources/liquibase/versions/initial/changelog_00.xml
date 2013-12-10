@@ -7,7 +7,7 @@
 
 	<changeSet id="user_table_init" author="ivan.spread" context="initial">
 
-		<createTable tableName="user">
+		<createTable tableName="user_">
 			<column name="id" autoIncrement="true" type="int">
 				<constraints nullable="false" primaryKey="true"
 					primaryKeyName="PK_user" />
@@ -63,7 +63,7 @@
 
 			<column name="user_id" type="int">
 			<constraints nullable="false" foreignKeyName="FK_project_user"
-					referencedTableName="user" referencedColumnNames="id" />
+					referencedTableName="user_" referencedColumnNames="id" />
 			</column>
 
 		</createTable>
@@ -146,7 +146,7 @@
 
 			<column name="user_id" type="int">
 				<constraints nullable="false" foreignKeyName="FK_subscription_user"
-					referencedTableName="user" referencedColumnNames="id" />
+					referencedTableName="user_" referencedColumnNames="id" />
 			</column>
 		</createTable>
 	</changeSet>

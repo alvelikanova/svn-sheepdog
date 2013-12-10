@@ -8,7 +8,7 @@
 	<changeSet id="user_table_test_data" author="ivan.spread"
 		context="initial">
 
-		<insert tableName="user">
+		<insert tableName="user_">
 			<column name="id">1</column>
 			<column name="login">vl.bichev</column>
 			<column name="first_name">Bichev</column>
@@ -17,7 +17,7 @@
 			<column name="password">gj9fm3CC6ur8</column>
 		</insert>
 
-		<insert tableName="user">
+		<insert tableName="user_">
 			<column name="id">2</column>
 			<column name="login">velikanova.alenka</column>
 			<column name="first_name">Velikanova</column>
@@ -26,7 +26,7 @@
 			<column name="password">dm4pf4MS7zu8</column>
 		</insert>
 
-		<insert tableName="user">
+		<insert tableName="user_">
 			<column name="id">3</column>
 			<column name="login">ivan.spread</column>
 			<column name="first_name">Ivan</column>
@@ -35,7 +35,7 @@
 			<column name="password">fc9uy8NM5dK8</column>
 		</insert>
 
-		<insert tableName="user">
+		<insert tableName="user_">
 			<column name="id">4</column>
 			<column name="login">slastena.pro</column>
 			<column name="first_name">Shemetova</column>
@@ -44,7 +44,7 @@
 			<column name="password">Tc9wP9qz7pT4</column>
 		</insert>
 
-		<insert tableName="user">
+		<insert tableName="user_">
 			<column name="id">5</column>
 			<column name="login">sirjant0038</column>
 			<column name="first_name">Nazin</column>
