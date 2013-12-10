@@ -2,36 +2,45 @@ package com.sheepdog.business.domain.entities;
 
 import java.util.Date;
 
-public class Revision {
+public class Revision extends PersistentEntity<Integer> {
 
-	private long revision_no;
+	private static final long serialVersionUID = -9057200620775979080L;
 
+	private Project project;
+	
+	private int revisionNo;
 	private String author;
-
 	private String comment;
 
-	private Date date;
+	private Date date = new Date();
 
-	public Revision(long revision_no, String author, String comment, Date date) {
+	public Revision(Project project, int revisionNo, String author,
+			String comment, Date date) {
 		super();
-		this.revision_no = revision_no;
+		this.project = project;
+		this.revisionNo = revisionNo;
 		this.author = author;
 		this.comment = comment;
 		this.date = date;
 	}
 
-	public long getRevision_no() {
-		return revision_no;
+	public Project getProject() {
+		return project;
+	}
+	public void setProject(Project project) {
+		this.project = project;
 	}
 
-	public void setRevision_no(long revision_no) {
-		this.revision_no = revision_no;
+	public int getRevisionNo() {
+		return revisionNo;
+	}
+	public void setRevisionNo(int revisionNo) {
+		this.revisionNo = revisionNo;
 	}
 
 	public String getAuthor() {
 		return author;
 	}
-
 	public void setAuthor(String author) {
 		this.author = author;
 	}
@@ -39,7 +48,6 @@ public class Revision {
 	public String getComment() {
 		return comment;
 	}
-
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
@@ -47,9 +55,10 @@ public class Revision {
 	public Date getDate() {
 		return date;
 	}
-
 	public void setDate(Date date) {
 		this.date = date;
 	}
 
+	
+	
 }
