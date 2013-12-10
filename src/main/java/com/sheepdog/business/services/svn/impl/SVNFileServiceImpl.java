@@ -45,11 +45,12 @@ public class SVNFileServiceImpl implements SVNFileService {
 	public List<File> getAllFiles(Project project) throws SVNException {
 		List<File> files = new ArrayList<>();
 
-		getEntries(projectFacade.getRepository(project), "", files);
+		getEntries(project, projectFacade.getRepositoryConnection(project), "", files);
 
 		return files;
 	}
 
+	//TODO что значит Map<File, String> и зачем, надо определиться List<File> или Map<File, String> или Set<File>
 	@Override
 	public Map<File, String> getFilesByRevision(Project project,
 			Revision revision) {
@@ -59,11 +60,10 @@ public class SVNFileServiceImpl implements SVNFileService {
 		Collection logEntries = null;
 
 		try {
-			logEntries = projectFacade.getRepository(project).log(
-					new String[] { "" }, null, revision.getRevision_no(),
-					revision.getRevision_no(), true, true);
+			logEntries = projectFacade.getRepositoryConnection(project).log(
+					new String[] { "" }, null, revision.getRevisionNo(),
+					revision.getRevisionNo(), true, true);
 		} catch (InvalidURLException e) {
-
 			e.printStackTrace();
 		} catch (SVNException e) {
 			e.printStackTrace();
@@ -76,16 +76,13 @@ public class SVNFileServiceImpl implements SVNFileService {
 			if (logEntry.getChangedPaths().size() < 1)
 				continue;
 
-			for (Iterator iterator = changedPaths.iterator(); iterator
-					.hasNext();) {
+			for (Iterator iterator = changedPaths.iterator(); iterator.hasNext();) {
 
-				SVNLogEntryPath entryPath = (SVNLogEntryPath) logEntry
-						.getChangedPaths().get(iterator.next());
+				SVNLogEntryPath entryPath = (SVNLogEntryPath) logEntry.getChangedPaths().get(iterator.next());
 
-				files.put(
-						(new File(entryPath.getPath(), entryPath.getCopyPath(),
-								null, false)), "" + entryPath.getType());
-
+				//TODO set Revision also
+				files.put((new File(project, null, entryPath.getPath(), entryPath.getCopyPath(), null, false)), 
+						"" + entryPath.getType());
 			}
 		}
 		return files;
@@ -101,11 +98,11 @@ public class SVNFileServiceImpl implements SVNFileService {
 		Map<File, String> files;
 
 		for (Revision r : revisions)
-			if (user.getName().equals(r.getAuthor())) {
+			if (user.getLogin().equals(r.getAuthor())) {
 				files = getFilesByRevision(project, r);
 				for (File f : files.keySet())
 					if ("A".equals(files.get(f))) {
-						f.setCreatorName(user.getName());
+						f.setCreatorName(user.getLogin());
 						authFiles.add(f);
 					}
 			}
@@ -124,8 +121,8 @@ public class SVNFileServiceImpl implements SVNFileService {
 	 *            Result list of File object.
 	 * @throws SVNException
 	 */
-	private void getEntries(SVNRepository repo, String path,
-			List<File> outputList) throws SVNException {
+	private void getEntries(Project project, SVNRepository repo, String path, List<File> outputList) 
+			throws SVNException {
 		Collection entries = repo.getDir(path, -1, null, (Collection) null);
 
 		Iterator iterator = entries.iterator();
@@ -135,13 +132,16 @@ public class SVNFileServiceImpl implements SVNFileService {
 
 			File file = new File();
 			file.setName(entry.getName());
-
 			file.setQualifiedName(entry.getURL().getPath());
-
+			//TODO file.setCreatorName(Имя пользователя создавшего файл);
+			//Set<Revision> revisions = revisionService.getRevisions(project, 0, -1);
+			//TODO setRevision(Revision) - подумать как лучше сделать
+			file.setProject(project);
+			
 			outputList.add(file);
 
 			if (entry.getKind() == SVNNodeKind.DIR) {
-				getEntries(repo, (path.equals("")) ? entry.getName() : path
+				getEntries(project, repo, (path.equals("")) ? entry.getName() : path
 						+ "/" + entry.getName(), outputList);
 			}
 

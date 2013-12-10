@@ -7,6 +7,9 @@ public class Subscription extends PersistentEntity<Integer> {
 	private User user;
 	private File file;
 	
+	public Subscription() {
+	}
+
 	public Subscription(User user, File file) {
 		this.user = user;
 		this.file = file;

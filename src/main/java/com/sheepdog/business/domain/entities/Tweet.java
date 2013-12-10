@@ -8,6 +8,9 @@ public class Tweet extends PersistentEntity<Integer> {
 	private String author;
 	private String tweet;
 	
+	public Tweet() {
+	}
+
 	public Tweet(Revision revision, String author, String tweet) {
 		this.revision = revision;
 		this.author = author;

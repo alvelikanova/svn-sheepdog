@@ -8,6 +8,9 @@ public class Project extends PersistentEntity<Integer> {
 	private String name;
 	private String url;
 	
+	public Project() {
+	}
+
 	public Project(User user, String name, String url) {
 		this.user = user;
 		this.name = name;
