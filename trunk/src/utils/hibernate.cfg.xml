@@ -2,14 +2,15 @@
 <!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
                                          "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
-	<session-factory>
+	<session-factory name="sheepdog">
 		<property name="hibernate.connection.driver_class">org.hsqldb.jdbc.JDBCDriver</property>
-		<property name="hibernate.connection.url">jdbc:hsqldb:hsql://localhost/testdb</property>
+		<property name="hibernate.connection.url">jdbc:hsqldb:hsql://localhost/sheepdog</property>
 		<property name="hibernate.connection.username">SA</property>
 		<property name="hibernate.connection.password"></property>
 		<property name="hibernate.dialect">hibernate.dialect=org.hibernate.dialect.HSQLDialect</property>
-		
-		<mapping class="com.sample.dal.entities.UserEntity" />
-		<mapping class="com.sample.dal.entities.AuthenticationEntity" />
+		<property name="current_session_context_class">thread</property>
+  		<property name="show_sql">true</property>
+		<!--  mapping class="com.sample.dal.entities.UserEntity" />
+		<mapping class="com.sample.dal.entities.AuthenticationEntity" /-->
 	</session-factory>
 </hibernate-configuration>
