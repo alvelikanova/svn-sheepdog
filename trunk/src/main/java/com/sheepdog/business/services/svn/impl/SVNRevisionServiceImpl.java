@@ -35,8 +35,7 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 	/**
 	 * Logger object.
 	 */
-	public static final Logger LOG = (Logger) LoggerFactory
-			.getLogger(SVNRevisionServiceImpl.class);
+	public static final Logger LOG = (Logger) LoggerFactory.getLogger(SVNRevisionServiceImpl.class);
 
 	/**
 	 * Parse template for date string.
@@ -44,8 +43,8 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 	public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 
 	 public SVNRevisionServiceImpl(SVNProjectFacade projectFacade) {
-	 super();
-	 this.projectFacade = projectFacade;
+		 super();
+		 this.projectFacade = projectFacade;
 	 }
 
 	/*
@@ -56,20 +55,20 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 	 * .sheepdog.business.domain.entities.Project, long, long)
 	 */
 	@Override
-	public Set<Revision> getRevisions(Project project, long startRevision,
-			long endRevision) throws InvalidURLException, SVNException {
+	public Set<Revision> getRevisions(Project project, long startRevision, long endRevision) 
+			throws InvalidURLException, SVNException {
 		Set<Revision> revisions = new HashSet<>();
 
 		Collection logEntries = null;
 
-		logEntries = projectFacade.getRepository(project).log(
+		logEntries = projectFacade.getRepositoryConnection(project).log(
 				new String[] { "" }, null, startRevision, endRevision, true,
 				true);
 
 		for (Iterator entries = logEntries.iterator(); entries.hasNext();) {
 			SVNLogEntry logEntry = (SVNLogEntry) entries.next();
-			revisions.add(new Revision(logEntry.getRevision(), logEntry
-					.getAuthor(), logEntry.getMessage(), logEntry.getDate()));
+			revisions.add(new Revision(project, (int) logEntry.getRevision(), 
+					logEntry.getAuthor(), logEntry.getMessage(), logEntry.getDate()));
 		}
 
 		return revisions;
@@ -89,26 +88,30 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 
 		Set<Revision> revisions = new HashSet<>();
 
-		Collection revisionCollection = projectFacade.getRepository(project)
-				.getFileRevisions(
+		Collection revisionCollection = projectFacade.getRepositoryConnection(project).getFileRevisions(
 						file.getQualifiedName(),
 						null,
 						0,
-						projectFacade.getRepository(project)
-								.getLatestRevision());
+						projectFacade.getRepositoryConnection(project).getLatestRevision());
 
-		for (Iterator iterator = revisionCollection.iterator(); iterator
-				.hasNext();) {
+		for (Iterator iterator = revisionCollection.iterator(); iterator.hasNext();) {
 			SVNFileRevision fileRevision = (SVNFileRevision) iterator.next();
 
-			Revision revision = getRevisionByPropeties(fileRevision
-					.getRevisionProperties());
-			revision.setRevision_no(fileRevision.getRevision());
+			Revision revision = getRevisionByPropeties(project, fileRevision.getRevisionProperties());
+			revision.setRevisionNo((int) fileRevision.getRevision());
 
 			revisions.add(revision);
 		}
 
 		return revisions;
+	}
+	
+	/**
+	 * TODO implementation
+	 */
+	@Override
+	public Revision getLastRevision(){
+		return null;
 	}
 
 	/**
@@ -118,16 +121,13 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 	 *            SVNProperties object containing revision properties.
 	 * @return Revision object.
 	 */
-	private Revision getRevisionByPropeties(SVNProperties property) {
+	private Revision getRevisionByPropeties(Project project, SVNProperties property) {
 
 		String author = property.getStringValue("svn:author");
-
 		String message = property.getStringValue("svn:log");
-
 		String dateString = property.getStringValue("svn:date");
 
-		SimpleDateFormat format = new SimpleDateFormat(
-				SVNRevisionServiceImpl.DATE_FORMAT, Locale.US);
+		SimpleDateFormat format = new SimpleDateFormat(SVNRevisionServiceImpl.DATE_FORMAT, Locale.US);
 
 		Date date = null;
 		try {
@@ -136,7 +136,7 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 			LOG.error(e.toString());
 		}
 
-		return new Revision(0, author, message, date);
+		return new Revision(project, 0, author, message, date);
 	}
 
 	public SVNProjectFacade getProjectFacade() {

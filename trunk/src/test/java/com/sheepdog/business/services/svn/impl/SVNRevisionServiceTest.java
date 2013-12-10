@@ -45,11 +45,11 @@ public class SVNRevisionServiceTest {
 		project.setName("svn_test");
 
 		User user = new User();
-		user.setName("ivan.spread@gmail.com");
+		user.setLogin("ivan.spread@gmail.com");
 		user.setPassword("fc9uy8NM5dK8");
 
 		try {
-			projectFacade.addSVNProject(project, user);
+			projectFacade.addSVNProjectConnection(project, user);
 		} catch (InvalidURLException e1) {
 			StrBuilder sb = new StrBuilder("InvalidURLException by URL :");
 			sb.append(e1.getUrl());
@@ -78,7 +78,7 @@ public class SVNRevisionServiceTest {
 
 		for (Revision r : revisions) {
 			StringBuilder sb = new StringBuilder();
-			sb.append(r.getRevision_no());
+			sb.append(r.getRevisionNo());
 			sb.append(" author: ");
 			sb.append(r.getAuthor());
 			sb.append(" message: ");
@@ -98,7 +98,8 @@ public class SVNRevisionServiceTest {
 			revisions2 = revService
 					.getRevisionsByFile(
 							project,
-							new File(
+							//TODO check test, why we create new File when get Revision
+							new File(project, null,
 									"",
 									"src/main/resources/liquibase/versions/initial/changelog_00.xml",
 									"", true));
@@ -114,7 +115,7 @@ public class SVNRevisionServiceTest {
 
 		for (Revision r : revisions2) {
 			StringBuilder sb = new StringBuilder();
-			sb.append(r.getRevision_no());
+			sb.append(r.getRevisionNo());
 			sb.append(" author: ");
 			sb.append(r.getAuthor());
 			sb.append(" message: ");

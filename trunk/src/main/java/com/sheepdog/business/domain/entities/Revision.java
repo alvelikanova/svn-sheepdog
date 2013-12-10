@@ -14,9 +14,11 @@ public class Revision extends PersistentEntity<Integer> {
 
 	private Date date = new Date();
 
+	public Revision() {
+	}
+	
 	public Revision(Project project, int revisionNo, String author,
 			String comment, Date date) {
-		super();
 		this.project = project;
 		this.revisionNo = revisionNo;
 		this.author = author;

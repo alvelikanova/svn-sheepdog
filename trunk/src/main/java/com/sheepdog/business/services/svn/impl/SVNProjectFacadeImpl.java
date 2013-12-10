@@ -23,23 +23,23 @@ public class SVNProjectFacadeImpl implements SVNProjectFacade {
 	}
 
 	@Override
-	public boolean addSVNProject(Project project, User user)
+	public boolean addSVNProjectConnection(Project project, User user)
 			throws InvalidURLException, SVNException {
-		return repositoryManager.addSVNProject(project, user);
+		return repositoryManager.addSVNProjectConnection(project, user);
 	}
 
 	@Override
-	public SVNRepository getRepository(Project project)
+	public SVNRepository getRepositoryConnection(Project project)
 			throws InvalidURLException {
 
-		return repositoryManager.getRepository(project);
+		return repositoryManager.getRepositoryConnection(project);
 	}
 
 	@Override
 	public boolean checkUpdates(Project project, Revision latestRevision)
 			throws SVNException {
-		SVNRepository repo = repositoryManager.getRepository(project);
-		return latestRevision.getRevision_no() != repo.getLatestRevision();
+		SVNRepository repo = repositoryManager.getRepositoryConnection(project);
+		return latestRevision.getRevisionNo() != repo.getLatestRevision();
 	}
 
 	public SVNRepositoryManager getRepositoryManager() {

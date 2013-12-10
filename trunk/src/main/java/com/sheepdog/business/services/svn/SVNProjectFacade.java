@@ -27,7 +27,7 @@ public interface SVNProjectFacade {
 	 *             supported.
 	 * @throws SVNException
 	 */
-	public boolean addSVNProject(Project project, User user)
+	public boolean addSVNProjectConnection(Project project, User user)
 			throws InvalidURLException, SVNException;
 
 	/**
@@ -39,7 +39,7 @@ public interface SVNProjectFacade {
 	 * @throws InvalidURLException
 	 *             - if URL of repository is not correct.
 	 */
-	public SVNRepository getRepository(Project project)
+	public SVNRepository getRepositoryConnection(Project project)
 			throws InvalidURLException;
 
 	public boolean checkUpdates(Project project, Revision latestRevision)

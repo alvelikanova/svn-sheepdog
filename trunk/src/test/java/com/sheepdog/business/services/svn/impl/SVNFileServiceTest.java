@@ -41,13 +41,13 @@ public class SVNFileServiceTest {
 		project.setName("svn_test");
 
 		User user = new User();
-		user.setName("ivan.spread@gmail.com");
+		user.setLogin("ivan.spread@gmail.com");
 		user.setPassword("fc9uy8NM5dK8");
 
 		long time = System.currentTimeMillis();
 
 		try {
-			projectFacade.addSVNProject(project, user);
+			projectFacade.addSVNProjectConnection(project, user);
 		} catch (InvalidURLException e1) {
 			StrBuilder sb = new StrBuilder("InvalidURLException by URL :");
 			sb.append(e1.getUrl());
@@ -101,7 +101,7 @@ public class SVNFileServiceTest {
 
 		Map<File, String> files2 = new HashMap<File, String>();
 
-		files2 = fileService.getFilesByRevision(project, new Revision(7, null,
+		files2 = fileService.getFilesByRevision(project, new Revision(project, 7, null,
 				null, null));
 
 		for (File f : files2.keySet()) {

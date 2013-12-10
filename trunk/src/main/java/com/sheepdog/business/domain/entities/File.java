@@ -14,6 +14,9 @@ public class File extends PersistentEntity<Integer> {
 	//TODO For Ivan - for which purpose?
 	private boolean isFile = Boolean.TRUE;
 
+	public File() {
+	}
+	
 	public File(Project project, Revision revision, String name,
 			String qualifiedName, String creatorName, boolean isFile) {
 		this.project = project;
