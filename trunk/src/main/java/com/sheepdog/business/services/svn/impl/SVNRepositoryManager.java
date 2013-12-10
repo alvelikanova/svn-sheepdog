@@ -51,7 +51,7 @@ public class SVNRepositoryManager {
 		if (repositories.get(project.getUrl()) != null)
 			return true;
 
-		//TODO добавить проверку - что будет если подключение не получено(Логировать пока что)? А если ошибка во время логики?
+		//TODO For Ivan добавить проверку - что будет если подключение не получено(Логировать пока что)? А если ошибка во время логики?
 		SVNRepository repo = createSVNProjectConnection(project, user);
 		repo.testConnection();
 

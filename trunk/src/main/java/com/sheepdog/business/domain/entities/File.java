@@ -11,7 +11,7 @@ public class File extends PersistentEntity<Integer> {
 	private String qualifiedName;
 	private String creatorName;
 
-	//TODO For Ivan - for which purpose?
+	//TODO For Ivan For Ivan - for which purpose?
 	private boolean isFile = Boolean.TRUE;
 
 	public File() {

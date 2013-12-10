@@ -98,7 +98,7 @@ public class SVNRevisionServiceTest {
 			revisions2 = revService
 					.getRevisionsByFile(
 							project,
-							//TODO check test, why we create new File when get Revision
+							//TODO For Ivan check test, why we create new File when get Revision
 							new File(project, null,
 									"",
 									"src/main/resources/liquibase/versions/initial/changelog_00.xml",

@@ -44,7 +44,7 @@ public interface SVNRevisionService {
 			throws InvalidURLException, SVNException;
 	
 	/**
-	 * TODO
+	 * TODO For Ivan
 	 * @return
 	 */
 	public Revision getLastRevision();
