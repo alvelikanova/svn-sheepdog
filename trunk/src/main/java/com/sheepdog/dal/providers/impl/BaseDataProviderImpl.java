@@ -30,7 +30,7 @@ public abstract class BaseDataProviderImpl<K, T, ID extends Serializable> implem
 	private static final Logger LOG = LoggerFactory.getLogger(BaseDataProviderImpl.class);
 
 	@Autowired
-	private SessionFactory sessionFactory;
+	protected SessionFactory sessionFactory;
 	
 	@Autowired
 	private MappingService mappingService;
