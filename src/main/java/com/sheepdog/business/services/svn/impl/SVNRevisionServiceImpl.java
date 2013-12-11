@@ -26,9 +26,19 @@ import com.sheepdog.business.exceptions.InvalidURLException;
 import com.sheepdog.business.services.svn.SVNProjectFacade;
 import com.sheepdog.business.services.svn.SVNRevisionService;
 
+/**
+ * SVNRevisionServiceImpl class allows to get information about any revisions of
+ * repository.
+ * 
+ * @author Ivan Arkhipov.
+ * 
+ */
 @Service
 public class SVNRevisionServiceImpl implements SVNRevisionService {
 
+	/**
+	 * SVNProjectFacade object is provides connection to required repository.
+	 */
 	@Autowired
 	SVNProjectFacade projectFacade;
 
@@ -38,7 +48,7 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 	public static final Logger LOG = (Logger) LoggerFactory.getLogger(SVNRevisionServiceImpl.class);
 
 	/**
-	 * Parse template for date string.
+	 * Template of parsing the date string.
 	 */
 	public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 
@@ -113,7 +123,7 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 
 		long latestRevision = projectFacade.getRepositoryConnection(project).getLatestRevision();
 
-		Set<Revision> revision = getRevisions(project, latestRevision - 1, latestRevision);
+		Set<Revision> revision = getRevisions(project, latestRevision, latestRevision);
 		for (Revision r : revision) {
 			if (r != null)
 				return r;

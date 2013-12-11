@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.tmatesoft.svn.core.SVNAuthenticationException;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
@@ -16,6 +17,7 @@ import org.tmatesoft.svn.core.wc.SVNWCUtil;
 import com.sheepdog.business.domain.entities.Project;
 import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.exceptions.InvalidURLException;
+import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
 
 /**
  * Singleton provides connection to repositories.
@@ -44,16 +46,32 @@ public class SVNRepositoryManager {
 	 *             - if URL of repository is not correct or protocol is not
 	 *             supported.
 	 * @throws SVNException
+	 *             if connection to repository failed.
+	 * 
+	 * @throws RepositoryAuthenticationExceptoin
+	 *             if user authentication failed
 	 */
-	public boolean addSVNProjectConnection(Project project, User user) throws SVNException, InvalidURLException {
+	public boolean addSVNProjectConnection(Project project, User user) throws SVNException, InvalidURLException,
+			RepositoryAuthenticationExceptoin {
 
-		if (repositories.get(project.getUrl()) != null)
+		if (repositories.get(project) != null)
 			return true;
 
 		// TODO For Ivan добавить проверку - что будет если подключение не
 		// получено(Логировать пока что)? А если ошибка во время логики?
-		SVNRepository repo = createSVNProjectConnection(project, user);
-		repo.testConnection();
+
+		SVNRepository repo;
+
+		try {
+			repo = createSVNProjectConnection(project, user);
+		} catch (SVNAuthenticationException e) {
+			throw new RepositoryAuthenticationExceptoin(user);
+		}
+		try {
+			repo.testConnection();
+		} catch (SVNException e) {
+			throw new RepositoryAuthenticationExceptoin(user);
+		}
 
 		repositories.put(project, repo);
 

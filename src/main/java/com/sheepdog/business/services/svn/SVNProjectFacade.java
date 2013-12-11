@@ -7,7 +7,14 @@ import org.tmatesoft.svn.core.io.SVNRepository;
 import com.sheepdog.business.domain.entities.Project;
 import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.exceptions.InvalidURLException;
+import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
 
+/**
+ * SVNProjectFacade service provides connection to required repository.
+ * 
+ * @author Ivan Arkhipov.
+ * 
+ */
 @Service
 public interface SVNProjectFacade {
 
@@ -23,8 +30,11 @@ public interface SVNProjectFacade {
 	 *             - if URL of repository is not correct or protocol is not
 	 *             supported.
 	 * @throws SVNException
+	 *             a failure occurred while connecting to a repository or the
+	 *             user authentication failed.
 	 */
-	public boolean addSVNProjectConnection(Project project, User user) throws InvalidURLException, SVNException;
+	public boolean addSVNProjectConnection(Project project, User user) throws InvalidURLException, SVNException,
+			RepositoryAuthenticationExceptoin;
 
 	/**
 	 * Get existing SVNRepository object by URL.

@@ -1,5 +1,6 @@
 package com.sheepdog.business.services.svn.impl;
 
+import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -61,13 +62,16 @@ public class SVNFileServiceTest {
 
 		testGetFilesByCreator(projectFacade, project, user);
 
+		testGetFileContent(projectFacade, project, user);
+
 	}
 
 	private void testGetAllFiles(SVNProjectFacade projectFacade, Project project, User user) {
 
-		long time = System.currentTimeMillis();
-
 		SVNFileService fileService = new SVNFileServiceImpl(projectFacade);
+		LOG.info("\n\n GET ALL FILES \n\n");
+
+		long time = System.currentTimeMillis();
 
 		Set<File> files = new HashSet<>();
 		try {
@@ -89,6 +93,7 @@ public class SVNFileServiceTest {
 
 		SVNFileService fileService = new SVNFileServiceImpl(projectFacade);
 
+		LOG.info("\n\n GET FILE BY REVISION \n\n");
 		long time = System.currentTimeMillis();
 
 		Map<File, Character> files2 = new HashMap<File, Character>();
@@ -120,6 +125,8 @@ public class SVNFileServiceTest {
 		try {
 			Set<Revision> revision = new SVNRevisionServiceImpl(projectFacade).getRevisions(project, 0, -1);
 
+			LOG.info("\n\n GET FILE BY CREATOR \n\n");
+
 			time = System.currentTimeMillis();
 
 			files = fileService.getFilesByCreator(project, user, revision);
@@ -134,5 +141,25 @@ public class SVNFileServiceTest {
 		}
 
 		LOG.info("Time getFilesByCreator: " + (System.currentTimeMillis() - time));
+	}
+
+	private void testGetFileContent(SVNProjectFacade projectFacade, Project project, User user) {
+		SVNFileService fileService = new SVNFileServiceImpl(projectFacade);
+
+		File file = new File();
+		file.setPath("src/main/webapp/protected/hello.xhtml");
+
+		LOG.info("\n\n  File content   \n \n ");
+
+		long time = System.currentTimeMillis();
+		try {
+			LOG.info(fileService.getFileContent(project, file));
+		} catch (InvalidParameterException e) {
+			LOG.error(e.toString());
+		} catch (SVNException e) {
+			LOG.error(e.toString());
+		}
+		LOG.info("" + (System.currentTimeMillis() - time));
+
 	}
 }
