@@ -1,5 +1,7 @@
 package com.sheepdog.business.services.svn.impl;
 
+import java.io.ByteArrayOutputStream;
+import java.security.InvalidParameterException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,6 +14,8 @@ import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNLogEntry;
 import org.tmatesoft.svn.core.SVNLogEntryPath;
 import org.tmatesoft.svn.core.SVNNodeKind;
+import org.tmatesoft.svn.core.SVNProperties;
+import org.tmatesoft.svn.core.SVNProperty;
 import org.tmatesoft.svn.core.io.ISVNReporter;
 import org.tmatesoft.svn.core.io.ISVNReporterBaton;
 import org.tmatesoft.svn.core.io.SVNRepository;
@@ -24,16 +28,39 @@ import com.sheepdog.business.exceptions.InvalidURLException;
 import com.sheepdog.business.services.svn.SVNFileService;
 import com.sheepdog.business.services.svn.SVNProjectFacade;
 
+/**
+ * SVNFileServiceImpl is a simple implementation of SVNFileService interface.
+ * This class using SVNProjectFacade to get access to required repository.
+ * 
+ * @author Ivan Arkhipov.
+ * 
+ */
+// @Service
 public class SVNFileServiceImpl implements SVNFileService {
 
+	/**
+	 * Static final field containing mark of deleting the file in the revision.
+	 */
 	public static final Character DELETED_FILE = new Character('D');
 
+	/**
+	 * Static final field containing mark of adding the file in the revision.
+	 */
 	public static final Character ADDED_FILE = new Character('A');
 
+	/**
+	 * Static final field containing mark of modifying the file in the revision.
+	 */
 	public static final Character MODIFIED_FILE = new Character('M');
 
+	/**
+	 * Static final field containing mark of replacing the file in the revision.
+	 */
 	public static final Character REPLACED_FILE = new Character('R');
 
+	/**
+	 * SVNProjectFacade object is provides connection to required repository.
+	 */
 	// @Autowired
 	private SVNProjectFacade projectFacade;
 
@@ -69,7 +96,14 @@ public class SVNFileServiceImpl implements SVNFileService {
 		for (File f : files)
 			f.setProject(project);
 
-		return setNameFieldsToManyFiles(files);
+		try {
+			files = setNameFieldsToManyFiles(files);
+		} catch (NullPointerException e) {
+			if (files == null || files.isEmpty())
+				return new HashSet<File>(0);
+		}
+
+		return files;
 	}
 
 	/*
@@ -143,6 +177,40 @@ public class SVNFileServiceImpl implements SVNFileService {
 		return authFiles;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.sheepdog.business.services.svn.SVNFileService#getFileContent(com.
+	 * sheepdog.business.domain.entities.Project,
+	 * com.sheepdog.business.domain.entities.File)
+	 */
+	@Override
+	public String getFileContent(Project project, File file) throws SVNException, InvalidParameterException {
+		SVNRepository repo = projectFacade.getRepositoryConnection(project);
+
+		SVNNodeKind nodeKind = repo.checkPath(file.getPath(), -1);
+
+		if (nodeKind == SVNNodeKind.NONE || nodeKind == SVNNodeKind.DIR)
+			throw new InvalidParameterException("That file is not exist: " + file.getPath());
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		SVNProperties properties = new SVNProperties();
+
+		repo.getFile(file.getPath(), -1, properties, baos);
+
+		String mimeType = (String) properties.getStringValue((SVNProperty.MIME_TYPE));
+		boolean isTextType = SVNProperty.isTextMimeType(mimeType);
+		String content = "";
+
+		if (isTextType)
+			content = baos.toString();
+		else
+			throw new InvalidParameterException("That file is not containing a text: " + file.getPath());
+
+		return content;
+	}
+
 	/**
 	 * Complete all File objects by name and qualified name of file.
 	 * 
@@ -161,7 +229,8 @@ public class SVNFileServiceImpl implements SVNFileService {
 	}
 
 	/**
-	 * Complete File object by name and qualified name of file.
+	 * Complete File object by name and qualified name of file. This method
+	 * parse path field of File object.
 	 * 
 	 * @param f
 	 *            File object.
@@ -173,6 +242,14 @@ public class SVNFileServiceImpl implements SVNFileService {
 		f.setQualifiedName(f.getProject().getName() + "/" + path);
 		f.setName(path.substring(path.lastIndexOf('/') + 1));
 		return f;
+	}
+
+	public SVNProjectFacade getProjectFacade() {
+		return projectFacade;
+	}
+
+	public void setProjectFacade(SVNProjectFacade projectFacade) {
+		this.projectFacade = projectFacade;
 	}
 
 }

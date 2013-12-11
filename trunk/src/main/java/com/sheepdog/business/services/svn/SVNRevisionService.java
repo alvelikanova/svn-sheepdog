@@ -10,6 +10,13 @@ import com.sheepdog.business.domain.entities.Project;
 import com.sheepdog.business.domain.entities.Revision;
 import com.sheepdog.business.exceptions.InvalidURLException;
 
+/**
+ * SVNRevisionService provides an interface to get information about revisions
+ * of required repository.
+ * 
+ * @author Ivan Arkhipov.
+ * 
+ */
 @Service
 public interface SVNRevisionService {
 
@@ -24,7 +31,10 @@ public interface SVNRevisionService {
 	 *            - a revision to end at.
 	 * @return Set of Revision object.
 	 * @throws InvalidURLException
+	 *             if URL of Project object is not correct.
 	 * @throws SVNException
+	 *             a failure occurred while connecting to a repository or the
+	 *             user authentication failed.
 	 */
 	public Set<Revision> getRevisions(Project project, long startRevision, long endRevision)
 			throws InvalidURLException, SVNException;
@@ -38,7 +48,10 @@ public interface SVNRevisionService {
 	 *            Required file.
 	 * @return Set of Revision object.
 	 * @throws InvalidURLException
+	 *             if URL of Project object is not correct.
 	 * @throws SVNException
+	 *             a failure occurred while connecting to a repository or the
+	 *             user authentication failed.
 	 */
 	public Set<Revision> getRevisionsByFile(Project project, File file) throws InvalidURLException, SVNException;
 
@@ -48,7 +61,10 @@ public interface SVNRevisionService {
 	 * @return Revision object.
 	 * 
 	 * @throws InvalidURLException
+	 *             if URL of Project object is not correct.
 	 * @throws SVNException
+	 *             a failure occurred while connecting to a repository or the
+	 *             user authentication failed.
 	 */
 	public Revision getLastRevision(Project project) throws InvalidURLException, SVNException;
 
