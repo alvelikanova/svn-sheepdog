@@ -15,7 +15,7 @@ import com.sheepdog.dal.providers.pagination.LoadOptions;
 import com.sheepdog.dal.providers.pagination.PagedList;
 
 public abstract class BaseDataProviderImpl<K, T, ID extends Serializable> implements GenericDataProvider<T,ID>, PageableDataProvider<K>{
-
+//WTF?
 	@Autowired
 	protected SessionFactory sessionFactory;
 
