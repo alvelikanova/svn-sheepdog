@@ -11,9 +11,9 @@ public interface UserDataProvider {
 	UserEntity findUserById(Integer id);
 	UserEntity findUserByLogin(String login);
 	UserEntity findUserByEmail(String email);
-	void createUser(UserEntity userEntity);
+	void createUser(User user);
 	void deleteUserById(Integer userId);
-	List<UserEntity> findAllUsers();
+	List<User> findAllUsers();
 	void changeUserPassword(UserEntity userEntity, String pass);
 	PagedList<User> getUserBusinessObjects(LoadOptions loadOptions);
 }
