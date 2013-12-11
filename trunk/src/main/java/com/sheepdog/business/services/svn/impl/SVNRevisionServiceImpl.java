@@ -42,10 +42,10 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 	 */
 	public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 
-	 public SVNRevisionServiceImpl(SVNProjectFacade projectFacade) {
-		 super();
-		 this.projectFacade = projectFacade;
-	 }
+	public SVNRevisionServiceImpl(SVNProjectFacade projectFacade) {
+		super();
+		this.projectFacade = projectFacade;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -55,20 +55,19 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 	 * .sheepdog.business.domain.entities.Project, long, long)
 	 */
 	@Override
-	public Set<Revision> getRevisions(Project project, long startRevision, long endRevision) 
+	public Set<Revision> getRevisions(Project project, long startRevision, long endRevision)
 			throws InvalidURLException, SVNException {
 		Set<Revision> revisions = new HashSet<>();
 
 		Collection logEntries = null;
 
-		logEntries = projectFacade.getRepositoryConnection(project).log(
-				new String[] { "" }, null, startRevision, endRevision, true,
-				true);
+		logEntries = projectFacade.getRepositoryConnection(project).log(new String[] { "" }, null, startRevision,
+				endRevision, true, true);
 
 		for (Iterator entries = logEntries.iterator(); entries.hasNext();) {
 			SVNLogEntry logEntry = (SVNLogEntry) entries.next();
-			revisions.add(new Revision(project, (int) logEntry.getRevision(), 
-					logEntry.getAuthor(), logEntry.getMessage(), logEntry.getDate()));
+			revisions.add(new Revision(project, (int) logEntry.getRevision(), logEntry.getAuthor(), logEntry
+					.getMessage(), logEntry.getDate()));
 		}
 
 		return revisions;
@@ -83,16 +82,12 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 	 * com.sheepdog.business.domain.entities.File)
 	 */
 	@Override
-	public Set<Revision> getRevisionsByFile(Project project, File file)
-			throws InvalidURLException, SVNException {
+	public Set<Revision> getRevisionsByFile(Project project, File file) throws InvalidURLException, SVNException {
 
 		Set<Revision> revisions = new HashSet<>();
 
 		Collection revisionCollection = projectFacade.getRepositoryConnection(project).getFileRevisions(
-						file.getQualifiedName(),
-						null,
-						0,
-						projectFacade.getRepositoryConnection(project).getLatestRevision());
+				file.getQualifiedName(), null, 0, projectFacade.getRepositoryConnection(project).getLatestRevision());
 
 		for (Iterator iterator = revisionCollection.iterator(); iterator.hasNext();) {
 			SVNFileRevision fileRevision = (SVNFileRevision) iterator.next();
@@ -105,13 +100,26 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 
 		return revisions;
 	}
-	
-	/**
-	 * TODO For Ivan implementation
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.sheepdog.business.services.svn.SVNRevisionService#getLastRevision
+	 * (com.sheepdog.business.domain.entities.Project)
 	 */
 	@Override
-	public Revision getLastRevision(){
-		return null;
+	public Revision getLastRevision(Project project) throws InvalidURLException, SVNException {
+
+		long latestRevision = projectFacade.getRepositoryConnection(project).getLatestRevision();
+
+		Set<Revision> revision = getRevisions(project, latestRevision - 1, latestRevision);
+		for (Revision r : revision) {
+			if (r != null)
+				return r;
+		}
+
+		throw new SVNException(null);
 	}
 
 	/**

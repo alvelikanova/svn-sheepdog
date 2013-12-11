@@ -45,13 +45,13 @@ public class SVNRepositoryManager {
 	 *             supported.
 	 * @throws SVNException
 	 */
-	public boolean addSVNProjectConnection(Project project, User user)
-			throws SVNException, InvalidURLException {
+	public boolean addSVNProjectConnection(Project project, User user) throws SVNException, InvalidURLException {
 
 		if (repositories.get(project.getUrl()) != null)
 			return true;
 
-		//TODO For Ivan добавить проверку - что будет если подключение не получено(Логировать пока что)? А если ошибка во время логики?
+		// TODO For Ivan добавить проверку - что будет если подключение не
+		// получено(Логировать пока что)? А если ошибка во время логики?
 		SVNRepository repo = createSVNProjectConnection(project, user);
 		repo.testConnection();
 
@@ -93,8 +93,7 @@ public class SVNRepositoryManager {
 	 *             - if URL of repository is not correct or protocol is not
 	 *             supported.
 	 */
-	private SVNRepository createSVNProjectConnection(Project project, User user)
-			throws SVNException {
+	private SVNRepository createSVNProjectConnection(Project project, User user) throws SVNException {
 
 		connectionSetup(project.getUrl());
 
@@ -102,8 +101,8 @@ public class SVNRepositoryManager {
 
 		SVNRepository repository = SVNRepositoryFactory.create(repositoryURL);
 
-		ISVNAuthenticationManager authManager = SVNWCUtil.
-				createDefaultAuthenticationManager(user.getLogin(), user.getPassword());
+		ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(user.getLogin(),
+				user.getPassword());
 
 		repository.setAuthenticationManager(authManager);
 
@@ -120,9 +119,8 @@ public class SVNRepositoryManager {
 		if (url == null || url.length() < 6)
 			throw new InvalidURLException(url);
 
-		if (url.startsWith("http://") || url.startsWith("https://") || 
-				url.startsWith("http://") || url.startsWith("https://") || 
-				url.startsWith("file://")) {
+		if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("http://")
+				|| url.startsWith("https://") || url.startsWith("file://")) {
 			DAVRepositoryFactory.setup();
 		} else {
 			throw new InvalidURLException(url);
