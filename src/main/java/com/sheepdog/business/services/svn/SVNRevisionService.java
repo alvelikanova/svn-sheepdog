@@ -26,7 +26,7 @@ public interface SVNRevisionService {
 	 * @throws InvalidURLException
 	 * @throws SVNException
 	 */
-	public Set<Revision> getRevisions(Project project, long startRevision, long endRevision) 
+	public Set<Revision> getRevisions(Project project, long startRevision, long endRevision)
 			throws InvalidURLException, SVNException;
 
 	/**
@@ -40,13 +40,16 @@ public interface SVNRevisionService {
 	 * @throws InvalidURLException
 	 * @throws SVNException
 	 */
-	public Set<Revision> getRevisionsByFile(Project project, File file)
-			throws InvalidURLException, SVNException;
-	
+	public Set<Revision> getRevisionsByFile(Project project, File file) throws InvalidURLException, SVNException;
+
 	/**
-	 * TODO For Ivan
-	 * @return
+	 * Get latest revision from repository by Project object.
+	 * 
+	 * @return Revision object.
+	 * 
+	 * @throws InvalidURLException
+	 * @throws SVNException
 	 */
-	public Revision getLastRevision();
+	public Revision getLastRevision(Project project) throws InvalidURLException, SVNException;
 
 }

@@ -5,7 +5,6 @@ import java.util.Set;
 
 import org.apache.commons.lang3.text.StrBuilder;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.tmatesoft.svn.core.SVNException;
 
 import ch.qos.logback.classic.Logger;
@@ -20,8 +19,7 @@ import com.sheepdog.business.services.svn.SVNRevisionService;
 
 public class SVNRevisionServiceTest {
 
-	public static final Logger LOG = (Logger) LoggerFactory
-			.getLogger(SVNRevisionServiceTest.class);
+	public static final Logger LOG = (Logger) LoggerFactory.getLogger(SVNRevisionServiceTest.class);
 
 	// @Autowired
 	// private SVNProjectFacade projectFacade;;
@@ -38,7 +36,7 @@ public class SVNRevisionServiceTest {
 	 * Get all revisions. Get revision, which containing required file.
 	 */
 	public void getAllRevisions() {
-		 SVNProjectFacade projectFacade = new SVNProjectFacadeImpl(new SVNRepositoryManager());
+		SVNProjectFacade projectFacade = new SVNProjectFacadeImpl(new SVNRepositoryManager());
 
 		Project project = new Project();
 		project.setUrl("https://svn-sheepdog.googlecode.com/svn/trunk/");
@@ -95,14 +93,11 @@ public class SVNRevisionServiceTest {
 
 		Set<Revision> revisions2 = new HashSet<Revision>();
 		try {
-			revisions2 = revService
-					.getRevisionsByFile(
-							project,
-							//TODO For Ivan check test, why we create new File when get Revision
-							new File(project, null,
-									"",
-									"src/main/resources/liquibase/versions/initial/changelog_00.xml",
-									"", true));
+			revisions2 = revService.getRevisionsByFile(project,
+			// TODO For Ivan check test, why we create new File when get
+			// Revision
+					new File(project, null, "", "src/main/resources/liquibase/versions/initial/changelog_00.xml", "",
+							true));
 		} catch (InvalidURLException e) {
 			StrBuilder sb = new StrBuilder("InvalidURLException by URL :");
 			sb.append(e.getUrl());
@@ -126,12 +121,31 @@ public class SVNRevisionServiceTest {
 			LOG.info(sb.toString());
 		}
 
+		Revision revision = new Revision();
+
+		try {
+			revision = revService.getLastRevision(project);
+		} catch (InvalidURLException e) {
+			StrBuilder sb = new StrBuilder("InvalidURLException by URL :");
+			sb.append(e.getUrl());
+			LOG.warn(sb.toString());
+		} catch (SVNException e) {
+			LOG.error(e.toString());
+		}
+
+		LOG.info("\n \n          LAST REVISION   \n \n");
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(revision.getRevisionNo());
+		sb.append(" author: ");
+		sb.append(revision.getAuthor());
+		sb.append(" message: ");
+		sb.append(revision.getComment());
+		sb.append(" date: ");
+		sb.append(revision.getDate());
+
+		LOG.info(sb.toString());
+
 	}
-	// public SVNProvider getProvider() {
-	// return provider;
-	// }
-	//
-	// public void setProvider(SVNProvider provider) {
-	// this.provider = provider;
-	// }
+
 }

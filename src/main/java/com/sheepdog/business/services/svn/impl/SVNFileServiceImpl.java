@@ -1,20 +1,19 @@
 package com.sheepdog.business.services.svn.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.tmatesoft.svn.core.SVNDirEntry;
+import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNLogEntry;
 import org.tmatesoft.svn.core.SVNLogEntryPath;
 import org.tmatesoft.svn.core.SVNNodeKind;
+import org.tmatesoft.svn.core.io.ISVNReporter;
+import org.tmatesoft.svn.core.io.ISVNReporterBaton;
 import org.tmatesoft.svn.core.io.SVNRepository;
 
 import com.sheepdog.business.domain.entities.File;
@@ -24,50 +23,75 @@ import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.exceptions.InvalidURLException;
 import com.sheepdog.business.services.svn.SVNFileService;
 import com.sheepdog.business.services.svn.SVNProjectFacade;
-import com.sheepdog.business.services.svn.SVNRevisionService;
 
 public class SVNFileServiceImpl implements SVNFileService {
+
+	public static final Character DELETED_FILE = new Character('D');
+
+	public static final Character ADDED_FILE = new Character('A');
+
+	public static final Character MODIFIED_FILE = new Character('M');
+
+	public static final Character REPLACED_FILE = new Character('R');
 
 	// @Autowired
 	private SVNProjectFacade projectFacade;
 
-	// @Autowired
-	private SVNRevisionService revisionService;
-
-	public SVNFileServiceImpl(SVNProjectFacade projectFacade,
-			SVNRevisionService revisionService) {
+	public SVNFileServiceImpl(SVNProjectFacade projectFacade) {
 		super();
 		this.projectFacade = projectFacade;
-		this.revisionService = revisionService;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.sheepdog.business.services.svn.SVNFileService#getAllFiles(com.sheepdog
+	 * .business.domain.entities.Project)
+	 */
 	@Override
-	public List<File> getAllFiles(Project project) throws SVNException {
-		List<File> files = new ArrayList<>();
+	public Set<File> getAllFiles(Project project) throws SVNException {
+		SVNRepository repos = projectFacade.getRepositoryConnection(project);
+		final long rev = repos.getLatestRevision();
 
-		getEntries(project, projectFacade.getRepositoryConnection(project), "", files);
+		QuickEditor editor = new QuickEditor();
 
-		return files;
+		repos.status(rev, "", SVNDepth.INFINITY, new ISVNReporterBaton() {
+			@Override
+			public void report(ISVNReporter reporter) throws SVNException {
+				reporter.setPath("", null, rev, SVNDepth.INFINITY, true);
+				reporter.finishReport();
+			}
+		}, editor);
+
+		Set<File> files = editor.getFiles();
+
+		for (File f : files)
+			f.setProject(project);
+
+		return setNameFieldsToManyFiles(files);
 	}
 
-	//TODO For Ivan что значит Map<File, String> и зачем, надо определиться List<File> или Map<File, String> или Set<File>
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.sheepdog.business.services.svn.SVNFileService#getFilesByRevision(
+	 * com.sheepdog.business.domain.entities.Project,
+	 * com.sheepdog.business.domain.entities.Revision)
+	 */
 	@Override
-	public Map<File, String> getFilesByRevision(Project project,
-			Revision revision) {
+	public Map<File, Character> getFilesByRevision(Project project, Revision revision) throws InvalidURLException,
+			SVNException {
 
-		Map<File, String> files = new HashMap<>();
+		Map<File, Character> files = new HashMap<>();
 
 		Collection logEntries = null;
 
-		try {
-			logEntries = projectFacade.getRepositoryConnection(project).log(
-					new String[] { "" }, null, revision.getRevisionNo(),
-					revision.getRevisionNo(), true, true);
-		} catch (InvalidURLException e) {
-			e.printStackTrace();
-		} catch (SVNException e) {
-			e.printStackTrace();
-		}
+		File tempFile;
+
+		logEntries = projectFacade.getRepositoryConnection(project).log(new String[] { "" }, null,
+				revision.getRevisionNo(), revision.getRevisionNo(), true, true);
 
 		for (Iterator entries = logEntries.iterator(); entries.hasNext();) {
 			SVNLogEntry logEntry = (SVNLogEntry) entries.next();
@@ -77,33 +101,42 @@ public class SVNFileServiceImpl implements SVNFileService {
 				continue;
 
 			for (Iterator iterator = changedPaths.iterator(); iterator.hasNext();) {
-
 				SVNLogEntryPath entryPath = (SVNLogEntryPath) logEntry.getChangedPaths().get(iterator.next());
+				if (SVNNodeKind.DIR.equals(entryPath.getKind()))
+					continue;
 
-				//TODO For Ivan set Revision also
-				files.put((new File(project, null, entryPath.getPath(), entryPath.getCopyPath(), null, false)), 
-						"" + entryPath.getType());
+				tempFile = new File();
+				tempFile.setPath(entryPath.getPath().substring(entryPath.getPath().indexOf('/'))); // getPath()
+				tempFile.setProject(project);
+				tempFile.setRevision(revision);
+
+				files.put(setNameFieldsToOneFile(tempFile), new Character(entryPath.getType()));
 			}
 		}
 		return files;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.sheepdog.business.services.svn.SVNFileService#getFilesByCreator(com
+	 * .sheepdog.business.domain.entities.Project,
+	 * com.sheepdog.business.domain.entities.User, java.util.Set)
+	 */
 	@Override
-	public Set<File> getFilesByCreator(Project project, User user)
-			throws InvalidURLException, SVNException {
-
+	public Set<File> getFilesByCreator(Project project, User user, Set<Revision> revisions) throws InvalidURLException,
+			SVNException {
 		Set<File> authFiles = new HashSet<>();
-
-		//TODO for Ivan get revisons from db
-		Set<Revision> revisions = revisionService.getRevisions(project, 0, -1);
-		Map<File, String> files;
+		Map<File, Character> files;
 
 		for (Revision r : revisions)
 			if (user.getLogin().equals(r.getAuthor())) {
 				files = getFilesByRevision(project, r);
 				for (File f : files.keySet())
-					if ("A".equals(files.get(f))) {
+					if (SVNFileServiceImpl.ADDED_FILE.equals(files.get(f))) {
 						f.setCreatorName(user.getLogin());
+
 						authFiles.add(f);
 					}
 			}
@@ -111,41 +144,35 @@ public class SVNFileServiceImpl implements SVNFileService {
 	}
 
 	/**
-	 * Recursive method to traverse the repository tree starting at a particular
-	 * path.
+	 * Complete all File objects by name and qualified name of file.
 	 * 
-	 * @param repo
-	 *            SVNRepository object of needed project.
-	 * @param path
-	 *            Particular path.
-	 * @param outputList
-	 *            Result list of File object.
-	 * @throws SVNException
+	 * @param files
+	 *            Set of files.
+	 * @return Completed Files objects.
+	 * @throws NullPointerException
 	 */
-	private void getEntries(Project project, SVNRepository repo, String path, List<File> outputList) 
-			throws SVNException {
-		Collection entries = repo.getDir(path, -1, null, (Collection) null);
+	private Set<File> setNameFieldsToManyFiles(Set<File> files) throws NullPointerException {
+		Set<File> tempFiles = new HashSet<>(files);
 
-		Iterator iterator = entries.iterator();
+		for (File f : tempFiles)
+			f = setNameFieldsToOneFile(f);
 
-		while (iterator.hasNext()) {
-			SVNDirEntry entry = (SVNDirEntry) iterator.next();
-
-			File file = new File();
-			file.setName(entry.getName());
-			file.setQualifiedName(entry.getURL().getPath());
-			//TODO For Ivan file.setCreatorName(Имя пользователя создавшего файл);
-			//Set<Revision> revisions = revisionService.getRevisions(project, 0, -1);
-			//TODO For Ivan setRevision(Revision) - подумать как лучше сделать
-			file.setProject(project);
-			
-			outputList.add(file);
-
-			if (entry.getKind() == SVNNodeKind.DIR) {
-				getEntries(project, repo, (path.equals("")) ? entry.getName() : path
-						+ "/" + entry.getName(), outputList);
-			}
-
-		}
+		return tempFiles;
 	}
+
+	/**
+	 * Complete File object by name and qualified name of file.
+	 * 
+	 * @param f
+	 *            File object.
+	 * @return Completed Files object.
+	 */
+	private File setNameFieldsToOneFile(File f) {
+		String path = f.getPath();
+
+		f.setQualifiedName(f.getProject().getName() + "/" + path);
+		f.setName(path.substring(path.lastIndexOf('/') + 1));
+		return f;
+	}
+
 }
