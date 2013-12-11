@@ -2,35 +2,85 @@ package com.sheepdog.dal.providers.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.sheepdog.dal.exceptions.DaoException;
+import com.sheepdog.infrastructure.services.MappingService;
+import com.sheepdog.utils.CollectionUtils;
+import com.sheepdog.dal.providers.pagination.FilterOption;
+import com.sheepdog.dal.providers.pagination.SortOption;
 import com.sheepdog.dal.providers.base.GenericDataProvider;
 import com.sheepdog.dal.providers.base.PageableDataProvider;
 import com.sheepdog.dal.providers.pagination.LoadOptions;
 import com.sheepdog.dal.providers.pagination.PagedList;
 
-public abstract class BaseDataProviderImpl<K, T, ID extends Serializable> implements GenericDataProvider<T,ID>, PageableDataProvider<K>{
-//WTF?
+public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implements GenericDataProvider<T, K, ID>, PageableDataProvider<K>{
+
+	private static final Logger LOG = LoggerFactory.getLogger(BaseDataProviderImpl.class);
+
 	@Autowired
 	protected SessionFactory sessionFactory;
-
+	
+	@Autowired
+	private MappingService mappingService;
 	@Override
 	public PagedList<K> getObjects(LoadOptions loadOptions, Class dalEntityClass, Class domainEntityClass) {
-		// TODO Auto-generated method stub
-		return null;
+        Session session = sessionFactory.getCurrentSession();
+
+        PagedList<K> result = new PagedList<>();
+
+        try {
+                Criteria countCriteria = session.createCriteria(dalEntityClass);
+                fillCriteria(countCriteria, loadOptions, true);
+
+                long rowsCount = (long) countCriteria.uniqueResult();
+
+                if (rowsCount > 0) {
+                        Criteria criteria = session.createCriteria(dalEntityClass);
+                        fillCriteria(criteria, loadOptions, false);
+
+                        List<T> dataEntities = criteria.list();
+                        for (T de : dataEntities) {
+                                K domainEntity = (K) mappingService.map(de, domainEntityClass);
+                                result.add(domainEntity);
+                        }
+                }
+
+                result.setTotalSize(rowsCount);
+        } catch (Exception ex) {
+                LOG.error("Error occured in BaseDataProviderImpl", ex);
+        }
+
+        return result;
 	}
 
 	@Override
-	public void save(T entity) {
+	public void save(K entity, Class dalEntityClass) throws DaoException {
 		Session session = sessionFactory.getCurrentSession();
-		session.saveOrUpdate(entity);
-	}
 
+		try {
+			T dataEntity = (T) mappingService.map(entity, dalEntityClass);
+			session.saveOrUpdate(dataEntity);
+			
+		} catch (Exception ex) {
+			LOG.error("Error creating or updating data entity", ex);
+			throw new DaoException(ex);
+		}
+	}
+	
+	
 	@Override
 	public void merge(T entity) {
 		Session session = sessionFactory.getCurrentSession();
@@ -51,9 +101,57 @@ public abstract class BaseDataProviderImpl<K, T, ID extends Serializable> implem
 	}
 
 	@Override
-	public List<T> findAll(Class clazz) {
+	public List<K> findAll(Class dalEntityClass, Class domainEntityClass) {		
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("from "+clazz.getSimpleName());
-		return (ArrayList<T>) query.list();
+
+		List<K> businessEntities = new ArrayList<>();
+
+		try {
+			@SuppressWarnings("unchecked")
+			List<T> dataEntities = session.createCriteria(dalEntityClass).list();
+
+			for (T de : dataEntities) {
+				K u = (K) mappingService.map(de, domainEntityClass);
+				businessEntities.add(u);
+			}
+		} catch (Exception ex) {
+			LOG.error("Error loading business entities", ex);
+		}
+		
+		return businessEntities;
+	}
+	
+	private void fillCriteria(Criteria source, LoadOptions loadOptions, boolean countOnly) {
+		List<FilterOption> filters = loadOptions.getFilters();
+		if (CollectionUtils.hasItems(filters)) {
+			for (FilterOption f : filters) {
+				source.add(Restrictions.eq(f.getField(), f.getValue()));
+			}
+		}
+
+		List<SortOption> sorts = loadOptions.getSorts();
+		Collections.sort(sorts);
+
+		if (CollectionUtils.hasItems(sorts)) {
+			for (SortOption s : sorts) {
+				switch (s.getSortDirection()) {
+				case ASCENDING:
+					source.addOrder(Order.asc(s.getSortField()));
+					break;
+				case DESCENDING:
+					source.addOrder(Order.desc(s.getSortField()));
+					break;
+				default:
+					break;
+				}
+			}
+		}
+
+		if (countOnly) {
+			source.setProjection(Projections.rowCount());
+		} else {
+			source.setFirstResult(loadOptions.getSkipItems());
+			source.setMaxResults(loadOptions.getTakeItems());
+		}
 	}
 }

@@ -12,7 +12,7 @@ import com.sheepdog.dal.providers.pagination.LoadOptions;
 import com.sheepdog.dal.providers.pagination.PagedList;
 
 @Repository
-public class UserDataProviderImpl extends BaseDataProviderImpl<User,UserEntity,Integer> implements UserDataProvider{
+public class UserDataProviderImpl extends BaseDataProviderImpl<UserEntity,User,Integer> implements UserDataProvider{
 
 	@Override
 	public UserEntity findUserById(Integer id) {
@@ -34,8 +34,8 @@ public class UserDataProviderImpl extends BaseDataProviderImpl<User,UserEntity,I
 	}
 
 	@Override
-	public void createUser(UserEntity userEntity) {
-		save(userEntity);
+	public void createUser(User user) {
+		save(user, UserEntity.class);
 	}
 
 	@Override
@@ -45,8 +45,8 @@ public class UserDataProviderImpl extends BaseDataProviderImpl<User,UserEntity,I
 	}
 
 	@Override
-	public List<UserEntity> findAllUsers() {
-		return findAll(UserEntity.class);
+	public List<User> findAllUsers() {
+		return findAll(UserEntity.class, User.class);
 	}
 
 	@Override
