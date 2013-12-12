@@ -41,5 +41,11 @@ public class UserDataProviderImpl extends BaseDataProviderImpl<UserEntity,User,I
 		return user;
 	}
 
+	@Override
+	public void changePassword(User user, String password) {
+		user.setPassword(password);
+		merge(user, UserEntity.class);
+	}
+
 
 }
