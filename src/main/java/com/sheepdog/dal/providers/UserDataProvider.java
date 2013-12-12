@@ -1,19 +1,10 @@
 package com.sheepdog.dal.providers;
 
-import java.util.List;
-
 import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.dal.entities.UserEntity;
-import com.sheepdog.dal.providers.pagination.LoadOptions;
-import com.sheepdog.dal.providers.pagination.PagedList;
+import com.sheepdog.dal.providers.base.GenericDataProvider;
 
-public interface UserDataProvider {
-	UserEntity findUserById(Integer id);
-	UserEntity findUserByLogin(String login);
-	UserEntity findUserByEmail(String email);
-	void createUser(User user);
-	void deleteUserById(Integer userId);
-	List<User> findAllUsers();
-	void changeUserPassword(UserEntity userEntity, String pass);
-	PagedList<User> getUserBusinessObjects(LoadOptions loadOptions);
+public interface UserDataProvider extends GenericDataProvider<UserEntity,User,Integer> {
+	User getUserByLogin(String login);
+	User getUserByEmail(String email);
 }

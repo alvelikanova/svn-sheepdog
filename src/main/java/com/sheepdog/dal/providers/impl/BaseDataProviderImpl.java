@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -26,17 +25,17 @@ import com.sheepdog.dal.providers.base.PageableDataProvider;
 import com.sheepdog.dal.providers.pagination.LoadOptions;
 import com.sheepdog.dal.providers.pagination.PagedList;
 
-public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implements GenericDataProvider<T, K, ID>, PageableDataProvider<K>{
+public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implements GenericDataProvider<T, K, ID>, PageableDataProvider<T, K>{
 
-	private static final Logger LOG = LoggerFactory.getLogger(BaseDataProviderImpl.class);
+	protected static final Logger LOG = LoggerFactory.getLogger(BaseDataProviderImpl.class);
 
 	@Autowired
 	protected SessionFactory sessionFactory;
 	
 	@Autowired
-	private MappingService mappingService;
+	protected MappingService mappingService;
 	@Override
-	public PagedList<K> getObjects(LoadOptions loadOptions, Class dalEntityClass, Class domainEntityClass) {
+	public PagedList<K> getObjects(LoadOptions loadOptions, Class<T> dalEntityClass, Class<K> domainEntityClass) {
         Session session = sessionFactory.getCurrentSession();
 
         PagedList<K> result = new PagedList<>();
@@ -53,55 +52,80 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
 
                         List<T> dataEntities = criteria.list();
                         for (T de : dataEntities) {
-                                K domainEntity = (K) mappingService.map(de, domainEntityClass);
+                                K domainEntity = mappingService.map(de, domainEntityClass);
                                 result.add(domainEntity);
                         }
                 }
 
                 result.setTotalSize(rowsCount);
         } catch (Exception ex) {
-                LOG.error("Error occured in BaseDataProviderImpl", ex);
+                LOG.error("Error occured in BaseDataProviderImpl", ex.getMessage());
         }
 
         return result;
 	}
 
 	@Override
-	public void save(K entity, Class dalEntityClass) throws DaoException {
+	public void save(K entity, Class<T> dalEntityClass) throws DaoException {
 		Session session = sessionFactory.getCurrentSession();
 
 		try {
-			T dataEntity = (T) mappingService.map(entity, dalEntityClass);
+			T dataEntity = mappingService.map(entity, dalEntityClass);
 			session.saveOrUpdate(dataEntity);
 			
 		} catch (Exception ex) {
-			LOG.error("Error creating or updating data entity", ex);
+			LOG.error("Error creating or updating data entity", ex.getMessage());
 			throw new DaoException(ex);
 		}
 	}
 	
 	
 	@Override
-	public void merge(T entity) {
+	public void merge(K entity, Class<T> dalEntityClass) throws DaoException{
 		Session session = sessionFactory.getCurrentSession();
-		session.merge(entity);
+
+		try {
+			T dataEntity = mappingService.map(entity, dalEntityClass);
+			session.merge(dataEntity);
+			
+		} catch (Exception ex) {
+			LOG.error("Error creating or updating data entity", ex.getMessage());
+			throw new DaoException(ex);
+		}
 	}
 
 	@Override
-	public void delete(T entity) {
+	public void delete(K entity, Class<T> dalEntityClass) throws DaoException{
 		Session session = sessionFactory.getCurrentSession();
-		session.delete(entity);
+
+		try {
+			T dataEntity = mappingService.map(entity, dalEntityClass);
+			session.delete(dataEntity);
+			
+		} catch (Exception ex) {
+			LOG.error("Error creating or updating data entity", ex.getMessage());
+			throw new DaoException(ex);
+		}
 	}
 
 	@Override
-	public T findById(Class clazz, Integer id) {
+	public K findById(Class<T> dalEntityClass, Class<K> domainEntityClass, Integer id) {
 		Session session = sessionFactory.getCurrentSession();
-		T t = (T)session.get(clazz, id);
-		return t;
+		K businessEntity = null;
+		try {
+			Criteria cr = session.createCriteria(dalEntityClass).add(Restrictions.eq("ID", id));
+			cr.setMaxResults(1);
+			T dalEntity = (T) cr.uniqueResult();
+			businessEntity = mappingService.map(dalEntity, domainEntityClass);
+		}
+		catch (Exception ex) {
+			LOG.error("Error loading business entity", ex.getMessage());
+		}
+		return businessEntity;
 	}
 
 	@Override
-	public List<K> findAll(Class dalEntityClass, Class domainEntityClass) {		
+	public List<K> findAll(Class<T> dalEntityClass, Class<K> domainEntityClass) {		
 		Session session = sessionFactory.getCurrentSession();
 
 		List<K> businessEntities = new ArrayList<>();
@@ -111,11 +135,11 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
 			List<T> dataEntities = session.createCriteria(dalEntityClass).list();
 
 			for (T de : dataEntities) {
-				K u = (K) mappingService.map(de, domainEntityClass);
-				businessEntities.add(u);
+				K businessEntity = mappingService.map(de, domainEntityClass);
+				businessEntities.add(businessEntity);
 			}
 		} catch (Exception ex) {
-			LOG.error("Error loading business entities", ex);
+			LOG.error("Error loading business entities", ex.getMessage());
 		}
 		
 		return businessEntities;
