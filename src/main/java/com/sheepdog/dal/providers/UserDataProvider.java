@@ -7,4 +7,5 @@ import com.sheepdog.dal.providers.base.GenericDataProvider;
 public interface UserDataProvider extends GenericDataProvider<UserEntity,User,Integer> {
 	User getUserByLogin(String login);
 	User getUserByEmail(String email);
+	void changePassword(User user, String password);
 }
