@@ -1,17 +1,10 @@
 package com.sheepdog.dal.providers;
 
-import java.util.List;
-
 import com.sheepdog.business.domain.entities.Project;
 import com.sheepdog.dal.entities.ProjectEntity;
-import com.sheepdog.dal.providers.pagination.LoadOptions;
-import com.sheepdog.dal.providers.pagination.PagedList;
+import com.sheepdog.dal.providers.base.GenericDataProvider;
 
-public interface ProjectDataProvider {
-	ProjectEntity findProjectById(Integer id);
-	ProjectEntity findProjectByUrl(String url);
-	void createProject(ProjectEntity projectEntity);
-	void deleteProjectById(Integer projectId);
-	List<ProjectEntity> findAllProjects();
-	PagedList<Project> getProjectBusinessObjects(LoadOptions loadOptions);
+public interface ProjectDataProvider extends GenericDataProvider<ProjectEntity, Project, Integer> {
+	Project findProjectByUrl(String url);
+	Project findProjectByName(String projectName);
 }
