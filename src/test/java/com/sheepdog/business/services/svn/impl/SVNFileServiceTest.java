@@ -1,5 +1,6 @@
 package com.sheepdog.business.services.svn.impl;
 
+import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,13 +9,13 @@ import java.util.Set;
 
 import org.apache.commons.lang3.text.StrBuilder;
 import org.slf4j.LoggerFactory;
-import org.tmatesoft.svn.core.SVNException;
 
 import com.sheepdog.business.domain.entities.File;
 import com.sheepdog.business.domain.entities.Project;
 import com.sheepdog.business.domain.entities.Revision;
 import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.exceptions.InvalidURLException;
+import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
 import com.sheepdog.business.services.svn.SVNFileService;
 import com.sheepdog.business.services.svn.SVNProjectFacade;
 
@@ -41,19 +42,23 @@ public class SVNFileServiceTest {
 		User user = new User();
 		user.setLogin("ivan.spread@gmail.com");
 		user.setPassword("fc9uy8NM5dK8");
+		user.setProject(project);
 
 		long time = System.currentTimeMillis();
 
 		try {
-			projectFacade.addSVNProjectConnection(project, user);
+			projectFacade.addSVNProjectConnection(user);
 		} catch (InvalidURLException e1) {
 			StrBuilder sb = new StrBuilder("InvalidURLException by URL :");
 			sb.append(e1.getUrl());
 			LOG.warn(sb.toString());
-		} catch (SVNException e1) {
-			LOG.error(e1.toString());
+		} catch (IllegalArgumentException e) {
+			LOG.info(e.getMessage());
+		} catch (RepositoryAuthenticationExceptoin e) {
+			LOG.info("User authentication error: " + e.getUser().getLogin());
+		} catch (IOException e) {
+			LOG.info(e.getMessage());
 		}
-
 		LOG.info("Time init SVNRepository: " + (System.currentTimeMillis() - time));
 
 		testGetAllFiles(projectFacade, project, user);
@@ -75,9 +80,13 @@ public class SVNFileServiceTest {
 
 		Set<File> files = new HashSet<>();
 		try {
-			files = fileService.getAllFiles(project);
-		} catch (SVNException e) {
-			LOG.error(e.toString());
+			files = fileService.getAllFiles(user);
+		} catch (IllegalArgumentException e) {
+			LOG.info(e.getMessage());
+		} catch (RepositoryAuthenticationExceptoin e) {
+			LOG.info("User authentication error: " + e.getUser().getLogin());
+		} catch (IOException e) {
+			LOG.info(e.getMessage());
 		}
 
 		for (File f : files) {
@@ -99,11 +108,13 @@ public class SVNFileServiceTest {
 		Map<File, Character> files2 = new HashMap<File, Character>();
 
 		try {
-			files2 = fileService.getFilesByRevision(project, new Revision(project, 7, null, null, null));
-		} catch (InvalidURLException e) {
-			LOG.error("InvalidURLException : " + e.getUrl());
-		} catch (SVNException e) {
-			LOG.error(e.toString());
+			files2 = fileService.getFilesByRevision(user, new Revision(project, 7, null, null, null));
+		} catch (IllegalArgumentException e) {
+			LOG.info(e.getMessage());
+		} catch (RepositoryAuthenticationExceptoin e) {
+			LOG.info("User authentication error: " + e.getUser().getLogin());
+		} catch (IOException e) {
+			LOG.info(e.getMessage());
 		}
 
 		for (File f : files2.keySet()) {
@@ -123,17 +134,19 @@ public class SVNFileServiceTest {
 		Set<File> files = new java.util.HashSet<>();
 
 		try {
-			Set<Revision> revision = new SVNRevisionServiceImpl(projectFacade).getRevisions(project, 0, -1);
+			Set<Revision> revision = new SVNRevisionServiceImpl(projectFacade).getRevisions(user, 0, -1);
 
 			LOG.info("\n\n GET FILE BY CREATOR \n\n");
 
 			time = System.currentTimeMillis();
 
-			files = fileService.getFilesByCreator(project, user, revision);
-		} catch (InvalidURLException e) {
-			LOG.error("InvalidURLException : " + e.getUrl());
-		} catch (SVNException e) {
-			LOG.error(e.toString());
+			files = fileService.getFilesByCreator(user, revision);
+		} catch (IllegalArgumentException e) {
+			LOG.info(e.getMessage());
+		} catch (RepositoryAuthenticationExceptoin e) {
+			LOG.info("User authentication error: " + e.getUser().getLogin());
+		} catch (IOException e) {
+			LOG.info(e.getMessage());
 		}
 
 		for (File f : files) {
@@ -153,11 +166,15 @@ public class SVNFileServiceTest {
 
 		long time = System.currentTimeMillis();
 		try {
-			LOG.info(fileService.getFileContent(project, file));
+			LOG.info(fileService.getFileContent(user, file));
 		} catch (InvalidParameterException e) {
 			LOG.error(e.toString());
-		} catch (SVNException e) {
-			LOG.error(e.toString());
+		} catch (IllegalArgumentException e) {
+			LOG.info(e.getMessage());
+		} catch (RepositoryAuthenticationExceptoin e) {
+			LOG.info("User authentication error: " + e.getUser().getLogin());
+		} catch (IOException e) {
+			LOG.info(e.getMessage());
 		}
 		LOG.info("" + (System.currentTimeMillis() - time));
 

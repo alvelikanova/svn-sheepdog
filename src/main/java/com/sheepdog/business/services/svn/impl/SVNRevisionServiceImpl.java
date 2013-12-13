@@ -1,5 +1,6 @@
 package com.sheepdog.business.services.svn.impl;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -12,6 +13,7 @@ import java.util.Set;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.tmatesoft.svn.core.SVNAuthenticationException;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNLogEntry;
 import org.tmatesoft.svn.core.SVNProperties;
@@ -19,10 +21,11 @@ import org.tmatesoft.svn.core.io.SVNFileRevision;
 
 import ch.qos.logback.classic.Logger;
 
+import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.domain.entities.File;
 import com.sheepdog.business.domain.entities.Project;
 import com.sheepdog.business.domain.entities.Revision;
-import com.sheepdog.business.exceptions.InvalidURLException;
+import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
 import com.sheepdog.business.services.svn.SVNProjectFacade;
 import com.sheepdog.business.services.svn.SVNRevisionService;
 
@@ -62,21 +65,29 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 	 * 
 	 * @see
 	 * com.sheepdog.business.services.svn.SVNRevisionService#getRevisions(com
-	 * .sheepdog.business.domain.entities.Project, long, long)
+	 * .sheepdog.business.domain.entities.User, long, long)
 	 */
 	@Override
-	public Set<Revision> getRevisions(Project project, long startRevision, long endRevision)
-			throws InvalidURLException, SVNException {
+	public Set<Revision> getRevisions(User user, long startRevision, long endRevision) throws IOException,
+			RepositoryAuthenticationExceptoin, IllegalArgumentException {
 		Set<Revision> revisions = new HashSet<>();
 
 		Collection logEntries = null;
 
-		logEntries = projectFacade.getRepositoryConnection(project).log(new String[] { "" }, null, startRevision,
-				endRevision, true, true);
+		try {
+			logEntries = projectFacade.getRepositoryConnection(user).log(new String[] { "" }, null, startRevision,
+					endRevision, true, true);
+		} catch (SVNAuthenticationException e) {
+			LOG.info("User authentication failed. User: " + user.getLogin());
+			throw new RepositoryAuthenticationExceptoin(user);
+		} catch (SVNException e) {
+			LOG.info("Connection to repository failed. User: " + user.getLogin());
+			throw new IOException("Failed connection to URL:" + user.getProject().getUrl());
+		}
 
 		for (Iterator entries = logEntries.iterator(); entries.hasNext();) {
 			SVNLogEntry logEntry = (SVNLogEntry) entries.next();
-			revisions.add(new Revision(project, (int) logEntry.getRevision(), logEntry.getAuthor(), logEntry
+			revisions.add(new Revision(user.getProject(), (int) logEntry.getRevision(), logEntry.getAuthor(), logEntry
 					.getMessage(), logEntry.getDate()));
 		}
 
@@ -88,26 +99,36 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 	 * 
 	 * @see
 	 * com.sheepdog.business.services.svn.SVNRevisionService#getRevisionsByFile
-	 * (com.sheepdog.business.domain.entities.Project,
+	 * (com.sheepdog.business.domain.entities.User,
 	 * com.sheepdog.business.domain.entities.File)
 	 */
 	@Override
-	public Set<Revision> getRevisionsByFile(Project project, File file) throws InvalidURLException, SVNException {
+	public Set<Revision> getRevisionsByFile(User user, File file) throws IOException,
+			RepositoryAuthenticationExceptoin, IllegalArgumentException {
 
 		Set<Revision> revisions = new HashSet<>();
 
-		Collection revisionCollection = projectFacade.getRepositoryConnection(project).getFileRevisions(
-				file.getQualifiedName(), null, 0, projectFacade.getRepositoryConnection(project).getLatestRevision());
+		Collection revisionCollection;
+
+		try {
+			revisionCollection = projectFacade.getRepositoryConnection(user).getFileRevisions(file.getPath(), null, 0,
+					projectFacade.getRepositoryConnection(user).getLatestRevision());
+		} catch (SVNAuthenticationException e) {
+			LOG.info("User authentication failed. User: " + user.getLogin());
+			throw new RepositoryAuthenticationExceptoin(user);
+		} catch (SVNException e) {
+			LOG.info("Connection to repository failed. User: " + user.getLogin());
+			throw new IOException("Failed connection to URL:" + user.getProject().getUrl());
+		}
 
 		for (Iterator iterator = revisionCollection.iterator(); iterator.hasNext();) {
 			SVNFileRevision fileRevision = (SVNFileRevision) iterator.next();
 
-			Revision revision = getRevisionByPropeties(project, fileRevision.getRevisionProperties());
+			Revision revision = getRevisionByPropeties(user.getProject(), fileRevision.getRevisionProperties());
 			revision.setRevisionNo((int) fileRevision.getRevision());
 
 			revisions.add(revision);
 		}
-
 		return revisions;
 	}
 
@@ -116,20 +137,31 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 	 * 
 	 * @see
 	 * com.sheepdog.business.services.svn.SVNRevisionService#getLastRevision
-	 * (com.sheepdog.business.domain.entities.Project)
+	 * (com.sheepdog.business.domain.entities.User)
 	 */
 	@Override
-	public Revision getLastRevision(Project project) throws InvalidURLException, SVNException {
+	public Revision getLastRevision(User user) throws RepositoryAuthenticationExceptoin, IllegalArgumentException,
+			IOException {
 
-		long latestRevision = projectFacade.getRepositoryConnection(project).getLatestRevision();
+		long latestRevision = 0;
 
-		Set<Revision> revision = getRevisions(project, latestRevision, latestRevision);
+		try {
+			latestRevision = projectFacade.getRepositoryConnection(user).getLatestRevision();
+		} catch (SVNAuthenticationException e) {
+			LOG.info("User authentication failed. User: " + user.getLogin());
+			throw new RepositoryAuthenticationExceptoin(user);
+		} catch (SVNException e) {
+			LOG.info("Connection to repository failed. User: " + user.getLogin());
+			throw new IOException("Failed connection to URL:" + user.getProject().getUrl());
+		}
+
+		Set<Revision> revision = getRevisions(user, latestRevision, latestRevision);
 		for (Revision r : revision) {
 			if (r != null)
 				return r;
 		}
 
-		throw new SVNException(null);
+		throw new IllegalArgumentException("Invalid repository");
 	}
 
 	/**

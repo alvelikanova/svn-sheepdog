@@ -1,11 +1,11 @@
 package com.sheepdog.business.services.svn.impl;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang3.text.StrBuilder;
 import org.slf4j.LoggerFactory;
-import org.tmatesoft.svn.core.SVNException;
 
 import ch.qos.logback.classic.Logger;
 
@@ -14,6 +14,7 @@ import com.sheepdog.business.domain.entities.Project;
 import com.sheepdog.business.domain.entities.Revision;
 import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.exceptions.InvalidURLException;
+import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
 import com.sheepdog.business.services.svn.SVNProjectFacade;
 import com.sheepdog.business.services.svn.SVNRevisionService;
 
@@ -32,9 +33,6 @@ public class SVNRevisionServiceTest {
 
 	}
 
-	/**
-	 * Get all revisions. Get revision, which containing required file.
-	 */
 	public void getAllRevisions() {
 		SVNProjectFacade projectFacade = new SVNProjectFacadeImpl(new SVNRepositoryManager());
 
@@ -42,18 +40,28 @@ public class SVNRevisionServiceTest {
 		project.setUrl("https://svn-sheepdog.googlecode.com/svn/trunk/");
 		project.setName("svn_test");
 
+		File file = new File();
+		file.setProject(project);
+		file.setPath("src/main/resources/liquibase/versions/initial/changelog_00.xml");
+
 		User user = new User();
 		user.setLogin("ivan.spread@gmail.com");
 		user.setPassword("fc9uy8NM5dK8");
+		user.setProject(project);
 
 		try {
-			projectFacade.addSVNProjectConnection(project, user);
+			projectFacade.addSVNProjectConnection(user);
+
 		} catch (InvalidURLException e1) {
 			StrBuilder sb = new StrBuilder("InvalidURLException by URL :");
 			sb.append(e1.getUrl());
 			LOG.warn(sb.toString());
-		} catch (SVNException e1) {
-			LOG.error(e1.toString());
+		} catch (IllegalArgumentException e) {
+			LOG.info(e.getMessage());
+		} catch (RepositoryAuthenticationExceptoin e) {
+			LOG.info("User authentication error: " + e.getUser().getLogin());
+		} catch (IOException e) {
+			LOG.info(e.getMessage());
 		}
 
 		long time = System.currentTimeMillis();
@@ -63,13 +71,13 @@ public class SVNRevisionServiceTest {
 		SVNRevisionService revService = new SVNRevisionServiceImpl(projectFacade);
 		Set<Revision> revisions = new HashSet<Revision>();
 		try {
-			revisions = revService.getRevisions(project, 0, -1);
-		} catch (InvalidURLException e) {
-			StrBuilder sb = new StrBuilder("InvalidURLException by URL :");
-			sb.append(e.getUrl());
-			LOG.warn(sb.toString());
-		} catch (SVNException e) {
-			LOG.error(e.toString());
+			revisions = revService.getRevisions(user, 0, -1);
+		} catch (IllegalArgumentException e) {
+			LOG.info(e.getMessage());
+		} catch (RepositoryAuthenticationExceptoin e) {
+			LOG.info("User authentication error: " + e.getUser().getLogin());
+		} catch (IOException e) {
+			LOG.info(e.getMessage());
 		}
 
 		LOG.info("\n \n          List of all revisions: \n\n");
@@ -93,17 +101,13 @@ public class SVNRevisionServiceTest {
 
 		Set<Revision> revisions2 = new HashSet<Revision>();
 		try {
-			revisions2 = revService.getRevisionsByFile(project,
-			// TODO For Ivan check test, why we create new File when get
-			// Revision
-					new File(project, null, "", "src/main/resources/liquibase/versions/initial/changelog_00.xml", "",
-							true));
-		} catch (InvalidURLException e) {
-			StrBuilder sb = new StrBuilder("InvalidURLException by URL :");
-			sb.append(e.getUrl());
-			LOG.warn(sb.toString());
-		} catch (SVNException e) {
-			LOG.error(e.toString());
+			revisions2 = revService.getRevisionsByFile(user, file);
+		} catch (IllegalArgumentException e) {
+			LOG.info(e.getMessage());
+		} catch (RepositoryAuthenticationExceptoin e) {
+			LOG.info("User authentication error: " + e.getUser().getLogin());
+		} catch (IOException e) {
+			LOG.info(e.getMessage());
 		}
 
 		LOG.info("\n \n          REVISIONS BY FILE  \n \n");
@@ -124,13 +128,14 @@ public class SVNRevisionServiceTest {
 		Revision revision = new Revision();
 
 		try {
-			revision = revService.getLastRevision(project);
-		} catch (InvalidURLException e) {
-			StrBuilder sb = new StrBuilder("InvalidURLException by URL :");
-			sb.append(e.getUrl());
-			LOG.warn(sb.toString());
-		} catch (SVNException e) {
-			LOG.error(e.toString());
+			revision = revService.getLastRevision(user);
+
+		} catch (IllegalArgumentException e) {
+			LOG.info(e.getMessage());
+		} catch (RepositoryAuthenticationExceptoin e) {
+			LOG.info("User authentication error: " + e.getUser().getLogin());
+		} catch (IOException e) {
+			LOG.info(e.getMessage());
 		}
 
 		LOG.info("\n \n          LAST REVISION   \n \n");
@@ -147,5 +152,4 @@ public class SVNRevisionServiceTest {
 		LOG.info(sb.toString());
 
 	}
-
 }
