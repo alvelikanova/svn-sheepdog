@@ -31,6 +31,7 @@ import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
 import com.sheepdog.business.services.svn.SVNFileService;
 import com.sheepdog.business.services.svn.SVNProjectFacade;
+import com.sheepdog.business.services.svn.TypeOfFileChanges;
 
 /**
  * SVNFileServiceImpl is a simple implementation of SVNFileService interface.
@@ -41,26 +42,6 @@ import com.sheepdog.business.services.svn.SVNProjectFacade;
  */
 // @Service
 public class SVNFileServiceImpl implements SVNFileService {
-
-	/**
-	 * Static final field containing mark of deleting the file in the revision.
-	 */
-	public static final Character DELETED_FILE = new Character('D');
-
-	/**
-	 * Static final field containing mark of adding the file in the revision.
-	 */
-	public static final Character ADDED_FILE = new Character('A');
-
-	/**
-	 * Static final field containing mark of modifying the file in the revision.
-	 */
-	public static final Character MODIFIED_FILE = new Character('M');
-
-	/**
-	 * Static final field containing mark of replacing the file in the revision.
-	 */
-	public static final Character REPLACED_FILE = new Character('R');
 
 	/**
 	 * Logger object.
@@ -134,10 +115,10 @@ public class SVNFileServiceImpl implements SVNFileService {
 	 * com.sheepdog.business.domain.entities.Revision)
 	 */
 	@Override
-	public Map<File, Character> getFilesByRevision(User user, Revision revision) throws IllegalArgumentException,
-			IOException, RepositoryAuthenticationExceptoin {
+	public Map<File, TypeOfFileChanges> getFilesByRevision(User user, Revision revision)
+			throws IllegalArgumentException, IOException, RepositoryAuthenticationExceptoin {
 
-		Map<File, Character> files = new HashMap<>();
+		Map<File, TypeOfFileChanges> files = new HashMap<>();
 
 		Collection logEntries = null;
 
@@ -172,7 +153,7 @@ public class SVNFileServiceImpl implements SVNFileService {
 				tempFile.setProject(user.getProject());
 				tempFile.setRevision(revision);
 
-				files.put(setNameFieldsToOneFile(tempFile), new Character(entryPath.getType()));
+				files.put(setNameFieldsToOneFile(tempFile), getTypeOfChanges(entryPath.getType()));
 			}
 		}
 		return files;
@@ -189,13 +170,13 @@ public class SVNFileServiceImpl implements SVNFileService {
 	public Set<File> getFilesByCreator(User user, Set<Revision> revisions) throws IllegalArgumentException,
 			RepositoryAuthenticationExceptoin, IOException {
 		Set<File> authFiles = new HashSet<>();
-		Map<File, Character> files;
+		Map<File, TypeOfFileChanges> files;
 
 		for (Revision r : revisions)
 			if (user.getLogin().equals(r.getAuthor())) {
 				files = getFilesByRevision(user, r);
 				for (File f : files.keySet())
-					if (SVNFileServiceImpl.ADDED_FILE.equals(files.get(f))) {
+					if (TypeOfFileChanges.ADDED.equals(files.get(f))) {
 						f.setCreatorName(user.getLogin());
 
 						authFiles.add(f);
@@ -291,6 +272,29 @@ public class SVNFileServiceImpl implements SVNFileService {
 
 	public void setProjectFacade(SVNProjectFacade projectFacade) {
 		this.projectFacade = projectFacade;
+	}
+
+	/**
+	 * Get type of changes applied to file.
+	 * 
+	 * @param type
+	 *            SVNKit mark of changes.
+	 * @return TypeOfFileChanges object.
+	 */
+	private TypeOfFileChanges getTypeOfChanges(char type) {
+		switch (type) {
+		case 'M':
+			return TypeOfFileChanges.MODIFIED;
+		case 'A':
+			return TypeOfFileChanges.ADDED;
+		case 'D':
+			return TypeOfFileChanges.DELETED;
+		case 'R':
+			return TypeOfFileChanges.REPLACED;
+
+		default:
+			return TypeOfFileChanges.UNKNOWN;
+		}
 	}
 
 }

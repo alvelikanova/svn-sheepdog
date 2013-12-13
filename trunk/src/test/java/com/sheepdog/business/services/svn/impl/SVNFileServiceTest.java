@@ -18,6 +18,7 @@ import com.sheepdog.business.exceptions.InvalidURLException;
 import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
 import com.sheepdog.business.services.svn.SVNFileService;
 import com.sheepdog.business.services.svn.SVNProjectFacade;
+import com.sheepdog.business.services.svn.TypeOfFileChanges;
 
 import ch.qos.logback.classic.Logger;
 
@@ -105,7 +106,7 @@ public class SVNFileServiceTest {
 		LOG.info("\n\n GET FILE BY REVISION \n\n");
 		long time = System.currentTimeMillis();
 
-		Map<File, Character> files2 = new HashMap<File, Character>();
+		Map<File, TypeOfFileChanges> files2 = new HashMap<File, TypeOfFileChanges>();
 
 		try {
 			files2 = fileService.getFilesByRevision(user, new Revision(project, 7, null, null, null));
