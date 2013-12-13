@@ -9,6 +9,7 @@ import com.sheepdog.business.domain.entities.File;
 import com.sheepdog.business.domain.entities.Revision;
 import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
+import com.sheepdog.business.services.svn.impl.TypeOfFileChanges;
 
 /**
  * SVNFileService class provides methods allowing to get information about files

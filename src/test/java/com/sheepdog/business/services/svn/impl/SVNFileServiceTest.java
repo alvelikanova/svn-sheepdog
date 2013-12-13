@@ -18,7 +18,7 @@ import com.sheepdog.business.exceptions.InvalidURLException;
 import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
 import com.sheepdog.business.services.svn.SVNFileService;
 import com.sheepdog.business.services.svn.SVNProjectFacade;
-import com.sheepdog.business.services.svn.TypeOfFileChanges;
+import com.sheepdog.business.services.svn.impl.TypeOfFileChanges;
 
 import ch.qos.logback.classic.Logger;
 
@@ -109,7 +109,7 @@ public class SVNFileServiceTest {
 		Map<File, TypeOfFileChanges> files2 = new HashMap<File, TypeOfFileChanges>();
 
 		try {
-			files2 = fileService.getFilesByRevision(user, new Revision(project, 7, null, null, null));
+			files2 = fileService.getFilesByRevision(user, new Revision(project, 20, null, null, null));
 		} catch (IllegalArgumentException e) {
 			LOG.info(e.getMessage());
 		} catch (RepositoryAuthenticationExceptoin e) {
@@ -119,7 +119,7 @@ public class SVNFileServiceTest {
 		}
 
 		for (File f : files2.keySet()) {
-			LOG.info(f.getName());
+			LOG.info(f.getName() + " ---- " + files2.get(f).toString());
 		}
 
 		LOG.info("Time getFilesByRevision: " + (System.currentTimeMillis() - time));
