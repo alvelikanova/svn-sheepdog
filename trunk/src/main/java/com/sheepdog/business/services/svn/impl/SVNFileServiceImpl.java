@@ -1,6 +1,7 @@
 package com.sheepdog.business.services.svn.impl;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,6 +10,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.LoggerFactory;
+import org.tmatesoft.svn.core.SVNAuthenticationException;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNLogEntry;
@@ -20,11 +23,12 @@ import org.tmatesoft.svn.core.io.ISVNReporter;
 import org.tmatesoft.svn.core.io.ISVNReporterBaton;
 import org.tmatesoft.svn.core.io.SVNRepository;
 
+import ch.qos.logback.classic.Logger;
+
 import com.sheepdog.business.domain.entities.File;
-import com.sheepdog.business.domain.entities.Project;
 import com.sheepdog.business.domain.entities.Revision;
 import com.sheepdog.business.domain.entities.User;
-import com.sheepdog.business.exceptions.InvalidURLException;
+import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
 import com.sheepdog.business.services.svn.SVNFileService;
 import com.sheepdog.business.services.svn.SVNProjectFacade;
 
@@ -59,6 +63,11 @@ public class SVNFileServiceImpl implements SVNFileService {
 	public static final Character REPLACED_FILE = new Character('R');
 
 	/**
+	 * Logger object.
+	 */
+	public static final Logger LOG = (Logger) LoggerFactory.getLogger(SVNFileServiceImpl.class);
+
+	/**
 	 * SVNProjectFacade object is provides connection to required repository.
 	 */
 	// @Autowired
@@ -74,27 +83,37 @@ public class SVNFileServiceImpl implements SVNFileService {
 	 * 
 	 * @see
 	 * com.sheepdog.business.services.svn.SVNFileService#getAllFiles(com.sheepdog
-	 * .business.domain.entities.Project)
+	 * .business.domain.entities.User)
 	 */
 	@Override
-	public Set<File> getAllFiles(Project project) throws SVNException {
-		SVNRepository repos = projectFacade.getRepositoryConnection(project);
-		final long rev = repos.getLatestRevision();
+	public Set<File> getAllFiles(User user) throws IllegalArgumentException, IOException,
+			RepositoryAuthenticationExceptoin {
+		SVNRepository repos = projectFacade.getRepositoryConnection(user);
 
 		QuickEditor editor = new QuickEditor();
 
-		repos.status(rev, "", SVNDepth.INFINITY, new ISVNReporterBaton() {
-			@Override
-			public void report(ISVNReporter reporter) throws SVNException {
-				reporter.setPath("", null, rev, SVNDepth.INFINITY, true);
-				reporter.finishReport();
-			}
-		}, editor);
+		try {
+			final long rev = repos.getLatestRevision();
+
+			repos.status(rev, "", SVNDepth.INFINITY, new ISVNReporterBaton() {
+				@Override
+				public void report(ISVNReporter reporter) throws SVNException {
+					reporter.setPath("", null, rev, SVNDepth.INFINITY, true);
+					reporter.finishReport();
+				}
+			}, editor);
+		} catch (SVNAuthenticationException e) {
+			LOG.info("User authentication failed. User: " + user.getLogin());
+			throw new RepositoryAuthenticationExceptoin(user);
+		} catch (SVNException e) {
+			LOG.info("Connection to repository failed. User: " + user.getLogin());
+			throw new IOException("Failed connection to URL:" + user.getProject().getUrl());
+		}
 
 		Set<File> files = editor.getFiles();
 
 		for (File f : files)
-			f.setProject(project);
+			f.setProject(user.getProject());
 
 		try {
 			files = setNameFieldsToManyFiles(files);
@@ -111,12 +130,12 @@ public class SVNFileServiceImpl implements SVNFileService {
 	 * 
 	 * @see
 	 * com.sheepdog.business.services.svn.SVNFileService#getFilesByRevision(
-	 * com.sheepdog.business.domain.entities.Project,
+	 * com.sheepdog.business.domain.entities.User,
 	 * com.sheepdog.business.domain.entities.Revision)
 	 */
 	@Override
-	public Map<File, Character> getFilesByRevision(Project project, Revision revision) throws InvalidURLException,
-			SVNException {
+	public Map<File, Character> getFilesByRevision(User user, Revision revision) throws IllegalArgumentException,
+			IOException, RepositoryAuthenticationExceptoin {
 
 		Map<File, Character> files = new HashMap<>();
 
@@ -124,8 +143,17 @@ public class SVNFileServiceImpl implements SVNFileService {
 
 		File tempFile;
 
-		logEntries = projectFacade.getRepositoryConnection(project).log(new String[] { "" }, null,
-				revision.getRevisionNo(), revision.getRevisionNo(), true, true);
+		try {
+			logEntries = projectFacade.getRepositoryConnection(user).log(new String[] { "" }, null,
+					revision.getRevisionNo(), revision.getRevisionNo(), true, true);
+
+		} catch (SVNAuthenticationException e) {
+			LOG.info("User authentication failed. User: " + user.getLogin());
+			throw new RepositoryAuthenticationExceptoin(user);
+		} catch (SVNException e) {
+			LOG.info("Connection to repository failed. User: " + user.getLogin());
+			throw new IOException("Failed connection to URL:" + user.getProject().getUrl());
+		}
 
 		for (Iterator entries = logEntries.iterator(); entries.hasNext();) {
 			SVNLogEntry logEntry = (SVNLogEntry) entries.next();
@@ -140,8 +168,8 @@ public class SVNFileServiceImpl implements SVNFileService {
 					continue;
 
 				tempFile = new File();
-				tempFile.setPath(entryPath.getPath().substring(entryPath.getPath().indexOf('/'))); // getPath()
-				tempFile.setProject(project);
+				tempFile.setPath(entryPath.getPath().substring(entryPath.getPath().indexOf('/')));
+				tempFile.setProject(user.getProject());
 				tempFile.setRevision(revision);
 
 				files.put(setNameFieldsToOneFile(tempFile), new Character(entryPath.getType()));
@@ -155,18 +183,17 @@ public class SVNFileServiceImpl implements SVNFileService {
 	 * 
 	 * @see
 	 * com.sheepdog.business.services.svn.SVNFileService#getFilesByCreator(com
-	 * .sheepdog.business.domain.entities.Project,
-	 * com.sheepdog.business.domain.entities.User, java.util.Set)
+	 * .sheepdog.business.domain.entities.User, java.util.Set)
 	 */
 	@Override
-	public Set<File> getFilesByCreator(Project project, User user, Set<Revision> revisions) throws InvalidURLException,
-			SVNException {
+	public Set<File> getFilesByCreator(User user, Set<Revision> revisions) throws IllegalArgumentException,
+			RepositoryAuthenticationExceptoin, IOException {
 		Set<File> authFiles = new HashSet<>();
 		Map<File, Character> files;
 
 		for (Revision r : revisions)
 			if (user.getLogin().equals(r.getAuthor())) {
-				files = getFilesByRevision(project, r);
+				files = getFilesByRevision(user, r);
 				for (File f : files.keySet())
 					if (SVNFileServiceImpl.ADDED_FILE.equals(files.get(f))) {
 						f.setCreatorName(user.getLogin());
@@ -182,14 +209,24 @@ public class SVNFileServiceImpl implements SVNFileService {
 	 * 
 	 * @see
 	 * com.sheepdog.business.services.svn.SVNFileService#getFileContent(com.
-	 * sheepdog.business.domain.entities.Project,
+	 * sheepdog.business.domain.entities.User,
 	 * com.sheepdog.business.domain.entities.File)
 	 */
 	@Override
-	public String getFileContent(Project project, File file) throws SVNException, InvalidParameterException {
-		SVNRepository repo = projectFacade.getRepositoryConnection(project);
+	public String getFileContent(User user, File file) throws IOException, RepositoryAuthenticationExceptoin,
+			InvalidParameterException, IllegalArgumentException {
+		SVNRepository repo = projectFacade.getRepositoryConnection(user);
 
-		SVNNodeKind nodeKind = repo.checkPath(file.getPath(), -1);
+		SVNNodeKind nodeKind = null;
+		try {
+			nodeKind = repo.checkPath(file.getPath(), -1);
+		} catch (SVNAuthenticationException e) {
+			LOG.info("User authentication failed. User: " + user.getLogin());
+			throw new RepositoryAuthenticationExceptoin(user);
+		} catch (SVNException e) {
+			LOG.info("Connection to repository failed. User: " + user.getLogin());
+			throw new IOException("Failed connection to URL:" + user.getProject().getUrl());
+		}
 
 		if (nodeKind == SVNNodeKind.NONE || nodeKind == SVNNodeKind.DIR)
 			throw new InvalidParameterException("That file is not exist: " + file.getPath());
@@ -197,7 +234,11 @@ public class SVNFileServiceImpl implements SVNFileService {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		SVNProperties properties = new SVNProperties();
 
-		repo.getFile(file.getPath(), -1, properties, baos);
+		try {
+			repo.getFile(file.getPath(), -1, properties, baos);
+		} catch (SVNException e) {
+			throw new InvalidParameterException("That file is not exist: " + file.getPath());
+		}
 
 		String mimeType = (String) properties.getStringValue((SVNProperty.MIME_TYPE));
 		boolean isTextType = SVNProperty.isTextMimeType(mimeType);

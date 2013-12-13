@@ -1,10 +1,10 @@
 package com.sheepdog.business.services.svn;
 
+import java.io.IOException;
+
 import org.springframework.stereotype.Service;
-import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.io.SVNRepository;
 
-import com.sheepdog.business.domain.entities.Project;
 import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.exceptions.InvalidURLException;
 import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
@@ -21,30 +21,33 @@ public interface SVNProjectFacade {
 	/**
 	 * Create new repository connection.
 	 * 
-	 * @param project
-	 *            Project object containing URL of repository.
 	 * @param user
-	 *            User object containing authentication info.
+	 *            User object containing authentication info and Project object
+	 *            containing URL of required repository.
 	 * @return Success flag.
 	 * @throws InvalidURLException
-	 *             - if URL of repository is not correct or protocol is not
+	 *             if URL of repository is not correct or protocol is not
 	 *             supported.
-	 * @throws SVNException
-	 *             a failure occurred while connecting to a repository or the
-	 *             user authentication failed.
+	 * @throws IllegalArgumentException
+	 *             if user and project are not registered.
+	 * 
+	 * @throws IOException
+	 *             a failure occurred while connecting to a repository
+	 * @throws RepositoryAuthenticationExceptoin
+	 *             if user authentication failed.
 	 */
-	public boolean addSVNProjectConnection(Project project, User user) throws InvalidURLException, SVNException,
-			RepositoryAuthenticationExceptoin;
+	public boolean addSVNProjectConnection(User user) throws InvalidURLException, IllegalArgumentException,
+			IOException, RepositoryAuthenticationExceptoin;
 
 	/**
-	 * Get existing SVNRepository object by URL.
+	 * Get existing SVNRepository object User object containing URL.
 	 * 
-	 * @param project
-	 *            Project object containing URL of repository.
+	 * @param user
+	 *            User object containing URL of required repository.
 	 * @return SVNRepository object.
-	 * @throws InvalidURLException
-	 *             - if URL of repository is not correct.
+	 * @throws IllegalArgumentException
+	 *             if user and project are not registered.
 	 */
-	public SVNRepository getRepositoryConnection(Project project) throws InvalidURLException;
+	public SVNRepository getRepositoryConnection(User user) throws IllegalArgumentException;
 
 }

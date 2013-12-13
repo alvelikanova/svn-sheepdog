@@ -32,7 +32,7 @@ public class SVNRepositoryManager {
 	/**
 	 * Map containing SVNRepository object of Project object.
 	 */
-	private Map<Project, SVNRepository> repositories = new HashMap<Project, SVNRepository>();
+	private Map<User, SVNRepository> repositories = new HashMap<User, SVNRepository>();
 
 	/**
 	 * Create and setup new repository connection.
@@ -40,21 +40,27 @@ public class SVNRepositoryManager {
 	 * @param project
 	 *            Project object containing URL of repository.
 	 * @param user
-	 *            User object containing authentication info.
+	 *            User object containing authentication info and Project object
+	 *            containing URL of required repository.
 	 * @return Success flag.
 	 * @throws InvalidURLException
-	 *             - if URL of repository is not correct or protocol is not
+	 *             if URL of repository is not correct or protocol is not
 	 *             supported.
 	 * @throws SVNException
 	 *             if connection to repository failed.
 	 * 
-	 * @throws RepositoryAuthenticationExceptoin
-	 *             if user authentication failed
+	 * @throws SVNAuthenticationException
+	 *             if user authentication failed.
+	 * @throws IllegalArgumentException
+	 *             if User object is incorrect.
 	 */
-	public boolean addSVNProjectConnection(Project project, User user) throws SVNException, InvalidURLException,
-			RepositoryAuthenticationExceptoin {
+	public boolean addSVNProjectConnection(User user) throws SVNException, InvalidURLException,
+			SVNAuthenticationException, IllegalArgumentException {
 
-		if (repositories.get(project) != null)
+		if (user == null || user.getProject() == null)
+			throw new IllegalArgumentException("Invalid User object: " + user.getLogin());
+
+		if (repositories.get(user) != null)
 			return true;
 
 		// TODO For Ivan добавить проверку - что будет если подключение не
@@ -62,18 +68,11 @@ public class SVNRepositoryManager {
 
 		SVNRepository repo;
 
-		try {
-			repo = createSVNProjectConnection(project, user);
-		} catch (SVNAuthenticationException e) {
-			throw new RepositoryAuthenticationExceptoin(user);
-		}
-		try {
-			repo.testConnection();
-		} catch (SVNException e) {
-			throw new RepositoryAuthenticationExceptoin(user);
-		}
+		repo = createSVNProjectConnection(user);
 
-		repositories.put(project, repo);
+		repo.testConnection();
+
+		repositories.put(user, repo);
 
 		return true;
 	}
@@ -81,18 +80,18 @@ public class SVNRepositoryManager {
 	/**
 	 * Get existing SVNRepository object by Project object.
 	 * 
-	 * @param project
-	 *            Project object containing URL of repository.
+	 * @param user
+	 *            User object containing URL of repository.
 	 * @return SVNRepository object.
-	 * @throws InvalidURLException
-	 *             - if URL of repository is not correct.
+	 * @throws IllegalArgumentException
+	 *             if user and project are not registered.
 	 */
-	public SVNRepository getRepositoryConnection(Project project) {
+	public SVNRepository getRepositoryConnection(User user) {
 
-		SVNRepository repo = repositories.get(project);
+		SVNRepository repo = repositories.get(user);
 
 		if (repo == null)
-			new InvalidURLException(project.getUrl());
+			new IllegalArgumentException("Invalid User object: " + user.getLogin());
 
 		return repo;
 	}
@@ -101,21 +100,19 @@ public class SVNRepositoryManager {
 	 * Create SVNRepository object and set ISVNAuthenticationManager object with
 	 * user's name and password.
 	 * 
-	 * @param project
-	 *            Project object containing URL of repository.
 	 * @param user
-	 *            User object containing authentication info.
+	 *            User object containing authentication info and Project object
+	 *            containing URL of required repository.
+	 * 
 	 * @return Configured SVNRepository object.
 	 * @throws SVNException
-	 * @throws InvalidURLException
-	 *             - if URL of repository is not correct or protocol is not
-	 *             supported.
+	 *             if URL is malformed.
 	 */
-	private SVNRepository createSVNProjectConnection(Project project, User user) throws SVNException {
+	private SVNRepository createSVNProjectConnection(User user) throws SVNException {
 
-		connectionSetup(project.getUrl());
+		connectionSetup(user.getProject().getUrl());
 
-		SVNURL repositoryURL = SVNURL.parseURIEncoded(project.getUrl());
+		SVNURL repositoryURL = SVNURL.parseURIEncoded(user.getProject().getUrl());
 
 		SVNRepository repository = SVNRepositoryFactory.create(repositoryURL);
 
@@ -132,8 +129,11 @@ public class SVNRepositoryManager {
 	 * 
 	 * @param url
 	 *            Repository URL.
+	 * @throws InvalidURLException
+	 *             if URL of repository is not correct or protocol is not
+	 *             supported.
 	 */
-	private void connectionSetup(String url) {
+	private void connectionSetup(String url) throws InvalidURLException {
 		if (url == null || url.length() < 6)
 			throw new InvalidURLException(url);
 
