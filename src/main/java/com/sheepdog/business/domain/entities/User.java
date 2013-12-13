@@ -4,6 +4,8 @@ public class User extends PersistentEntity<Integer> {
 	
 	private static final long serialVersionUID = 5292401382106106765L;
 	
+	private Project project;
+	
 	private String login;
 	private String firstName;
 	private String lastName;
@@ -20,7 +22,9 @@ public class User extends PersistentEntity<Integer> {
 	 * @param email
 	 * @param password
 	 */
-	public User(String login, String email, String password) {
+	public User(Project project, String login, String email, String password) {
+		super();
+		this.project = project;
 		this.login = login;
 		this.email = email;
 		this.password = password;
@@ -35,8 +39,10 @@ public class User extends PersistentEntity<Integer> {
 	 * @param email
 	 * @param password
 	 */
-	public User(String login, String firstName, String lastName, String email,
-			String password) {
+	public User(Project project, String login, String firstName,
+			String lastName, String email, String password) {
+		super();
+		this.project = project;
 		this.login = login;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -44,11 +50,11 @@ public class User extends PersistentEntity<Integer> {
 		this.password = password;
 	}
 
-
-
 	public String getLogin() {
 		return login;
 	}
+
+
 	public void setLogin(String login) {
 		this.login = login;
 	}
@@ -75,6 +81,14 @@ public class User extends PersistentEntity<Integer> {
 	}
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
 	}
 
 

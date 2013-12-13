@@ -1,6 +1,6 @@
 package com.sheepdog.dal.entities;
 
-// Generated 10.12.2013 11:02:02 by Hibernate Tools 4.0.0
+// Generated 13.12.2013 11:09:05 by Hibernate Tools 4.0.0
 
 import java.util.HashSet;
 import java.util.Set;
@@ -10,6 +10,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -19,11 +21,12 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(name = "USER_", schema = "PUBLIC", catalog = "PUBLIC", uniqueConstraints = {
-		@UniqueConstraint(columnNames = "EMAIL"),
-		@UniqueConstraint(columnNames = "LOGIN") })
+		@UniqueConstraint(columnNames = "LOGIN"),
+		@UniqueConstraint(columnNames = "EMAIL") })
 public class UserEntity implements java.io.Serializable {
 
 	private Integer id;
+	private ProjectEntity projectEntity;
 	private String login;
 	private String firstName;
 	private String lastName;
@@ -31,13 +34,13 @@ public class UserEntity implements java.io.Serializable {
 	private String password;
 	private Set<SubscriptionEntity> subscriptionEntities = new HashSet<SubscriptionEntity>(
 			0);
-	private Set<ProjectEntity> projectEntities = new HashSet<ProjectEntity>(0);
 
 	public UserEntity() {
 	}
 
-	public UserEntity(String login, String firstName, String lastName,
-			String email, String password) {
+	public UserEntity(ProjectEntity projectEntity, String login,
+			String firstName, String lastName, String email, String password) {
+		this.projectEntity = projectEntity;
 		this.login = login;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -45,17 +48,16 @@ public class UserEntity implements java.io.Serializable {
 		this.password = password;
 	}
 
-	public UserEntity(String login, String firstName, String lastName,
-			String email, String password,
-			Set<SubscriptionEntity> subscriptionEntities,
-			Set<ProjectEntity> projectEntities) {
+	public UserEntity(ProjectEntity projectEntity, String login,
+			String firstName, String lastName, String email, String password,
+			Set<SubscriptionEntity> subscriptionEntities) {
+		this.projectEntity = projectEntity;
 		this.login = login;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
 		this.password = password;
 		this.subscriptionEntities = subscriptionEntities;
-		this.projectEntities = projectEntities;
 	}
 
 	@Id
@@ -67,6 +69,16 @@ public class UserEntity implements java.io.Serializable {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PROJECT_ID", nullable = false)
+	public ProjectEntity getProjectEntity() {
+		return this.projectEntity;
+	}
+
+	public void setProjectEntity(ProjectEntity projectEntity) {
+		this.projectEntity = projectEntity;
 	}
 
 	@Column(name = "LOGIN", unique = true, nullable = false, length = 128)
@@ -122,15 +134,6 @@ public class UserEntity implements java.io.Serializable {
 	public void setSubscriptionEntities(
 			Set<SubscriptionEntity> subscriptionEntities) {
 		this.subscriptionEntities = subscriptionEntities;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "userEntity")
-	public Set<ProjectEntity> getProjectEntities() {
-		return this.projectEntities;
-	}
-
-	public void setProjectEntities(Set<ProjectEntity> projectEntities) {
-		this.projectEntities = projectEntities;
 	}
 
 }
