@@ -39,8 +39,11 @@ public class QuickEditor implements ISVNEditor {
 
 	@Override
 	public void addDir(String path, String copyFromPath, long copyFromRevision) throws SVNException {
+		tempFile = new File();
+		tempFile.setPath(path);
+		tempFile.setIsDir(true);
 
-		// NOTE : we can get all paths of directories.
+		files.add(tempFile);
 	}
 
 	@Override
@@ -59,6 +62,7 @@ public class QuickEditor implements ISVNEditor {
 	public void addFile(String path, String copyFromPath, long copyFromRevision) throws SVNException {
 		tempFile = new File();
 		tempFile.setPath(path);
+		tempFile.setIsDir(false);
 
 		files.add(tempFile);
 	}

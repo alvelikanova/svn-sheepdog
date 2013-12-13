@@ -12,8 +12,7 @@ public class File extends PersistentEntity<Integer> {
 	private String path;
 	private String creatorName;
 
-	// TODO For Ivan For Ivan - for which purpose?
-	// private boolean isFile = Boolean.TRUE; - deprecated field.
+	private boolean isDir = Boolean.FALSE;
 
 	public File() {
 	}
@@ -73,6 +72,14 @@ public class File extends PersistentEntity<Integer> {
 
 	public void setPath(String path) {
 		this.path = path;
+	}
+
+	public boolean isDir() {
+		return isDir;
+	}
+
+	public void setIsDir(boolean isDir) {
+		this.isDir = isDir;
 	}
 
 }

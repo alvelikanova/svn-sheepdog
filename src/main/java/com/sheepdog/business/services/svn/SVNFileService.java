@@ -48,9 +48,7 @@ public interface SVNFileService {
 	 * @param revision
 	 *            Revision object containing required number.
 	 * @return Map containing File object with the type of the change applied to
-	 *         the item represented by this object in that revision. This type
-	 *         can be one of the following: 'M' - Modified, 'A' - Added, 'D' -
-	 *         Deleted, 'R' - Replaced.
+	 *         the item represented by this object in that revision.
 	 * @throws IllegalArgumentException
 	 *             if user and project are not registered.
 	 * 
@@ -59,8 +57,8 @@ public interface SVNFileService {
 	 * @throws RepositoryAuthenticationExceptoin
 	 *             if user authentication failed.
 	 */
-	public Map<File, Character> getFilesByRevision(User user, Revision revision) throws IllegalArgumentException,
-			IOException, RepositoryAuthenticationExceptoin;
+	public Map<File, TypeOfFileChanges> getFilesByRevision(User user, Revision revision)
+			throws IllegalArgumentException, IOException, RepositoryAuthenticationExceptoin;
 
 	/**
 	 * Get files, that were created by required user in required set of
