@@ -31,7 +31,7 @@ import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
 import com.sheepdog.business.services.svn.SVNFileService;
 import com.sheepdog.business.services.svn.SVNProjectFacade;
-import com.sheepdog.business.services.svn.TypeOfFileChanges;
+import com.sheepdog.business.services.svn.impl.TypeOfFileChanges;
 
 /**
  * SVNFileServiceImpl is a simple implementation of SVNFileService interface.
@@ -153,7 +153,7 @@ public class SVNFileServiceImpl implements SVNFileService {
 				tempFile.setProject(user.getProject());
 				tempFile.setRevision(revision);
 
-				files.put(setNameFieldsToOneFile(tempFile), getTypeOfChanges(entryPath.getType()));
+				files.put(setNameFieldsToOneFile(tempFile), TypeOfFileChanges.getType(entryPath.getType()));
 			}
 		}
 		return files;
@@ -272,29 +272,6 @@ public class SVNFileServiceImpl implements SVNFileService {
 
 	public void setProjectFacade(SVNProjectFacade projectFacade) {
 		this.projectFacade = projectFacade;
-	}
-
-	/**
-	 * Get type of changes applied to file.
-	 * 
-	 * @param type
-	 *            SVNKit mark of changes.
-	 * @return TypeOfFileChanges object.
-	 */
-	private TypeOfFileChanges getTypeOfChanges(char type) {
-		switch (type) {
-		case 'M':
-			return TypeOfFileChanges.MODIFIED;
-		case 'A':
-			return TypeOfFileChanges.ADDED;
-		case 'D':
-			return TypeOfFileChanges.DELETED;
-		case 'R':
-			return TypeOfFileChanges.REPLACED;
-
-		default:
-			return TypeOfFileChanges.UNKNOWN;
-		}
 	}
 
 }
