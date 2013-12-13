@@ -1,6 +1,6 @@
 package com.sheepdog.dal.entities;
 
-// Generated 10.12.2013 11:02:02 by Hibernate Tools 4.0.0
+// Generated 13.12.2013 11:09:05 by Hibernate Tools 4.0.0
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

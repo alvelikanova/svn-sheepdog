@@ -1,6 +1,6 @@
 package com.sheepdog.dal.entities;
 
-// Generated 10.12.2013 11:02:02 by Hibernate Tools 4.0.0
+// Generated 13.12.2013 11:09:05 by Hibernate Tools 4.0.0
 
 import java.util.HashSet;
 import java.util.Set;
@@ -10,8 +10,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -26,28 +24,27 @@ import javax.persistence.UniqueConstraint;
 public class ProjectEntity implements java.io.Serializable {
 
 	private Integer id;
-	private UserEntity userEntity;
 	private String name;
 	private String url;
 	private Set<FileEntity> fileEntities = new HashSet<FileEntity>(0);
+	private Set<UserEntity> userEntities = new HashSet<UserEntity>(0);
 	private Set<RevisionEntity> revisionEntities = new HashSet<RevisionEntity>(
 			0);
 
 	public ProjectEntity() {
 	}
 
-	public ProjectEntity(UserEntity userEntity, String name, String url) {
-		this.userEntity = userEntity;
+	public ProjectEntity(String name, String url) {
 		this.name = name;
 		this.url = url;
 	}
 
-	public ProjectEntity(UserEntity userEntity, String name, String url,
-			Set<FileEntity> fileEntities, Set<RevisionEntity> revisionEntities) {
-		this.userEntity = userEntity;
+	public ProjectEntity(String name, String url, Set<FileEntity> fileEntities,
+			Set<UserEntity> userEntities, Set<RevisionEntity> revisionEntities) {
 		this.name = name;
 		this.url = url;
 		this.fileEntities = fileEntities;
+		this.userEntities = userEntities;
 		this.revisionEntities = revisionEntities;
 	}
 
@@ -60,16 +57,6 @@ public class ProjectEntity implements java.io.Serializable {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "USER_ID", nullable = false)
-	public UserEntity getUserEntity() {
-		return this.userEntity;
-	}
-
-	public void setUserEntity(UserEntity userEntity) {
-		this.userEntity = userEntity;
 	}
 
 	@Column(name = "NAME", unique = true, nullable = false)
@@ -97,6 +84,15 @@ public class ProjectEntity implements java.io.Serializable {
 
 	public void setFileEntities(Set<FileEntity> fileEntities) {
 		this.fileEntities = fileEntities;
+	}
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "projectEntity")
+	public Set<UserEntity> getUserEntities() {
+		return this.userEntities;
+	}
+
+	public void setUserEntities(Set<UserEntity> userEntities) {
+		this.userEntities = userEntities;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "projectEntity")
