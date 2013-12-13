@@ -103,6 +103,7 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
 			session.delete(dataEntity);
 			
 		} catch (Exception ex) {
+			//TODO for Alena - whrong exception description
 			LOG.error("Error creating or updating data entity", ex.getMessage());
 			throw new DaoException(ex);
 		}

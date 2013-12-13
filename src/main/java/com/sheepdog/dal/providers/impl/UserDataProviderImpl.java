@@ -43,6 +43,7 @@ public class UserDataProviderImpl extends BaseDataProviderImpl<UserEntity,User,I
 
 	@Override
 	public void changePassword(User user, String password) {
+		//TODO for Alena - possible error. Entity in detached state
 		user.setPassword(password);
 		merge(user, UserEntity.class);
 	}
