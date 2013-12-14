@@ -93,6 +93,20 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
 			throw new DaoException(ex);
 		}
 	}
+	
+//	public void merge(K entity, T dalEntity, Class<T> dalEntityClass)
+//	{
+//		Session session = sessionFactory.getCurrentSession();
+//
+//		try {
+//			dalEntity = mappingService.map(entity, dalEntityClass);
+//			session.merge(dalEntity);
+//			
+//		} catch (Exception ex) {
+//			LOG.error("Error creating or updating data entity", ex.getMessage());
+//			throw new DaoException(ex);
+//		}
+//	}
 
 	@Override
 	public void delete(K entity, Class<T> dalEntityClass) throws DaoException{
@@ -103,8 +117,7 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
 			session.delete(dataEntity);
 			
 		} catch (Exception ex) {
-			//TODO for Alena - whrong exception description
-			LOG.error("Error creating or updating data entity", ex.getMessage());
+			LOG.error("Error deleting data entity", ex.getMessage());
 			throw new DaoException(ex);
 		}
 	}
