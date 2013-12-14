@@ -50,7 +50,8 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
                         Criteria criteria = session.createCriteria(dalEntityClass);
                         fillCriteria(criteria, loadOptions, false);
 
-                        List<T> dataEntities = criteria.list();
+                        @SuppressWarnings("unchecked")
+						List<T> dataEntities = criteria.list();
                         for (T de : dataEntities) {
                                 K domainEntity = mappingService.map(de, domainEntityClass);
                                 result.add(domainEntity);
@@ -129,6 +130,7 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
 		try {
 			Criteria cr = session.createCriteria(dalEntityClass).add(Restrictions.eq("ID", id));
 			cr.setMaxResults(1);
+			@SuppressWarnings("unchecked")
 			T dalEntity = (T) cr.uniqueResult();
 			businessEntity = mappingService.map(dalEntity, domainEntityClass);
 		}
