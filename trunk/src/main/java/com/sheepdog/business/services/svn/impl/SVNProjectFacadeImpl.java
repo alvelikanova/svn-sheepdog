@@ -4,8 +4,6 @@ import java.io.IOException;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.tmatesoft.svn.core.SVNAuthenticationException;
-import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.io.SVNRepository;
 
 import ch.qos.logback.classic.Logger;
@@ -54,15 +52,7 @@ public class SVNProjectFacadeImpl implements SVNProjectFacade {
 
 		boolean added = false;
 
-		try {
-			added = repositoryManager.addSVNProjectConnection(user);
-		} catch (SVNAuthenticationException e) {
-			LOG.info("User authentication failed. User: " + user.getLogin());
-			throw new RepositoryAuthenticationExceptoin(user);
-		} catch (SVNException e) {
-			LOG.info("First connection to repository failed. User: " + user.getLogin());
-			throw new IOException("Failed connection to URL:" + user.getProject().getUrl());
-		}
+		added = repositoryManager.addSVNProjectConnection(user);
 
 		return added;
 	}

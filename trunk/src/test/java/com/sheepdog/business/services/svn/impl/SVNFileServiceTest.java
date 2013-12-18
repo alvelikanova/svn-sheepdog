@@ -44,6 +44,7 @@ public class SVNFileServiceTest {
 		user.setLogin("ivan.spread@gmail.com");
 		user.setPassword("fc9uy8NM5dK8");
 		user.setProject(project);
+		user.setIsAdmin(true);
 
 		long time = System.currentTimeMillis();
 

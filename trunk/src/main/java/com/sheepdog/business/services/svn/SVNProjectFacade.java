@@ -19,7 +19,9 @@ import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
 public interface SVNProjectFacade {
 
 	/**
-	 * Create new repository connection.
+	 * Create new repository connection. If user in admin role, create a main
+	 * connection to repository, that mapping by User.UPDATE_USER and needed to
+	 * update services.
 	 * 
 	 * @param user
 	 *            User object containing authentication info and Project object
@@ -32,7 +34,7 @@ public interface SVNProjectFacade {
 	 *             if user and project are not registered.
 	 * 
 	 * @throws IOException
-	 *             a failure occurred while connecting to a repository
+	 *             a failure occurred while connecting to a repository.
 	 * @throws RepositoryAuthenticationExceptoin
 	 *             if user authentication failed.
 	 */
@@ -40,7 +42,8 @@ public interface SVNProjectFacade {
 			IOException, RepositoryAuthenticationExceptoin;
 
 	/**
-	 * Get existing SVNRepository object User object containing URL.
+	 * Get existing SVNRepository object User object containing URL. If you need
+	 * to get update connection, set User.UPDATE_USER to parameter 'user'.
 	 * 
 	 * @param user
 	 *            User object containing URL of required repository.
