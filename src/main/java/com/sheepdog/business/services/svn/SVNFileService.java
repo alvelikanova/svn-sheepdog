@@ -80,6 +80,7 @@ public interface SVNFileService {
 	 * @throws RepositoryAuthenticationExceptoin
 	 *             if user authentication failed.
 	 */
+	@Deprecated
 	public Set<File> getFilesByCreator(User user, Set<Revision> revisions) throws IllegalArgumentException,
 			RepositoryAuthenticationExceptoin, IOException;
 

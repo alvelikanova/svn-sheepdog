@@ -1,20 +1,27 @@
 package com.sheepdog.business.domain.entities;
 
 public class User extends PersistentEntity<Integer> {
-	
+
+	/**
+	 * User object, that is mapping connection object to update operations.
+	 */
+	public static final User UPDATE_USER = new User(null, "UPDATE_USER", null, null);
+
 	private static final long serialVersionUID = 5292401382106106765L;
-	
+
 	private Project project;
-	
+
 	private String login;
 	private String firstName;
 	private String lastName;
 	private String email;
 	private String password;
-	
-	public User(){
+
+	private boolean isAdmin = Boolean.FALSE;
+
+	public User() {
 	}
-	
+
 	/**
 	 * Required fields
 	 * 
@@ -29,7 +36,7 @@ public class User extends PersistentEntity<Integer> {
 		this.email = email;
 		this.password = password;
 	}
-	
+
 	/**
 	 * Set all fields
 	 * 
@@ -39,8 +46,7 @@ public class User extends PersistentEntity<Integer> {
 	 * @param email
 	 * @param password
 	 */
-	public User(Project project, String login, String firstName,
-			String lastName, String email, String password) {
+	public User(Project project, String login, String firstName, String lastName, String email, String password) {
 		super();
 		this.project = project;
 		this.login = login;
@@ -54,31 +60,38 @@ public class User extends PersistentEntity<Integer> {
 		return login;
 	}
 
-
 	public void setLogin(String login) {
 		this.login = login;
 	}
+
 	public String getFirstName() {
 		return firstName;
 	}
+
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
+
 	public String getLastName() {
 		return lastName;
 	}
+
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
+
 	public String getEmail() {
 		return email;
 	}
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
 	public String getPassword() {
 		return password;
 	}
+
 	public void setPassword(String password) {
 		this.password = password;
 	}
@@ -91,6 +104,12 @@ public class User extends PersistentEntity<Integer> {
 		this.project = project;
 	}
 
+	public boolean isAdmin() {
+		return isAdmin;
+	}
 
+	public void setIsAdmin(boolean isAdmin) {
+		this.isAdmin = isAdmin;
+	}
 
 }
