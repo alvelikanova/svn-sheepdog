@@ -46,9 +46,15 @@ public class MailServiceImpl implements MailService {
 	}
 
 	@Override
-	public synchronized void sendMailByTweet(Tweet tweet) {
-		// TODO Auto-generated method stub
+	public synchronized void sendMailByTweet(Tweet tweet, User user) {
+		mailConnection.openConnection();
+		
+		MessageBuilder messageBuilder = new MessageBuilder();
+		messageBuilder.addTweetInfo(tweet);
+		 
+		mailConnection.send(user, messageBuilder.getFinalMessage());
 
+		mailConnection.closeConnection();
 	}
 
 }

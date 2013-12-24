@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.sheepdog.business.domain.entities.Subscription;
 import com.sheepdog.business.domain.entities.Tweet;
+import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.services.svn.impl.TypeOfFileChanges;
 
 /**
@@ -22,6 +23,15 @@ public interface MailService {
 	 */
 	public void sendMailBySubscription(Map<Subscription, TypeOfFileChanges> necessarySubscriptions);
 
-	public void sendMailByTweet(Tweet tweet);
+	/**
+	 * Send mail, that containing info about comment to revision of required
+	 * user.
+	 * 
+	 * @param tweet
+	 *            Tweet object containing revision info.
+	 * @param user
+	 *            Author of revision.
+	 */
+	public void sendMailByTweet(Tweet tweet, User user);
 
 }

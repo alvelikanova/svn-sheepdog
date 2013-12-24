@@ -4,14 +4,20 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Logger;
+
 import com.sheepdog.business.domain.entities.File;
 import com.sheepdog.business.domain.entities.Revision;
 import com.sheepdog.business.domain.entities.Subscription;
+import com.sheepdog.business.domain.entities.Tweet;
 import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.services.svn.impl.TypeOfFileChanges;
 import com.sheepdog.mail.MailService;
 
 public class MailServiceTest {
+	public static final Logger LOG = (Logger) LoggerFactory.getLogger(MailServiceTest.class);
 
 	public static void main(String[] args) {
 		User user = new User();
@@ -31,11 +37,10 @@ public class MailServiceTest {
 		necessarySubscriptions.put(new Subscription(user, new File(null, new Revision(null, 10,
 				"ivan.spread@gmail.com", null, new Date()), "second.java", null, null, true)),
 				TypeOfFileChanges.MODIFIED);
-		
+
 		necessarySubscriptions.put(new Subscription(user2, new File(null, new Revision(null, 8,
 				"ivan.spread@gmail.com", null, new Date()), "seco.java", null, null, true)), TypeOfFileChanges.DELETED);
 
-		
 		MailConnection mailConnection = new MailConnection("smtp.gmail.com", "sheepdog.svn", "tunisheepdog",
 				"src/main/resources/hellouser.vm");
 
@@ -45,7 +50,15 @@ public class MailServiceTest {
 
 		mailService.sendMailBySubscription(necessarySubscriptions);
 
-		System.out.println("COMPLETED!! time: " + (System.currentTimeMillis() - time));
+		LOG.warn("COMPLETED!! time: " + (System.currentTimeMillis() - time));
+
+		time = System.currentTimeMillis();
+
+		Tweet tweet = new Tweet(new Revision(null, 20, "Ivanov", null, new Date()), "Arkhipov", "That's good!");
+
+		mailService.sendMailByTweet(tweet, user2);
+
+		LOG.warn("COMPLETED!! time: " + (System.currentTimeMillis() - time));
 	}
 
 }

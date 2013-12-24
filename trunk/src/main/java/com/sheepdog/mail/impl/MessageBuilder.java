@@ -1,11 +1,12 @@
 package com.sheepdog.mail.impl;
 
 import com.sheepdog.business.domain.entities.Subscription;
+import com.sheepdog.business.domain.entities.Tweet;
 import com.sheepdog.business.services.svn.impl.TypeOfFileChanges;
 
 /**
  * MessageBuilder containing complete message, which will be sent to subscriber.
- * That message complete by new subscriptions info.
+ * That message complete by new subscriptions and tweets info.
  * 
  * @author Ivan Arkhipov.
  * 
@@ -55,5 +56,23 @@ public class MessageBuilder {
 		} catch (NullPointerException e) {
 			// TODO
 		}
+	}
+
+	/**
+	 * Complete message by tweet info.
+	 * 
+	 * @param tweet
+	 *            Tweet object containing revision info and message.
+	 */
+	void addTweetInfo(Tweet tweet) {
+		finalMessage.append("User ");
+		finalMessage.append(tweet.getAuthor());
+		finalMessage.append(" was tweeted your revision #");
+		finalMessage.append(tweet.getRevision().getRevisionNo());
+		finalMessage.append(" of ");
+		finalMessage.append(tweet.getRevision().getDate());
+		finalMessage.append(" :   \n");
+		finalMessage.append(tweet.getTweet());
+
 	}
 }
