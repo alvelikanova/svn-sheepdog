@@ -1,5 +1,7 @@
 package com.sheepdog.dal.providers.impl;
 
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Projections;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,24 @@ public class RevisionDataProviderImpl extends BaseDataProviderImpl<RevisionEntit
 			LOG.error("Error creating revision", ex.getMessage());
 			throw new DaoException(ex);
 		}
+	}
+	
+	@Transactional
+	@Override
+	public Revision getLatestRevision(){
+		Revision revision = null;
+		try{
+			Criteria cr = sessionFactory.getCurrentSession()
+				    .createCriteria(RevisionEntity.class)
+				    .setProjection(Projections.max("REVISION_NO"));
+			cr.setMaxResults(1);
+			RevisionEntity re = (RevisionEntity)cr.uniqueResult();
+			revision = mappingService.map(re, Revision.class);
+		} catch (Exception ex){
+			LOG.error("Error loading revision", ex.getMessage());
+			throw new DaoException(ex);
+		}
+		return revision;
 	}
 
 }
