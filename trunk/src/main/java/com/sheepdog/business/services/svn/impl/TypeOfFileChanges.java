@@ -10,11 +10,11 @@ import java.util.Map;
  * 
  */
 public enum TypeOfFileChanges {
-	MODIFIED('M', "File was modified."), 
-	ADDED('A', "File was added."), 
-	DELETED('D', "File was deleted."), 
-	REPLACED('R', "File was replaced."), 
-	UNKNOWN('0', "Unknown changes of file.");
+	MODIFIED('M', " was modified."), 
+	ADDED('A', " was added."), 
+	DELETED('D', " was deleted."), 
+	REPLACED('R', " was replaced."), 
+	UNKNOWN('0', "Unknown changes of file!!");
 
 	private Character mark;
 	private String description;
