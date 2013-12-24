@@ -29,12 +29,24 @@ import com.sun.mail.smtp.SMTPTransport;
  */
 public class MailConnection {
 
+	/**
+	 * Host of mail server.
+	 */
 	private String host;
 
+	/**
+	 * Login of app on mail server.
+	 */
 	private String senderLogin;
 
+	/**
+	 * Password of app on mail server.
+	 */
 	private String senderPassword;
 
+	/**
+	 * Path of Velocity HTML template for email.
+	 */
 	private String templatePath;
 
 	private VelocityContext context;
@@ -43,6 +55,9 @@ public class MailConnection {
 
 	private SMTPTransport mailSender;
 
+	/**
+	 * Velocity HTML template for email.
+	 */
 	private Template template;
 
 	private Session session;
@@ -55,6 +70,8 @@ public class MailConnection {
 		this.senderLogin = senderLogin;
 		this.senderPassword = senderPassword;
 		this.templatePath = templatePath;
+
+		setup();
 	}
 
 	public synchronized void send(User user, String messageString) {
