@@ -24,22 +24,24 @@ public class MailServiceImpl implements MailService {
 	@Override
 	public synchronized void sendMailBySubscription(Map<Subscription, TypeOfFileChanges> necessarySubscriptions) {
 		mailConnection.openConnection();
-		Map<User, MessageBuilder> messages = new HashMap<User, MessageBuilder>(0);
-		MessageBuilder tempBuilder;
+		
+		Map<User, Map<Subscription, TypeOfFileChanges>> subscriptions = new HashMap<>(0);
+
 
 		for (Subscription s : necessarySubscriptions.keySet()) {
-			tempBuilder = messages.get(s.getUser());
-
-			if (tempBuilder == null) {
-				tempBuilder = new MessageBuilder();
-				messages.put(s.getUser(), tempBuilder);
+			
+			if (!subscriptions.containsKey(s.getUser())){
+				subscriptions.put(s.getUser(), new HashMap<Subscription,TypeOfFileChanges>(0));
+				subscriptions.get(s.getUser()).put(s, necessarySubscriptions.get(s));
+				continue;
 			}
 
-			tempBuilder.addSubscriptionUpdate(s, necessarySubscriptions.get(s));
+			subscriptions.get(s.getUser()).put(s, necessarySubscriptions.get(s));
+			
 		}
 
-		for (User u : messages.keySet()) {
-			mailConnection.send(u, messages.get(u).getFinalMessage());
+		for (User u : subscriptions.keySet()) {
+			mailConnection.send(u, subscriptions.get(u), null);
 		}
 
 		mailConnection.closeConnection();
@@ -48,11 +50,8 @@ public class MailServiceImpl implements MailService {
 	@Override
 	public synchronized void sendMailByTweet(Tweet tweet, User user) {
 		mailConnection.openConnection();
-		
-		MessageBuilder messageBuilder = new MessageBuilder();
-		messageBuilder.addTweetInfo(tweet);
 		 
-		mailConnection.send(user, messageBuilder.getFinalMessage());
+		mailConnection.send(user, new HashMap(0), tweet);
 
 		mailConnection.closeConnection();
 	}

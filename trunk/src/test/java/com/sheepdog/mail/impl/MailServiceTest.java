@@ -23,12 +23,12 @@ public class MailServiceTest {
 		User user = new User();
 		user.setEmail("sheepdog.svn@gmail.com");
 		user.setFirstName("Ivan");
-		user.setLastName("Arkhipov");
+		user.setLastName("Ivanov");
 
 		User user2 = new User();
 		user2.setEmail("sheepdog.svn@gmail.com");
 		user2.setFirstName("Ivan");
-		user2.setLastName("Ivanov");
+		user2.setLastName("Arkhipov");
 
 		Map<Subscription, TypeOfFileChanges> necessarySubscriptions = new HashMap<>(0);
 
@@ -42,7 +42,7 @@ public class MailServiceTest {
 				"ivan.spread@gmail.com", null, new Date()), "seco.java", null, null, true)), TypeOfFileChanges.DELETED);
 
 		MailConnection mailConnection = new MailConnection("smtp.gmail.com", "sheepdog.svn", "tunisheepdog",
-				"src/main/resources/hellouser.vm");
+				"src/main/resources/velocity/main_template.vm");
 
 		MailService mailService = new MailServiceImpl(mailConnection);
 
@@ -56,7 +56,7 @@ public class MailServiceTest {
 
 		Tweet tweet = new Tweet(new Revision(null, 20, "Ivanov", null, new Date()), "Arkhipov", "That's good!");
 
-		mailService.sendMailByTweet(tweet, user2);
+		mailService.sendMailByTweet(tweet, user);
 
 		LOG.warn("COMPLETED!! time: " + (System.currentTimeMillis() - time));
 	}

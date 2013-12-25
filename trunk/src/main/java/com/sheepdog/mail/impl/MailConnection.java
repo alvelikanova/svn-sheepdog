@@ -2,6 +2,7 @@ package com.sheepdog.mail.impl;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -18,7 +19,10 @@ import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 
+import com.sheepdog.business.domain.entities.Subscription;
+import com.sheepdog.business.domain.entities.Tweet;
 import com.sheepdog.business.domain.entities.User;
+import com.sheepdog.business.services.svn.impl.TypeOfFileChanges;
 import com.sun.mail.smtp.SMTPTransport;
 
 /**
@@ -74,10 +78,23 @@ public class MailConnection {
 		setup();
 	}
 
-	public synchronized void send(User user, String messageString) {
+	/**
+	 * Send message with subscription or tweet info.
+	 * 
+	 * @param user
+	 *            Recipient.
+	 * @param necessarySubscriptions
+	 *            Map with subscription info. If you need send mail with tweet
+	 *            info, set empty HashMap.
+	 * @param tweet
+	 *            Tweet object. If necessarySubscriptions map is not empty, that
+	 *            object ignore in template.
+	 */
+	public synchronized void send(User user, Map<Subscription, TypeOfFileChanges> necessarySubscriptions, Tweet tweet) {
 
 		context.put("user", user);
-		context.put("message", messageString);
+		context.put("subscriptions", necessarySubscriptions);
+		context.put("tweet", tweet);
 
 		StringWriter w = new StringWriter();
 
