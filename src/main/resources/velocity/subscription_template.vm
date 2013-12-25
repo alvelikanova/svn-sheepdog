@@ -1,0 +1,6 @@
+<ul style = "color: #009966; text-align: center; width: 50%; margin: auto; font-size: 15px;">
+#foreach( $s in $subscriptions.keySet() )
+	#set($revision = $s.getFile().getRevision())
+    <li>File: $s.getFile().getName() $subscriptions.get($s).toString() in revision $revision.getRevisionNo() by $revision.getAuthor() </li>
+#end
+</ul>

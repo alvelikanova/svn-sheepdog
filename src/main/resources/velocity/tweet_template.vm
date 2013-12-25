@@ -1,0 +1,9 @@
+User $tweet.getAuthor() was tweeted your revision $tweet.getRevision().getRevisionNo() of $tweet.getRevision().getDate() :
+</p>
+
+<p style = " text-align: center; margin: 0 auto">
+<textarea style = "color: #FFFFFF; background-color:#009966; margin: 0 auto" readonly>
+	$tweet.getTweet()
+</textarea>
+
+	

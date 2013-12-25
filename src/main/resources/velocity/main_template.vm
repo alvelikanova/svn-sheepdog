@@ -1,0 +1,23 @@
+<html>
+	#set($subject = "Some subscribed files was updated!")
+	#if($subscriptions.isEmpty())
+		#set($subject = "Your revision was tweeted!")
+	#end
+	
+	
+<body>
+<h1 style = "color: #FFFFFF; text-align: center; background-color:#009966;width: 50%; margin: auto">
+Hello, ${user.firstName} ${user.lastName}! $subject</h1>
+
+<p style = "color: #009966; text-align: center; width: 50%; margin: auto; font-size: 15px;">
+	
+	#if($subscriptions.isEmpty())
+		#parse("src/main/resources/velocity/tweet_template.vm")
+	#else
+		#parse("src/main/resources/velocity/subscription_template.vm")
+	#end
+</p>
+
+</body>
+
+</html>
