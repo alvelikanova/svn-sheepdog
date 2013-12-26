@@ -5,6 +5,6 @@ import org.springframework.stereotype.Service;
 @Service
 public interface ShepherdService {
 
-	public void manageHerd();
+	public void lookOn();
 	
 }

@@ -1,6 +1,14 @@
 package com.sheepdog.business.services.svn.impl;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.InvalidPropertiesFormatException;
+import java.util.Properties;
+
+import javax.security.auth.RefreshFailedException;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -68,6 +76,35 @@ public class SVNProjectFacadeImpl implements SVNProjectFacade {
 	public SVNRepository getRepositoryConnection(User user) throws IllegalArgumentException {
 
 		return repositoryManager.getRepositoryConnection(user);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.sheepdog.business.services.svn.SVNProjectFacade#createMainConnection()
+	 */
+	@Override
+	public void createMainConnection() throws RefreshFailedException, InvalidURLException, RepositoryAuthenticationExceptoin, IOException {
+		Properties prop = new Properties();
+		String propertyPath = "src/main/resources/project.properties";
+		
+		try (InputStream is = new FileInputStream(new File(propertyPath))) {
+
+			prop.load(is);
+
+			
+		} catch (FileNotFoundException e) {
+			LOG.error(e.getMessage() + " " + propertyPath); // TODO
+			throw new RefreshFailedException();
+		} catch (InvalidPropertiesFormatException e) {
+			LOG.error(e.getMessage() + " " + propertyPath); // TODO
+			throw new RefreshFailedException();
+		} catch (IOException e) {
+			LOG.error(e.getMessage() + " " + propertyPath); // TODO
+			throw new RefreshFailedException();
+		}
+		
+		repositoryManager.createMainConnection(prop.getProperty("repository.url"),
+				prop.getProperty("repository.login"), prop.getProperty("repository.password"));
+
 	}
 
 	public SVNRepositoryManager getRepositoryManager() {

@@ -3,12 +3,15 @@ package com.sheepdog.update.impl;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.security.auth.RefreshFailedException;
+import javax.xml.transform.TransformerException;
+
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import ch.qos.logback.classic.Logger;
 
@@ -24,8 +27,10 @@ import com.sheepdog.business.services.UserManagementService;
 import com.sheepdog.business.services.svn.SVNFileService;
 import com.sheepdog.business.services.svn.SVNRevisionService;
 import com.sheepdog.business.services.svn.impl.TypeOfFileChanges;
+import com.sheepdog.mail.MailService;
 import com.sheepdog.update.ShepherdService;
 
+@Service
 public class ShepherdServiceImpl implements ShepherdService {
 
 	/**
@@ -39,19 +44,24 @@ public class ShepherdServiceImpl implements ShepherdService {
 	@Autowired
 	private SVNFileService svnFileService;
 
+	@Autowired
 	private FileManagementService fileManagementService;
 
+	@Autowired
 	private RevisionManagementService revisionManagementService;
 
+	@Autowired
 	private SubscriptionManagementService subscriptionManagementService;
 
+	@Autowired
 	private UserManagementService userManagementService;
 
-	// private FileManagementService fileManagementService;
-	//
-	// private FileManagementService fileManagementService;
+	@Autowired
+	private MailService mailService;
 
 	private Map<Revision, Map<File, TypeOfFileChanges>> newRevisionsAndFiles;
+
+	private final User updateUser = User.getUpdateUser();
 
 	public ShepherdServiceImpl(SVNRevisionService svnRevisionService, SVNFileService svnFileService,
 			FileManagementService fileManagementService, RevisionManagementService revisionManagementService,
@@ -68,7 +78,7 @@ public class ShepherdServiceImpl implements ShepherdService {
 	}
 
 	@Override
-	public void manageHerd() {
+	public void lookOn() {
 		long currentRevision = 0;
 
 		try {
@@ -77,71 +87,77 @@ public class ShepherdServiceImpl implements ShepherdService {
 			LOG.warn("No current revisions in DB.");
 		}
 
-		if (checkUpdates(currentRevision)) {
-			loadRevisions(currentRevision);
+		try {
+			if (checkUpdates(currentRevision)) {
+				loadRevisions(currentRevision);
 
-			revisionManagementService.saveRevisions(newRevisionsAndFiles.keySet());
+				revisionManagementService.saveRevisions(newRevisionsAndFiles.keySet());
 
-			subscribeManagement();
+				subscribeManagement();
+			}
+		} catch (RefreshFailedException e) {
+			LOG.error("UPDATE PROCESS IS FAILED! SEE LOG FOR MORE DETAILS!");
+		} catch (Exception e) {
+			LOG.error("UPDATE PROCESS IS FAILED! UNKNOWN PROBLEM!");
 		}
-
 	}
 
-	private boolean checkUpdates(long currentRevision) {
+	private boolean checkUpdates(long currentRevision) throws RefreshFailedException {
 
-		Revision latestRepositoryRevision = null;
+		Revision latestRepositoryRevision = new Revision();
+		latestRepositoryRevision.setRevisionNo(0);
 
 		try {
-			latestRepositoryRevision = svnRevisionService.getLastRevision(User.UPDATE_USER);
+			latestRepositoryRevision = svnRevisionService.getLastRevision(updateUser);
 		} catch (RepositoryAuthenticationExceptoin e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error("UPDATE_USER is fail repository authentication.");
+			throw new RefreshFailedException();
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error("UPDATE_USER is not exist or not correctly registred.");
+			throw new RefreshFailedException();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error("Connection to repository failed by UPDATE_USER");
+			throw new RefreshFailedException();
 		}
 
 		if (latestRepositoryRevision.getRevisionNo() > currentRevision) {
 			return true;
 		}
 		if (latestRepositoryRevision.getRevisionNo() < currentRevision) {
-			// throw new UpdateException(); TODO
+			throw new RefreshFailedException();
 		}
 
 		return false;
 	}
 
-	private void loadRevisions(long currentRevision) {
+	private void loadRevisions(long currentRevision) throws RefreshFailedException {
 		newRevisionsAndFiles.clear();
 		Set<Revision> newRevisionsSet = new HashSet<>(0);
 
 		try {
-			newRevisionsSet = svnRevisionService.getRevisions(User.UPDATE_USER, currentRevision + 1, -1);
+			newRevisionsSet = svnRevisionService.getRevisions(updateUser, currentRevision + 1, -1);
 
 			for (Revision r : newRevisionsSet) {
-				newRevisionsAndFiles.put(r, svnFileService.getFilesByRevision(User.UPDATE_USER, r));
+				newRevisionsAndFiles.put(r, svnFileService.getFilesByRevision(updateUser, r));
 			}
 		} catch (RepositoryAuthenticationExceptoin e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error("UPDATE_USER is fail repository authentication.");
+			throw new RefreshFailedException();
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error("UPDATE_USER is not exist or not correctly registred.");
+			throw new RefreshFailedException();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error("Connection to repository failed by UPDATE_USER");
+			throw new RefreshFailedException();
 		}
 
 	}
 
-	private void subscribeManagement() {
+	private void subscribeManagement() throws RefreshFailedException {
 		Map<Subscription, TypeOfFileChanges> newSubscriptions = new HashMap<Subscription, TypeOfFileChanges>(0);
 		Map<Subscription, TypeOfFileChanges> necessarySubscriptions = new HashMap<Subscription, TypeOfFileChanges>(0);
 
-		Map<Subscription, TypeOfFileChanges> tempSubscriptions = new HashMap<Subscription, TypeOfFileChanges>(0);
+		Set<Subscription> tempSubscriptions = new HashSet<>(0);
 
 		User tempUser;
 
@@ -153,14 +169,30 @@ public class ShepherdServiceImpl implements ShepherdService {
 				newSubscriptions.putAll(subscribeNewFiles(newRevisionsAndFiles.get(r), tempUser));
 			}
 
-			tempSubscriptions = subscriptionManagementService.getSubscriptionsByFiles(newRevisionsAndFiles.get(r));
-
-			necessarySubscriptions.putAll(tempSubscriptions);
+			for (Map.Entry<File, TypeOfFileChanges> entry : newRevisionsAndFiles.get(r).entrySet()) {
+				// tempSubscriptions =
+				// subscriptionManagementService.getSubscriptionsByFile(e); TODO
+				if (!tempSubscriptions.isEmpty()) {
+					for (Subscription s : tempSubscriptions) {
+						necessarySubscriptions.put(s, entry.getValue());
+					}
+					// fileManagementService.updateFilesRevision(entry.getKey);
+					// TODO
+				}
+			}
 		}
 
 		subscriptionManagementService.saveSubscriptions(newSubscriptions.keySet());
 
-		// mailSendingService.send(Set <Subscription> subscriptions);TODO
+		try {
+			mailService.sendMailBySubscription(necessarySubscriptions);
+		} catch (RefreshFailedException e) {
+			throw new RefreshFailedException();
+		} catch (IOException e) {
+			throw new RefreshFailedException();
+		} catch (TransformerException e) {
+			throw new RefreshFailedException();
+		}
 
 	}
 
@@ -172,9 +204,9 @@ public class ShepherdServiceImpl implements ShepherdService {
 			return subscriptions;
 		}
 
-		for (File f : tempFiles.keySet()) {
-			if (TypeOfFileChanges.ADDED.equals(tempFiles.get(f))) {
-				subscriptions.put(new Subscription(user, f), TypeOfFileChanges.ADDED);
+		for (Map.Entry<File, TypeOfFileChanges> entry : tempFiles.entrySet()) {
+			if (TypeOfFileChanges.ADDED.equals(entry.getValue())) {
+				subscriptions.put(new Subscription(user, entry.getKey()), TypeOfFileChanges.ADDED);
 			}
 		}
 		return subscriptions;

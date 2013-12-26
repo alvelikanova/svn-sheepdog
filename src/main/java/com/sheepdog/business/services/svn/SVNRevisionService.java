@@ -4,13 +4,10 @@ import java.io.IOException;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
-import org.tmatesoft.svn.core.SVNException;
 
 import com.sheepdog.business.domain.entities.File;
 import com.sheepdog.business.domain.entities.User;
-import com.sheepdog.business.domain.entities.Project;
 import com.sheepdog.business.domain.entities.Revision;
-import com.sheepdog.business.exceptions.InvalidURLException;
 import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
 
 /**

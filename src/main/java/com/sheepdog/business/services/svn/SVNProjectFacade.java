@@ -2,6 +2,8 @@ package com.sheepdog.business.services.svn;
 
 import java.io.IOException;
 
+import javax.security.auth.RefreshFailedException;
+
 import org.springframework.stereotype.Service;
 import org.tmatesoft.svn.core.io.SVNRepository;
 
@@ -36,7 +38,7 @@ public interface SVNProjectFacade {
 	 * @throws IOException
 	 *             a failure occurred while connecting to a repository.
 	 * @throws RepositoryAuthenticationExceptoin
-	 *             if user authentication failed.
+	 *             if user authentication is failed.
 	 */
 	public boolean addSVNProjectConnection(User user) throws InvalidURLException, IllegalArgumentException,
 			IOException, RepositoryAuthenticationExceptoin;
@@ -52,5 +54,23 @@ public interface SVNProjectFacade {
 	 *             if user and project are not registered.
 	 */
 	public SVNRepository getRepositoryConnection(User user) throws IllegalArgumentException;
+
+	/**
+	 * Creating main connection to repository. Load properties of connection
+	 * from property file.
+	 * 
+	 * @throws RefreshFailedException
+	 *             if properties loading is failed.
+	 * @throws InvalidURLException
+	 *             if URL of repository is not correct or protocol is not
+	 *             supported.
+	 * 
+	 * @throws IOException
+	 *             a failure occurred while connecting to a repository.
+	 * @throws RepositoryAuthenticationExceptoin
+	 *             if repository authentication is failed.
+	 */
+	public void createMainConnection() throws RefreshFailedException, InvalidURLException,
+			RepositoryAuthenticationExceptoin, IOException;
 
 }
