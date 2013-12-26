@@ -92,11 +92,10 @@ public class SVNFileServiceImpl implements SVNFileService {
 		}
 
 		Set<File> files = editor.getFiles();
-
-		for (File f : files)
-			f.setProject(user.getProject());
-
 		try {
+			for (File f : files)
+				f.setProject(user.getProject());
+
 			files = setNameFieldsToManyFiles(files);
 		} catch (NullPointerException e) {
 			if (files == null || files.isEmpty())
@@ -175,12 +174,13 @@ public class SVNFileServiceImpl implements SVNFileService {
 		for (Revision r : revisions)
 			if (user.getLogin().equals(r.getAuthor())) {
 				files = getFilesByRevision(user, r);
-				for (File f : files.keySet())
-					if (TypeOfFileChanges.ADDED.equals(files.get(f))) {
-						f.setCreatorName(user.getLogin());
+				for (Map.Entry<File, TypeOfFileChanges> entry : files.entrySet()) {
+					if (TypeOfFileChanges.ADDED.equals(entry.getValue())) {
+						entry.getKey().setCreatorName(user.getLogin());
 
-						authFiles.add(f);
+						authFiles.add(entry.getKey());
 					}
+				}
 			}
 		return authFiles;
 	}
@@ -225,11 +225,11 @@ public class SVNFileServiceImpl implements SVNFileService {
 		boolean isTextType = SVNProperty.isTextMimeType(mimeType);
 		String content = "";
 
-		if (isTextType)
+		if (isTextType) {
 			content = baos.toString();
-		else
+		} else {
 			throw new InvalidParameterException("That file is not containing a text: " + file.getPath());
-
+		}
 		return content;
 	}
 
@@ -244,8 +244,9 @@ public class SVNFileServiceImpl implements SVNFileService {
 	private Set<File> setNameFieldsToManyFiles(Set<File> files) throws NullPointerException {
 		Set<File> tempFiles = new HashSet<>(files);
 
-		for (File f : tempFiles)
+		for (File f : tempFiles) {
 			f = setNameFieldsToOneFile(f);
+		}
 
 		return tempFiles;
 	}

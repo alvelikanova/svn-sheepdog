@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.security.auth.RefreshFailedException;
+
 import org.apache.commons.lang3.text.StrBuilder;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +51,9 @@ public class SVNFileServiceTest {
 		long time = System.currentTimeMillis();
 
 		try {
+
+			projectFacade.createMainConnection();
+
 			projectFacade.addSVNProjectConnection(user);
 		} catch (InvalidURLException e1) {
 			StrBuilder sb = new StrBuilder("InvalidURLException by URL :");
@@ -59,6 +64,8 @@ public class SVNFileServiceTest {
 		} catch (RepositoryAuthenticationExceptoin e) {
 			LOG.info("User authentication error: " + e.getUser().getLogin());
 		} catch (IOException e) {
+			LOG.info(e.getMessage());
+		} catch (RefreshFailedException e) {
 			LOG.info(e.getMessage());
 		}
 		LOG.info("Time init SVNRepository: " + (System.currentTimeMillis() - time));

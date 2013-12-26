@@ -15,6 +15,7 @@ import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
+import com.sheepdog.business.domain.entities.Project;
 import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.exceptions.InvalidURLException;
 import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
@@ -56,7 +57,7 @@ public class SVNRepositoryManager {
 			IOException, RepositoryAuthenticationExceptoin {
 
 		if (user == null || user.getProject() == null)
-			throw new IllegalArgumentException("Invalid User object: " + user.getLogin());
+			throw new IllegalArgumentException("Invalid User object: ");
 
 		if (repositories.get(user) != null)
 			return true;
@@ -77,15 +78,6 @@ public class SVNRepositoryManager {
 			throw new IOException("Failed connection to URL:" + user.getProject().getUrl());
 		}
 
-		if (user.isAdmin()) {
-			repositories.remove(User.UPDATE_USER);
-			try {
-				repositories.put(User.UPDATE_USER, createSVNProjectConnection(user));
-			} catch (SVNException e) {
-				throw new InvalidURLException(user.getProject().getUrl());
-			}
-		}
-
 		repositories.put(user, repo);
 
 		return true;
@@ -100,7 +92,7 @@ public class SVNRepositoryManager {
 	 * @throws IllegalArgumentException
 	 *             if user and project are not registered.
 	 */
-	public SVNRepository getRepositoryConnection(User user) {
+	public SVNRepository getRepositoryConnection(User user) throws IllegalArgumentException {
 
 		SVNRepository repo = repositories.get(user);
 
@@ -108,6 +100,51 @@ public class SVNRepositoryManager {
 			new IllegalArgumentException("Invalid User object: " + user.getLogin());
 
 		return repo;
+	}
+
+	/**
+	 * Create main connection to repository.
+	 * 
+	 * @param url
+	 *            URL of repository.
+	 * @param login
+	 *            Login of main connection.
+	 * @param password
+	 *            Password of main connection.
+	 * @throws InvalidURLException
+	 *             if URL of repository is not correct or protocol is not
+	 *             supported.
+	 * 
+	 * @throws IOException
+	 *             a failure occurred while connecting to a repository
+	 * @throws RepositoryAuthenticationExceptoin
+	 *             if user authentication failed.
+	 */
+	public void createMainConnection(String url, String login, String password) throws InvalidURLException,
+			IOException, RepositoryAuthenticationExceptoin {
+
+		User tempUser = new User();
+		tempUser.setLogin(login);
+		tempUser.setPassword(password);
+		tempUser.setProject(new Project(null, url));
+
+		SVNRepository repo;
+
+		try {
+			repo = createSVNProjectConnection(tempUser);
+		} catch (SVNException e) {
+			throw new InvalidURLException(tempUser.getProject().getUrl());
+		}
+
+		try {
+			repo.testConnection();
+		} catch (SVNAuthenticationException e) {
+			throw new RepositoryAuthenticationExceptoin(tempUser);
+		} catch (SVNException e) {
+			throw new IOException("Failed connection to URL:" + tempUser.getProject().getUrl());
+		}
+
+		repositories.put(User.getUpdateUser(), repo);
 	}
 
 	/**
