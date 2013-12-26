@@ -2,11 +2,6 @@ package com.sheepdog.business.domain.entities;
 
 public class User extends PersistentEntity<Integer> {
 
-	/**
-	 * User object, that is mapping connection object to update operations.
-	 */
-	public static final User UPDATE_USER = new User(null, "UPDATE_USER", null, null);
-
 	private static final long serialVersionUID = 5292401382106106765L;
 
 	private Project project;
@@ -54,6 +49,17 @@ public class User extends PersistentEntity<Integer> {
 		this.lastName = lastName;
 		this.email = email;
 		this.password = password;
+	}
+
+	/**
+	 * Get user for update service.
+	 * 
+	 * @return 
+	 */
+	public static User getUpdateUser() {
+		User updateUser = new User();
+		updateUser.setLogin("UPDATE_USER");
+		return updateUser;
 	}
 
 	public String getLogin() {

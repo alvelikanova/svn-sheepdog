@@ -5,7 +5,7 @@ public class File extends PersistentEntity<Integer> {
 	private static final long serialVersionUID = -3129188013320967949L;
 
 	private Project project;
-	private Revision revision;
+	private Revision lastRevision;
 
 	private String name;
 	private String qualifiedName;
@@ -17,10 +17,10 @@ public class File extends PersistentEntity<Integer> {
 	public File() {
 	}
 
-	public File(Project project, Revision revision, String name, String qualifiedName, String creatorName,
+	public File(Project project, Revision lastRevision, String name, String qualifiedName, String creatorName,
 			boolean isFile) {
 		this.project = project;
-		this.revision = revision;
+		this.lastRevision = lastRevision;
 		this.name = name;
 		this.qualifiedName = qualifiedName;
 		this.creatorName = creatorName;
@@ -35,11 +35,11 @@ public class File extends PersistentEntity<Integer> {
 	}
 
 	public Revision getRevision() {
-		return revision;
+		return lastRevision;
 	}
 
-	public void setRevision(Revision revision) {
-		this.revision = revision;
+	public void setRevision(Revision lastRevision) {
+		this.lastRevision = lastRevision;
 	}
 
 	public String getName() {
