@@ -1,8 +1,12 @@
 package com.sheepdog.mail.impl;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.security.auth.RefreshFailedException;
+import javax.xml.transform.TransformerException;
 
 import org.slf4j.LoggerFactory;
 
@@ -41,14 +45,32 @@ public class MailServiceTest {
 		necessarySubscriptions.put(new Subscription(user2, new File(null, new Revision(null, 8,
 				"ivan.spread@gmail.com", null, new Date()), "seco.java", null, null, true)), TypeOfFileChanges.DELETED);
 
-		MailConnection mailConnection = new MailConnection("smtp.gmail.com", "sheepdog.svn", "tunisheepdog",
-				"src/main/resources/velocity/main_template.vm");
 
-		MailService mailService = new MailServiceImpl(mailConnection);
+		MailConnector mailConnector = new MailConnector();
+
+		MailService mailService = new MailServiceImpl(mailConnector);
+		
+		try {
+			mailService.resetConfig();
+		} catch (RefreshFailedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		long time = System.currentTimeMillis();
 
-		mailService.sendMailBySubscription(necessarySubscriptions);
+		try {
+			mailService.sendMailBySubscription(necessarySubscriptions);
+		} catch (RefreshFailedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		LOG.warn("COMPLETED!! time: " + (System.currentTimeMillis() - time));
 
@@ -56,7 +78,18 @@ public class MailServiceTest {
 
 		Tweet tweet = new Tweet(new Revision(null, 20, "Ivanov", null, new Date()), "Arkhipov", "That's good!");
 
-		mailService.sendMailByTweet(tweet, user);
+		try {
+			mailService.sendMailByTweet(tweet, user);
+		} catch (RefreshFailedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		LOG.warn("COMPLETED!! time: " + (System.currentTimeMillis() - time));
 	}

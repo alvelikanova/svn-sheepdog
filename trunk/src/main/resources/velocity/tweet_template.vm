@@ -1,3 +1,11 @@
+<html>
+		#set($subject = "Your revision was tweeted!")	
+<body>
+<h1 style = "color: #FFFFFF; text-align: center; background-color:#009966;width: 50%; margin: auto">
+Hello, ${user.firstName} ${user.lastName}! $subject</h1>
+
+<p style = "color: #009966; text-align: center; width: 50%; margin: auto; font-size: 15px;">
+
 User $tweet.getAuthor() was tweeted your revision $tweet.getRevision().getRevisionNo() of $tweet.getRevision().getDate() :
 </p>
 
@@ -6,4 +14,8 @@ User $tweet.getAuthor() was tweeted your revision $tweet.getRevision().getRevisi
 	$tweet.getTweet()
 </textarea>
 
-	
+	</p>
+
+</body>
+
+</html>
