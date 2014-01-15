@@ -49,5 +49,27 @@ public class SubscriptionDataProviderImpl extends BaseDataProviderImpl<Subscript
 		}
 		return resultList;
 	}
+	
+	@Transactional
+	@Override
+	public List<Subscription> getSubscriptionsByQualifiedName(String qualifiedName) {
+		List <Subscription> sublist = null;
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			
+			//load file with qname from dbase
+			Criteria crfile = session.createCriteria(FileEntity.class)
+					.add(Restrictions.eq("QUALIFIED_NAME", qualifiedName));
+			FileEntity fe = (FileEntity)crfile.uniqueResult();
+			
+			//load subscriptions by file's id
+			Criteria crsub = session.createCriteria(SubscriptionEntity.class)
+					.add(Restrictions.eq("FILE_ID", fe.getId()));
+			sublist = crsub.list();
+		} catch (Exception ex) {
+			LOG.error("Error loading subscriptions", ex.getMessage());
+		}
+		return sublist;
+	}
 
 }

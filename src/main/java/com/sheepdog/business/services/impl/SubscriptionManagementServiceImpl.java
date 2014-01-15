@@ -1,6 +1,7 @@
 package com.sheepdog.business.services.impl;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,32 +38,16 @@ public class SubscriptionManagementServiceImpl implements SubscriptionManagement
 	}
 
 	@Override
-	public Map<Subscription, TypeOfFileChanges> getSubscriptionsByFiles(
-			Map<File, TypeOfFileChanges> files) {
-		
-		Map <Subscription, TypeOfFileChanges> resultmap = new HashMap<Subscription, TypeOfFileChanges>();
-		try {
-			List <Subscription> subscrs = subscriptionDataProvider
-					.findAll(SubscriptionEntity.class, Subscription.class);
-			
-			Set<File> keys = files.keySet();
-			for(File file: keys) {
-				File f = fileDataProvider
-						.findFileByQualifiedName(file.getQualifiedName());
-				if (f!=null) {
-					Integer id = f.getId();
-					for (Subscription sub:subscrs){
-						if (sub.getFile().getId().equals(id)){
-							resultmap.put(sub, files.get(file));
-						}
-					}
-				}
-			}
+	public Set<Subscription> getSubscriptionsByFile(File file) {
+		Set <Subscription> subscrs = new HashSet<Subscription>();
+		List<Subscription> subs = subscriptionDataProvider
+				.getSubscriptionsByQualifiedName(file.getQualifiedName());
+		for (Subscription s : subs){
+			subscrs.add(s);
 		}
-		catch (Exception exc){
-			LOG.error("Error loading subscriptions", exc.getMessage());
-		}
-		return resultmap;
+		return subscrs;
 	}
+
+
 
 }

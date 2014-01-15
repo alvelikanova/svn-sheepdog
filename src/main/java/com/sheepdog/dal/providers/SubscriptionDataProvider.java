@@ -9,4 +9,5 @@ import com.sheepdog.dal.providers.base.GenericDataProvider;
 
 public interface SubscriptionDataProvider extends GenericDataProvider<SubscriptionEntity, Subscription, Integer>{
 	List<File> getFilesByUserName(String userName);
+	List<Subscription> getSubscriptionsByQualifiedName(String qualifiedName);
 }
