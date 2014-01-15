@@ -46,4 +46,16 @@ public class ProjectDataProviderImpl extends BaseDataProviderImpl<ProjectEntity,
 		return project;
 	}
 
+	@Transactional
+	@Override
+	public Project getCurrentProject() {
+		Project project = null;
+		Criteria cr = sessionFactory.getCurrentSession()
+				.createCriteria(ProjectEntity.class);
+		cr.setMaxResults(1);
+		ProjectEntity pe = (ProjectEntity)cr.uniqueResult();
+		project = mappingService.map(pe, Project.class);
+		return project;
+	}
+
 }
