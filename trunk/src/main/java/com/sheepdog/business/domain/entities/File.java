@@ -26,6 +26,15 @@ public class File extends PersistentEntity<Integer> {
 		this.creatorName = creatorName;
 	}
 
+	public static File getRootDir() {
+		File root = new File();
+		root.setIsDir(true);
+		root.setName("/");
+		root.setQualifiedName("/");
+
+		return root;
+	}
+
 	public Project getProject() {
 		return project;
 	}
@@ -80,6 +89,11 @@ public class File extends PersistentEntity<Integer> {
 
 	public void setIsDir(boolean isDir) {
 		this.isDir = isDir;
+	}
+
+	@Override
+	public String toString() {
+		return name + " " + qualifiedName;
 	}
 
 }
