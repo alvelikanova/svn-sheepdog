@@ -3,10 +3,13 @@ package com.sheepdog.business.services.svn.impl;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,6 +29,7 @@ import org.tmatesoft.svn.core.io.SVNRepository;
 import ch.qos.logback.classic.Logger;
 
 import com.sheepdog.business.domain.entities.File;
+import com.sheepdog.business.domain.entities.FileTreeComposite;
 import com.sheepdog.business.domain.entities.Revision;
 import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
@@ -67,7 +71,7 @@ public class SVNFileServiceImpl implements SVNFileService {
 	 * .business.domain.entities.User)
 	 */
 	@Override
-	public Set<File> getAllFiles(User user) throws IllegalArgumentException, IOException,
+	public FileTreeComposite getAllFiles(User user) throws IllegalArgumentException, IOException,
 			RepositoryAuthenticationExceptoin {
 		SVNRepository repos = projectFacade.getRepositoryConnection(user);
 
@@ -91,7 +95,11 @@ public class SVNFileServiceImpl implements SVNFileService {
 			throw new IOException("Failed connection to URL:" + user.getProject().getUrl());
 		}
 
-		Set<File> files = editor.getFiles();
+		Map dirProps = new HashMap<>(editor.getMyDirProps());
+		Map fileProps = new HashMap<>(editor.getMyFileProps());
+
+		LinkedList<File> files = editor.getFiles();
+
 		try {
 			for (File f : files)
 				f.setProject(user.getProject());
@@ -99,10 +107,12 @@ public class SVNFileServiceImpl implements SVNFileService {
 			files = setNameFieldsToManyFiles(files);
 		} catch (NullPointerException e) {
 			if (files == null || files.isEmpty())
-				return new HashSet<File>(0);
+				return new FileTreeComposite();
 		}
 
-		return files;
+		FileTreeComposite root = createComposite(files, dirProps, fileProps);
+
+		return root;
 	}
 
 	/*
@@ -194,13 +204,13 @@ public class SVNFileServiceImpl implements SVNFileService {
 	 * com.sheepdog.business.domain.entities.File)
 	 */
 	@Override
-	public String getFileContent(User user, File file) throws IOException, RepositoryAuthenticationExceptoin,
-			InvalidParameterException, IllegalArgumentException {
+	public String getFileContent(User user, File file, int revisionNumber) throws IOException,
+			RepositoryAuthenticationExceptoin, InvalidParameterException, IllegalArgumentException {
 		SVNRepository repo = projectFacade.getRepositoryConnection(user);
 
 		SVNNodeKind nodeKind = null;
 		try {
-			nodeKind = repo.checkPath(file.getPath(), -1);
+			nodeKind = repo.checkPath(file.getPath(), revisionNumber);
 		} catch (SVNAuthenticationException e) {
 			LOG.info("User authentication failed. User: " + user.getLogin());
 			throw new RepositoryAuthenticationExceptoin(user);
@@ -216,7 +226,7 @@ public class SVNFileServiceImpl implements SVNFileService {
 		SVNProperties properties = new SVNProperties();
 
 		try {
-			repo.getFile(file.getPath(), -1, properties, baos);
+			repo.getFile(file.getPath(), revisionNumber, properties, baos);
 		} catch (SVNException e) {
 			throw new InvalidParameterException("That file is not exist: " + file.getPath());
 		}
@@ -241,14 +251,13 @@ public class SVNFileServiceImpl implements SVNFileService {
 	 * @return Completed Files objects.
 	 * @throws NullPointerException
 	 */
-	private Set<File> setNameFieldsToManyFiles(Set<File> files) throws NullPointerException {
-		Set<File> tempFiles = new HashSet<>(files);
+	private LinkedList<File> setNameFieldsToManyFiles(LinkedList<File> files) throws NullPointerException {
 
-		for (File f : tempFiles) {
+		for (File f : files) {
 			f = setNameFieldsToOneFile(f);
 		}
 
-		return tempFiles;
+		return files;
 	}
 
 	/**
@@ -265,6 +274,111 @@ public class SVNFileServiceImpl implements SVNFileService {
 		f.setQualifiedName(f.getProject().getName() + "/" + path);
 		f.setName(path.substring(path.lastIndexOf('/') + 1));
 		return f;
+	}
+
+	/**
+	 * Method sorting input files by hierarchy levels and root composite
+	 * recursively filling. Files and appropriate properties inserted into
+	 * composites.
+	 * 
+	 * @param files
+	 *            All repository files and directories.
+	 * @param dirProps
+	 *            Properties of directories from repository.
+	 * @param fileProps
+	 *            Properties of files from repository.
+	 * @return Complete {@link FileTreeComposite} root object.
+	 */
+	private FileTreeComposite createComposite(LinkedList<File> files, Map dirProps, Map fileProps) {
+		String path = "";
+		Integer level = 0;
+
+		List<FileTreeComposite> tempComposites = new LinkedList<>();
+		Map tempProps = new HashMap<>();
+
+		FileTreeComposite root = new FileTreeComposite();
+
+		Map<Integer, Collection<FileTreeComposite>> levelFiles = new HashMap<>(0);
+
+		for (File f : files) {
+			path = f.getPath();
+			level = path.split("/").length;
+
+			if (f.isDir()) {
+				tempProps = (Map) dirProps.get("/" + f.getPath());
+			} else {
+				tempProps = (Map) fileProps.get("/" + f.getPath());
+			}
+
+			if (tempProps == null) {
+				tempProps = new HashMap<>(0);
+			}
+
+			if (levelFiles.containsKey(level)) {
+				levelFiles.get(level).add(new FileTreeComposite(f, tempProps));
+			} else {
+				tempComposites.clear();
+				tempComposites.add(new FileTreeComposite(f, tempProps));
+				levelFiles.put(level, new ArrayList<>(tempComposites));
+			}
+		}
+
+		for (FileTreeComposite ftc : levelFiles.get(1)) {
+
+			root.addChild(ftc);
+
+			fillComposite(ftc, levelFiles, 1);
+		}
+
+		root.setFile(File.getRootDir());
+
+		return root;
+	}
+
+	/**
+	 * If current composite is directory with not empty childs
+	 * collection,recursive method fills composite files by checking for
+	 * compliance with the hierarchy levels. If hierarchy of composite is
+	 * defined, that composite is removing from collection of files levels.
+	 * 
+	 * @param composite
+	 *            Current composite object.
+	 * @param levelFiles
+	 *            Collection containing composites by hierarchy level.
+	 * @param position
+	 *            Deep of hierarchy.
+	 */
+	private void fillComposite(FileTreeComposite composite, Map<Integer, Collection<FileTreeComposite>> levelFiles,
+			int position) {
+
+		if (!composite.getFile().isDir()) {
+			return;
+		}
+
+		Collection<FileTreeComposite> levelDown = levelFiles.get(position + 1);
+
+		if (levelDown != null) {
+
+			String tempPath;
+
+			Collection<FileTreeComposite> completeComposite = new LinkedList<>();
+
+			for (FileTreeComposite ftc : levelDown) {
+				tempPath = ftc.getFile().getPath();
+
+				if (tempPath.split("/")[tempPath.split("/").length - 2].equals(composite.getFile().getName())) {
+					composite.addChild(ftc);
+					completeComposite.add(ftc);
+				}
+
+				fillComposite(ftc, levelFiles, position + 1);
+			}
+
+			for (FileTreeComposite ftcRemove : completeComposite) {
+				levelDown.remove(ftcRemove);
+			}
+		}
+
 	}
 
 	public SVNProjectFacade getProjectFacade() {

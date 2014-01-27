@@ -2,6 +2,7 @@ package com.sheepdog.business.services.svn.impl;
 
 import java.io.IOException;
 import java.security.InvalidParameterException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.apache.commons.lang3.text.StrBuilder;
 import org.slf4j.LoggerFactory;
 
 import com.sheepdog.business.domain.entities.File;
+import com.sheepdog.business.domain.entities.FileTreeComposite;
 import com.sheepdog.business.domain.entities.Project;
 import com.sheepdog.business.domain.entities.Revision;
 import com.sheepdog.business.domain.entities.User;
@@ -41,6 +43,9 @@ public class SVNFileServiceTest {
 		Project project = new Project();
 		project.setUrl("https://svn-sheepdog.googlecode.com/svn/trunk/");
 		project.setName("sheepdog");
+		
+//		project.setUrl("https://svn-kit-test.googlecode.com/svn/trunk/");
+//		project.setName("svn-kit-test");
 
 		User user = new User();
 		user.setLogin("ivan.spread@gmail.com");
@@ -87,9 +92,10 @@ public class SVNFileServiceTest {
 
 		long time = System.currentTimeMillis();
 
-		Set<File> files = new HashSet<>();
+	
+		FileTreeComposite root = null;
 		try {
-			files = fileService.getAllFiles(user);
+			root = fileService.getAllFiles(user);
 		} catch (IllegalArgumentException e) {
 			LOG.info(e.getMessage());
 		} catch (RepositoryAuthenticationExceptoin e) {
@@ -98,13 +104,34 @@ public class SVNFileServiceTest {
 			LOG.info(e.getMessage());
 		}
 
-		for (File f : files) {
-			if (f != null)
-				LOG.info(f.getQualifiedName() + "   name = " + f.getName());
-		}
+		
+		printComposite(root);
+		
 
 		LOG.info("Time print repo tree: " + (System.currentTimeMillis() - time));
 
+	}
+	
+	private void printComposite(FileTreeComposite ftc){
+		StringBuilder sb = new StringBuilder();
+		sb.append(ftc.getFile().getQualifiedName());
+		sb.append(";   name = ");
+		sb.append(ftc.getFile().getName());
+		sb.append(";   last rev = ");
+		sb.append(ftc.getProperty().get("svn:entry:committed-rev"));
+		sb.append(";   commiter = ");
+		sb.append(ftc.getProperty().get("svn:entry:last-author"));
+		sb.append(";   date = ");
+		sb.append(ftc.getProperty().get("svn:entry:committed-date"));
+		
+		LOG.info(sb.toString());
+		
+		if (!ftc.getChilds().isEmpty()){
+			for(FileTreeComposite ftcChild : ftc.getChilds()){
+				printComposite(ftcChild);
+			}
+		}
+		
 	}
 
 	private void testGetFileByRevision(SVNProjectFacade projectFacade, Project project, User user) {
@@ -175,7 +202,7 @@ public class SVNFileServiceTest {
 
 		long time = System.currentTimeMillis();
 		try {
-			LOG.info(fileService.getFileContent(user, file));
+			LOG.info(fileService.getFileContent(user, file, -1));
 		} catch (InvalidParameterException e) {
 			LOG.error(e.toString());
 		} catch (IllegalArgumentException e) {

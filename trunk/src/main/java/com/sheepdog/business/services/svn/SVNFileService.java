@@ -2,10 +2,12 @@ package com.sheepdog.business.services.svn;
 
 import java.io.IOException;
 import java.security.InvalidParameterException;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
 import com.sheepdog.business.domain.entities.File;
+import com.sheepdog.business.domain.entities.FileTreeComposite;
 import com.sheepdog.business.domain.entities.Revision;
 import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
@@ -22,14 +24,13 @@ import com.sheepdog.business.services.svn.impl.TypeOfFileChanges;
 public interface SVNFileService {
 
 	/**
-	 * Get all files of actual repository tree by Project object.
+	 * Get composite of all files of actual repository tree.
 	 * 
 	 * @param user
 	 *            User object containing authentication info and Project object
 	 *            containing URL of required repository.
-	 * @return Set of incomplete File objects, that are not containing revision
-	 *         and creator information. If repository is empty, method return
-	 *         empty set.
+	 * @return Composite object with hierarchy of files and directories in
+	 *         repository tree.
 	 * @throws IllegalArgumentException
 	 *             if user and project are not registered.
 	 * 
@@ -38,7 +39,7 @@ public interface SVNFileService {
 	 * @throws RepositoryAuthenticationExceptoin
 	 *             if user authentication failed.
 	 */
-	public Set<File> getAllFiles(User user) throws IllegalArgumentException, IOException,
+	public FileTreeComposite getAllFiles(User user) throws IllegalArgumentException, IOException,
 			RepositoryAuthenticationExceptoin;
 
 	/**
@@ -85,7 +86,7 @@ public interface SVNFileService {
 			RepositoryAuthenticationExceptoin, IOException;
 
 	/**
-	 * Get text content of file from repository.
+	 * Get text content of file in required revision from repository.
 	 * 
 	 * @param project
 	 *            Project object of required repository.
@@ -103,6 +104,6 @@ public interface SVNFileService {
 	 *             if there's no such path in revision, that is path of
 	 *             directory or that is path of non-text file.
 	 */
-	public String getFileContent(User user, File file) throws IOException, RepositoryAuthenticationExceptoin,
-			InvalidParameterException, IllegalArgumentException;
+	public String getFileContent(User user, File file, int revisionNumber) throws IOException,
+			RepositoryAuthenticationExceptoin, InvalidParameterException, IllegalArgumentException;
 }
