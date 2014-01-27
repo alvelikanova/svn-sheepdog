@@ -1,20 +1,35 @@
 package com.sheepdog.business.services.svn.impl;
 
 import java.io.OutputStream;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 import org.tmatesoft.svn.core.SVNCommitInfo;
 import org.tmatesoft.svn.core.SVNException;
+import org.tmatesoft.svn.core.SVNProperty;
 import org.tmatesoft.svn.core.SVNPropertyValue;
 import org.tmatesoft.svn.core.io.ISVNEditor;
 import org.tmatesoft.svn.core.io.diff.SVNDiffWindow;
 
 import com.sheepdog.business.domain.entities.File;
 
+/**
+ * QuickEditor is simple implementing of ISVNEditor, that required for
+ * one-request loading information about files and directories from repository.
+ * 
+ * @author Ivan Arkhipov.
+ * 
+ */
 public class QuickEditor implements ISVNEditor {
-	private Set<File> files = new HashSet<>();
+	private LinkedList<File> files = new LinkedList<>();
+
 	private File tempFile;
+
+	private LinkedList myDirectoriesStack = new LinkedList();
+
+	private Map myDirProps = new HashMap();
+	private Map myFileProps = new HashMap();
 
 	@Override
 	public void targetRevision(long revision) throws SVNException {
@@ -23,6 +38,8 @@ public class QuickEditor implements ISVNEditor {
 
 	@Override
 	public void openRoot(long revision) throws SVNException {
+		String absoluteDirPath = "/";
+		myDirectoriesStack.push(absoluteDirPath);
 	}
 
 	@Override
@@ -44,18 +61,33 @@ public class QuickEditor implements ISVNEditor {
 		tempFile.setIsDir(true);
 
 		files.add(tempFile);
+
+		String absouluteDirPath = "/" + path;
+		myDirectoriesStack.push(absouluteDirPath);
 	}
 
 	@Override
 	public void openDir(String path, long revision) throws SVNException {
+		String absoluteDirPath = "/" + path;
+		myDirectoriesStack.push(absoluteDirPath);
 	}
 
 	@Override
 	public void changeDirProperty(String name, SVNPropertyValue value) throws SVNException {
+
+		String currentDirPath = (String) myDirectoriesStack.peek();
+
+		Map props = (Map) myDirProps.get(currentDirPath);
+		if (props == null) {
+			props = new HashMap();
+			myDirProps.put(currentDirPath, props);
+		}
+		props.put(name, value);
 	}
 
 	@Override
 	public void closeDir() throws SVNException {
+		myDirectoriesStack.pop();
 	}
 
 	@Override
@@ -65,6 +97,7 @@ public class QuickEditor implements ISVNEditor {
 		tempFile.setIsDir(false);
 
 		files.add(tempFile);
+
 	}
 
 	@Override
@@ -74,6 +107,14 @@ public class QuickEditor implements ISVNEditor {
 	@Override
 	public void changeFileProperty(String path, String propertyName, SVNPropertyValue propertyValue)
 			throws SVNException {
+
+		String absolutePath = "/" + path;
+		Map props = (Map) myFileProps.get(absolutePath);
+		if (props == null) {
+			props = new HashMap();
+			myFileProps.put(absolutePath, props);
+		}
+		props.put(propertyName, propertyValue);
 	}
 
 	@Override
@@ -102,8 +143,16 @@ public class QuickEditor implements ISVNEditor {
 		return null;
 	}
 
-	public Set<File> getFiles() {
+	public LinkedList<File> getFiles() {
 		return files;
+	}
+
+	public Map getMyDirProps() {
+		return myDirProps;
+	}
+
+	public Map getMyFileProps() {
+		return myFileProps;
 	}
 
 }
