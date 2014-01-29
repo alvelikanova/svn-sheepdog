@@ -1,11 +1,9 @@
 package com.sheepdog.business.domain.entities;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * FileTreeComposite class is required for creating hierarchy of files tree.
@@ -13,24 +11,24 @@ import java.util.Set;
  * @author Ivan Arkhipov.
  * 
  */
-public class FileTreeComposite {
+public class FileTreeComposite implements Comparable<FileTreeComposite> {
 
 	private FileTreeComposite parent = null;
 
-	private Collection<FileTreeComposite> childs = new ArrayList<FileTreeComposite>(0);
+	private Collection<FileTreeComposite> childs = new TreeSet<FileTreeComposite>();
 
 	private File file = null;
 
 	private Map property = new HashMap<>(0);
 
+	public FileTreeComposite() {
+
+	}
+
 	public FileTreeComposite(File file, Map props) {
 
 		this.setFile(file);
 		this.setProperty(props);
-
-	}
-
-	public FileTreeComposite() {
 
 	}
 
@@ -87,7 +85,29 @@ public class FileTreeComposite {
 
 	@Override
 	public String toString() {
-		return "file";
+		return file.toString();
+	}
+
+	/*
+	 * @throws NullPointerException if ftc, files or filename strings is null.
+	 * 
+	 * @throws IllegalArgumentException if this object and ftc are not in one
+	 * level of FileTreeComposite hierarchy.
+	 */
+	@Override
+	public int compareTo(FileTreeComposite ftc) throws NullPointerException, IllegalArgumentException {
+
+		if (this == ftc) {
+			return 0;
+		}
+
+		if (!ftc.getParent().equals(this.getParent())) {
+			throw new IllegalArgumentException();
+		}
+
+		int compare = this.getFile().getName().compareTo(ftc.getFile().getName());
+
+		return compare;
 	}
 
 }
