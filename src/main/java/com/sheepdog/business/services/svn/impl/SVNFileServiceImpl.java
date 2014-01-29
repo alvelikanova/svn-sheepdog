@@ -199,6 +199,21 @@ public class SVNFileServiceImpl implements SVNFileService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
+	 * com.sheepdog.business.services.svn.SVNFileService#getActualFileContent
+	 * (com.sheepdog.business.domain.entities.User,
+	 * com.sheepdog.business.domain.entities.File)
+	 */
+	@Override
+	public String getActualFileContent(User user, File file) throws IOException, RepositoryAuthenticationExceptoin,
+			InvalidParameterException, IllegalArgumentException {
+
+		return getFileContent(user, file, -1);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
 	 * com.sheepdog.business.services.svn.SVNFileService#getFileContent(com.
 	 * sheepdog.business.domain.entities.User,
 	 * com.sheepdog.business.domain.entities.File)

@@ -106,4 +106,26 @@ public interface SVNFileService {
 	 */
 	public String getFileContent(User user, File file, int revisionNumber) throws IOException,
 			RepositoryAuthenticationExceptoin, InvalidParameterException, IllegalArgumentException;
+	
+	/**
+	 * Get actual text content of file from repository.
+	 * 
+	 * @param project
+	 *            Project object of required repository.
+	 * @param file
+	 *            File object containing path to required file.
+	 * @return String of text content.
+	 * @throws IllegalArgumentException
+	 *             if user and project are not registered.
+	 * 
+	 * @throws IOException
+	 *             a failure occurred while connecting to a repository
+	 * @throws RepositoryAuthenticationExceptoin
+	 *             if user authentication failed.
+	 * @throws InvalidParameterException
+	 *             if there's no such path in revision, that is path of
+	 *             directory or that is path of non-text file.
+	 */
+	public String getActualFileContent(User user, File file) throws IOException,
+	RepositoryAuthenticationExceptoin, InvalidParameterException, IllegalArgumentException;
 }
