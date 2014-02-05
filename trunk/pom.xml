@@ -80,6 +80,19 @@
 			<artifactId>spring-aop</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<dependency>
+		   <groupId>org.springframework</groupId>
+		   <artifactId>spring-context-support</artifactId>
+		   <version>${spring.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
@@ -139,19 +152,21 @@
 		<!-- Security -->
 		<dependency>
 			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-core</artifactId>
+			<artifactId>shiro-all</artifactId>
 			<version>${shiro.version}</version>
+		</dependency>
+		
+		<dependency>
+		   <groupId>com.googlecode.ehcache-spring-annotations</groupId>
+		   <artifactId>ehcache-spring-annotations</artifactId>
+		   <version>1.2.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-web</artifactId>
-			<version>${shiro.version}</version>
+		   <groupId>net.sf.ehcache</groupId>
+		   <artifactId>ehcache</artifactId>
+		   <version>2.7.2</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-spring</artifactId>
-			<version>${shiro.version}</version>
-		</dependency>
+
 
 		<!-- Misc -->
 		<dependency>
