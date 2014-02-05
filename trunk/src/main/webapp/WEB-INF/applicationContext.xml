@@ -9,7 +9,15 @@
 	<import resource="spring-orm.xml" />
 	<import resource="spring-shiro-security.xml" />
 
-	<context:property-placeholder location="classpath:*.properties" />
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	   <property name="locations">
+	      <list>
+	         <value>/WEB-INF/dev.properties</value>
+	      </list>
+	   </property>
+	</bean>
+
+	<!-- context:property-placeholder location="classpath:*.properties" / -->
 
 	<context:component-scan base-package="com.sheepdog" />
 
