@@ -11,6 +11,7 @@ import java.util.Properties;
 import javax.security.auth.RefreshFailedException;
 
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.tmatesoft.svn.core.io.SVNRepository;
 
@@ -34,7 +35,7 @@ public class SVNProjectFacadeImpl implements SVNProjectFacade {
 	/**
 	 * SVNRepositoryManager singleton containing {@link SVNRepository} objects.
 	 */
-	// @Autowired
+	@Autowired
 	private SVNRepositoryManager repositoryManager;
 
 	/**
@@ -42,9 +43,8 @@ public class SVNProjectFacadeImpl implements SVNProjectFacade {
 	 */
 	public static final Logger LOG = (Logger) LoggerFactory.getLogger(SVNProjectFacadeImpl.class);
 
-	public SVNProjectFacadeImpl(SVNRepositoryManager repositoryManager) {
-		super();
-		this.repositoryManager = repositoryManager;
+	public SVNProjectFacadeImpl() {
+		
 	}
 
 	/*

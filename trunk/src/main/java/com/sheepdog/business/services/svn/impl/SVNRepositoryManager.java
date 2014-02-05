@@ -34,6 +34,10 @@ public class SVNRepositoryManager {
 	 * Map containing SVNRepository object of Project object.
 	 */
 	private Map<User, SVNRepository> repositories = new ConcurrentHashMap<User, SVNRepository>(0);
+	
+	public SVNRepositoryManager(){
+		
+	}
 
 	/**
 	 * Create and setup new repository connection.

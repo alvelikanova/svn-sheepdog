@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.tmatesoft.svn.core.SVNAuthenticationException;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNException;
@@ -44,7 +46,7 @@ import com.sheepdog.business.services.svn.impl.TypeOfFileChanges;
  * @author Ivan Arkhipov.
  * 
  */
-// @Service
+@Service
 public class SVNFileServiceImpl implements SVNFileService {
 
 	/**
@@ -55,12 +57,11 @@ public class SVNFileServiceImpl implements SVNFileService {
 	/**
 	 * SVNProjectFacade object is provides connection to required repository.
 	 */
-	// @Autowired
+	@Autowired
 	private SVNProjectFacade projectFacade;
 
-	public SVNFileServiceImpl(SVNProjectFacade projectFacade) {
-		super();
-		this.projectFacade = projectFacade;
+	public SVNFileServiceImpl() {
+		
 	}
 
 	/*

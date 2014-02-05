@@ -55,9 +55,8 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 	 */
 	public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 
-	public SVNRevisionServiceImpl(SVNProjectFacade projectFacade) {
-		super();
-		this.projectFacade = projectFacade;
+	public SVNRevisionServiceImpl() {
+		
 	}
 
 	/*

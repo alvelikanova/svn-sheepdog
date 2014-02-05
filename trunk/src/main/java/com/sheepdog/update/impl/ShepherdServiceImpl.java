@@ -105,19 +105,6 @@ public class ShepherdServiceImpl implements ShepherdService {
 
 	}
 
-	public ShepherdServiceImpl(SVNRevisionService svnRevisionService, SVNFileService svnFileService,
-			FileManagementService fileManagementService, RevisionManagementService revisionManagementService,
-			SubscriptionManagementService subscriptionManagementService, UserManagementService userManagementService,
-			Map<Revision, Map<File, TypeOfFileChanges>> newRevisionsAndFiles) {
-		super();
-		this.svnRevisionService = svnRevisionService;
-		this.svnFileService = svnFileService;
-		this.fileManagementService = fileManagementService;
-		this.revisionManagementService = revisionManagementService;
-		this.subscriptionManagementService = subscriptionManagementService;
-		this.userManagementService = userManagementService;
-		this.newRevisionsAndFiles = newRevisionsAndFiles;
-	}
 
 	/*
 	 * (non-Javadoc)
