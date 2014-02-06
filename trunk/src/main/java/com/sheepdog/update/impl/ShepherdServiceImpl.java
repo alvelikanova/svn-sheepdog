@@ -9,11 +9,10 @@ import java.util.Set;
 import javax.security.auth.RefreshFailedException;
 import javax.xml.transform.TransformerException;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import ch.qos.logback.classic.Logger;
 
 import com.sheepdog.business.domain.entities.File;
 import com.sheepdog.business.domain.entities.Revision;
@@ -46,7 +45,7 @@ public class ShepherdServiceImpl implements ShepherdService {
 	/**
 	 * Logger object.
 	 */
-	public static final Logger LOG = (Logger) LoggerFactory.getLogger(ShepherdServiceImpl.class);
+	public static final Logger LOG = LoggerFactory.getLogger(ShepherdServiceImpl.class);
 
 	/**
 	 * Load new revision info from repository.
@@ -104,7 +103,6 @@ public class ShepherdServiceImpl implements ShepherdService {
 	public ShepherdServiceImpl() {
 
 	}
-
 
 	/*
 	 * (non-Javadoc)

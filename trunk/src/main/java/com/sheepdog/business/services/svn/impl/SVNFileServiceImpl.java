@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,8 @@ import org.tmatesoft.svn.core.io.ISVNReporter;
 import org.tmatesoft.svn.core.io.ISVNReporterBaton;
 import org.tmatesoft.svn.core.io.SVNRepository;
 
-import ch.qos.logback.classic.Logger;
+
+
 
 import com.sheepdog.business.domain.entities.File;
 import com.sheepdog.business.domain.entities.FileTreeComposite;
@@ -52,7 +54,7 @@ public class SVNFileServiceImpl implements SVNFileService {
 	/**
 	 * Logger object.
 	 */
-	public static final Logger LOG = (Logger) LoggerFactory.getLogger(SVNFileServiceImpl.class);
+	public static final Logger LOG = LoggerFactory.getLogger(SVNFileServiceImpl.class);
 
 	/**
 	 * SVNProjectFacade object is provides connection to required repository.

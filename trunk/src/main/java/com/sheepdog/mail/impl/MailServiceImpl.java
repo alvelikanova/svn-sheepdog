@@ -22,9 +22,7 @@ public class MailServiceImpl implements MailService {
 	@Autowired
 	private MailConnector mailConnector;
 
-	public MailServiceImpl(MailConnector mailConnector) {
-		super();
-		this.mailConnector = mailConnector;
+	public MailServiceImpl() {
 	}
 
 	/*

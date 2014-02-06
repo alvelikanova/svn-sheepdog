@@ -10,12 +10,11 @@ import java.util.Properties;
 
 import javax.security.auth.RefreshFailedException;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.tmatesoft.svn.core.io.SVNRepository;
-
-import ch.qos.logback.classic.Logger;
 
 import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
@@ -41,10 +40,10 @@ public class SVNProjectFacadeImpl implements SVNProjectFacade {
 	/**
 	 * Logger object.
 	 */
-	public static final Logger LOG = (Logger) LoggerFactory.getLogger(SVNProjectFacadeImpl.class);
+	public static final Logger LOG = LoggerFactory.getLogger(SVNProjectFacadeImpl.class);
 
 	public SVNProjectFacadeImpl() {
-		
+
 	}
 
 	/*
@@ -78,19 +77,23 @@ public class SVNProjectFacadeImpl implements SVNProjectFacade {
 		return repositoryManager.getRepositoryConnection(user);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.sheepdog.business.services.svn.SVNProjectFacade#createMainConnection()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.sheepdog.business.services.svn.SVNProjectFacade#createMainConnection
+	 * ()
 	 */
 	@Override
-	public void createMainConnection() throws RefreshFailedException, InvalidURLException, RepositoryAuthenticationExceptoin, IOException {
+	public void createMainConnection() throws RefreshFailedException, InvalidURLException,
+			RepositoryAuthenticationExceptoin, IOException {
 		Properties prop = new Properties();
 		String propertyPath = "src/main/resources/project.properties";
-		
+
 		try (InputStream is = new FileInputStream(new File(propertyPath))) {
 
 			prop.load(is);
 
-			
 		} catch (FileNotFoundException e) {
 			LOG.error(e.getMessage() + " " + propertyPath); // TODO
 			throw new RefreshFailedException();
@@ -101,7 +104,7 @@ public class SVNProjectFacadeImpl implements SVNProjectFacade {
 			LOG.error(e.getMessage() + " " + propertyPath); // TODO
 			throw new RefreshFailedException();
 		}
-		
+
 		repositoryManager.createMainConnection(prop.getProperty("repository.url"),
 				prop.getProperty("repository.login"), prop.getProperty("repository.password"));
 

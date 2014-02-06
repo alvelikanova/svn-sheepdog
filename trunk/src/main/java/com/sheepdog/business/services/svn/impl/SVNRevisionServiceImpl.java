@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,6 @@ import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNLogEntry;
 import org.tmatesoft.svn.core.SVNProperties;
 import org.tmatesoft.svn.core.io.SVNFileRevision;
-
-import ch.qos.logback.classic.Logger;
 
 import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.domain.entities.File;
@@ -48,7 +47,7 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 	/**
 	 * Logger object.
 	 */
-	public static final Logger LOG = (Logger) LoggerFactory.getLogger(SVNRevisionServiceImpl.class);
+	public static final Logger LOG = LoggerFactory.getLogger(SVNRevisionServiceImpl.class);
 
 	/**
 	 * Template of parsing the date string.
@@ -56,7 +55,7 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 	public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 
 	public SVNRevisionServiceImpl() {
-		
+
 	}
 
 	/*
