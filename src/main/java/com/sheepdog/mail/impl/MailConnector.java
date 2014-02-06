@@ -19,13 +19,14 @@ import javax.mail.internet.MimeMessage;
 import javax.security.auth.RefreshFailedException;
 import javax.xml.transform.TransformerException;
 
-import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -119,20 +120,10 @@ public class MailConnector {
 	/**
 	 * Logger object.
 	 */
-	public static final Logger LOG = Logger.getLogger(MailConnector.class);
+	public static final Logger LOG = LoggerFactory.getLogger(MailConnector.class);
 
 	public MailConnector() {
 
-	}
-
-	public MailConnector(String host, String senderLogin, String senderPassword, String subscriptionTemplatePath,
-			String tweetTemplatePath) {
-		super();
-		this.host = host;
-		this.senderLogin = senderLogin;
-		this.senderPassword = senderPassword;
-		this.subscriptionTemplatePath = subscriptionTemplatePath;
-		this.tweetTemplatePath = tweetTemplatePath;
 	}
 
 	/**
