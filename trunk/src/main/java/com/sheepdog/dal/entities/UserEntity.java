@@ -32,6 +32,7 @@ public class UserEntity implements java.io.Serializable {
 	private String lastName;
 	private String email;
 	private String password;
+	private boolean admin;
 	private Set<SubscriptionEntity> subscriptionEntities = new HashSet<SubscriptionEntity>(
 			0);
 
@@ -39,24 +40,26 @@ public class UserEntity implements java.io.Serializable {
 	}
 
 	public UserEntity(ProjectEntity projectEntity, String login,
-			String firstName, String lastName, String email, String password) {
+			String firstName, String lastName, String email, String password, boolean admin) {
 		this.projectEntity = projectEntity;
 		this.login = login;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
 		this.password = password;
+		this.admin = admin;
 	}
 
 	public UserEntity(ProjectEntity projectEntity, String login,
 			String firstName, String lastName, String email, String password,
-			Set<SubscriptionEntity> subscriptionEntities) {
+			boolean admin, Set<SubscriptionEntity> subscriptionEntities) {
 		this.projectEntity = projectEntity;
 		this.login = login;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
 		this.password = password;
+		this.admin = admin;
 		this.subscriptionEntities = subscriptionEntities;
 	}
 
@@ -125,7 +128,16 @@ public class UserEntity implements java.io.Serializable {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	
+	@Column(name = "ADMIN", nullable = false)
+	public boolean isAdmin() {
+		return this.admin;
+	}
 
+	public void setAdmin(boolean admin) {
+		this.admin = admin;
+	}
+	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "userEntity")
 	public Set<SubscriptionEntity> getSubscriptionEntities() {
 		return this.subscriptionEntities;
