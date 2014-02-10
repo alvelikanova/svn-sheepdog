@@ -15,6 +15,17 @@
 		<div>
 			<h3>This is Dashboard page</h3>
 		</div>
+	    <h:panelGroup rendered="#{not empty request.remoteUser}">
+	        You're logged in as #{request.remoteUser}.
+	        <br/>
+	        <h:panelGroup rendered="#{request.isUserInRole('ADMIN')}">
+	            You're an ADMIN user!
+	            <br/>
+	        </h:panelGroup>
+	        <h:panelGroup rendered="#{not request.isUserInRole('ADMIN')}">
+	            You're not an ADMIN user!
+	        </h:panelGroup>
+	    </h:panelGroup>
 	</ui:define>
 
 	<ui:define name="footer">

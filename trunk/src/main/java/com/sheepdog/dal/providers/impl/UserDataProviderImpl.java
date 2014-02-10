@@ -18,7 +18,7 @@ public class UserDataProviderImpl extends BaseDataProviderImpl<UserEntity,User,I
 		User user = null;
 		try{
 		Criteria cr = sessionFactory.getCurrentSession()
-				.createCriteria(UserEntity.class).add(Restrictions.eq("LOGIN", login));
+				.createCriteria(UserEntity.class).add(Restrictions.eq("login", login));
 		cr.setMaxResults(1);
 		UserEntity userEntity = (UserEntity) cr.uniqueResult();
 		user =	mappingService.map(userEntity, User.class);
@@ -34,7 +34,7 @@ public class UserDataProviderImpl extends BaseDataProviderImpl<UserEntity,User,I
 		User user = null;
 		try{
 		Criteria cr = sessionFactory.getCurrentSession()
-				.createCriteria(UserEntity.class).add(Restrictions.eq("EMAIL", email));
+				.createCriteria(UserEntity.class).add(Restrictions.eq("email", email));
 		cr.setMaxResults(1);
 		UserEntity userEntity = (UserEntity) cr.uniqueResult();
 		user =	mappingService.map(userEntity, User.class);
@@ -60,7 +60,7 @@ public class UserDataProviderImpl extends BaseDataProviderImpl<UserEntity,User,I
 //		cr.setMaxResults(1);
 //		userEntity = (UserEntity) cr.uniqueResult();
 //		user.setPassword(password);
-//		merge(user,userEntity,UserEntity.class);
+//		merge(user,UserEntity.class);
 //	}
 	
 }
