@@ -12,7 +12,7 @@ public class User extends PersistentEntity<Integer> {
 	private String email;
 	private String password;
 
-	private boolean isAdmin = Boolean.FALSE;
+	private boolean admin = Boolean.FALSE;
 
 	public User() {
 	}
@@ -24,12 +24,13 @@ public class User extends PersistentEntity<Integer> {
 	 * @param email
 	 * @param password
 	 */
-	public User(Project project, String login, String email, String password) {
+	public User(Project project, String login, String email, String password, boolean admin) {
 		super();
 		this.project = project;
 		this.login = login;
 		this.email = email;
 		this.password = password;
+		this.admin = admin;
 	}
 
 	/**
@@ -40,8 +41,9 @@ public class User extends PersistentEntity<Integer> {
 	 * @param lastName
 	 * @param email
 	 * @param password
+	 * @param admin
 	 */
-	public User(Project project, String login, String firstName, String lastName, String email, String password) {
+	public User(Project project, String login, String firstName, String lastName, String email, String password, boolean admin) {
 		super();
 		this.project = project;
 		this.login = login;
@@ -49,6 +51,7 @@ public class User extends PersistentEntity<Integer> {
 		this.lastName = lastName;
 		this.email = email;
 		this.password = password;
+		this.admin = admin;
 	}
 
 	/**
@@ -111,11 +114,11 @@ public class User extends PersistentEntity<Integer> {
 	}
 
 	public boolean isAdmin() {
-		return isAdmin;
+		return admin;
 	}
 
-	public void setIsAdmin(boolean isAdmin) {
-		this.isAdmin = isAdmin;
+	public void setAdmin(boolean admin) {
+		this.admin = admin;
 	}
 
 }

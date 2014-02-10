@@ -36,16 +36,11 @@ public class HibernateRealm extends AuthorizingRealm {
 		String login = (String)principals.getPrimaryPrincipal();
 		User user = userDataProvider.getUserByLogin(login);
 		if (user == null) {
-		    throw new AuthorizationException("Could not find user with specified id");
+		    throw new AuthorizationException("Could not find user with specified login");
 		}
-		// if role based access needed
 		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-//	        for (Role role : user.getRoles()) {
-//	            info.addRole(role.getDescription());
-//	            for (Permission permission : role.getPermissions()) {
-//	                info.addStringPermission(permition.getDescription());
-//	            }
-//	        }
+		if (user.isAdmin()) 
+			info.addRole("ADMIN");
 		return info;
 	}
 
