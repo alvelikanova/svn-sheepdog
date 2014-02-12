@@ -15,7 +15,8 @@
 					<p:tabMenu activeIndex="4">
 					    <p:menuitem value="Dashboard" url="/protected/dashboard.xhtml" icon="ui-icon-star"/>
 					    <p:menuitem value="Students" url="/protected/students/students.xhtml" icon="ui-icon-star"/>
-					    <p:menuitem value="Hello" url="/protected/hello.xhtml" icon="ui-icon-search" />
+					    <p:menuitem value="Hello" url="/protected/hello.xhtml" icon="ui-icon-search" />	    
+					    <p:menuitem rendered="#{request.isUserInRole('ADMIN')}" value="Admin" url="/admin/adminpage.xhtml" icon="ui-icon-star" />
 					</p:tabMenu>
 				</h:form>
 			</div>
