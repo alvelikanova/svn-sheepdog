@@ -29,8 +29,7 @@
         class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
         <property name="sessionDAO" ref="sessionDAO" />
     </bean>
-    
-    
+	
 	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
 		<property name="securityManager" ref="securityManager" />
 		<property name="loginUrl" value="/public/login.xhtml" />
@@ -39,6 +38,7 @@
 
 		<property name="filterChainDefinitions">
 			<value>
+				/admin/** = roles["ADMIN"]
 				/** = authc
 			</value>
 		</property>
@@ -52,6 +52,10 @@
 						<property name="rememberMeParam" value="login:rememberMe" />
 					</bean>
 				</entry>
+			  	<entry key="roles">
+                	<bean class="org.apache.shiro.web.filter.authz.RolesAuthorizationFilter">	
+                	</bean>
+            	</entry>
 			</map>
 		</property>
 	</bean>
