@@ -7,12 +7,16 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.security.auth.RefreshFailedException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.TransformerException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.sheepdog.business.domain.entities.File;
 import com.sheepdog.business.domain.entities.Revision;
@@ -39,8 +43,9 @@ import com.sheepdog.update.ShepherdService;
  * @author Ivan Arkhipov
  * 
  */
-@Service
-public class ShepherdServiceImpl implements ShepherdService {
+
+@WebServlet(name="ShepherdService", urlPatterns={"/shepherdService"})
+public class ShepherdServiceImpl extends HttpServlet implements ShepherdService {
 
 	/**
 	 * Logger object.
@@ -102,6 +107,13 @@ public class ShepherdServiceImpl implements ShepherdService {
 
 	public ShepherdServiceImpl() {
 
+	}
+	
+	@Override
+	public void doPost(HttpServletRequest request, HttpServletResponse response) 
+		throws ServletException, IOException {
+		LOG.info("Post-Commit Hook success. Starting lookOn() method...........");
+		lookOn();
 	}
 
 	/*
