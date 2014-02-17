@@ -14,6 +14,7 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import com.sheepdog.dal.exceptions.DaoException;
 import com.sheepdog.infrastructure.services.MappingService;
@@ -25,6 +26,7 @@ import com.sheepdog.dal.providers.base.PageableDataProvider;
 import com.sheepdog.dal.providers.pagination.LoadOptions;
 import com.sheepdog.dal.providers.pagination.PagedList;
 
+@Repository
 public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implements GenericDataProvider<T, K, ID>, PageableDataProvider<T, K>{
 
 	protected static final Logger LOG = LoggerFactory.getLogger(BaseDataProviderImpl.class);
