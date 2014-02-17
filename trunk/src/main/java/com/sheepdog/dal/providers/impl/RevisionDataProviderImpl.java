@@ -32,7 +32,7 @@ public class RevisionDataProviderImpl extends BaseDataProviderImpl<RevisionEntit
 		try{
 			Criteria cr = sessionFactory.getCurrentSession()
 				    .createCriteria(RevisionEntity.class)
-				    .setProjection(Projections.max("REVISION_NO"));
+				    .setProjection(Projections.max("revisionNo"));
 			cr.setMaxResults(1);
 			RevisionEntity re = (RevisionEntity)cr.uniqueResult();
 			revision = mappingService.map(re, Revision.class);

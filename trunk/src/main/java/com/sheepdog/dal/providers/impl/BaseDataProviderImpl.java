@@ -128,7 +128,7 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
 		Session session = sessionFactory.getCurrentSession();
 		K businessEntity = null;
 		try {
-			Criteria cr = session.createCriteria(dalEntityClass).add(Restrictions.eq("ID", id));
+			Criteria cr = session.createCriteria(dalEntityClass).add(Restrictions.eq("id", id));
 			cr.setMaxResults(1);
 			@SuppressWarnings("unchecked")
 			T dalEntity = (T) cr.uniqueResult();

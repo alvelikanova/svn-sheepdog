@@ -19,7 +19,7 @@ public class FileDataProviderImpl extends BaseDataProviderImpl<FileEntity, File,
 		try{
 			Criteria cr = sessionFactory.getCurrentSession()
 					.createCriteria(FileEntity.class)
-					.add(Restrictions.eq("QUALIFIED_NAME", qualifiedName));
+					.add(Restrictions.eq("qualifiedName", qualifiedName));
 			cr.setMaxResults(1);
 			FileEntity fileEntity = (FileEntity) cr.uniqueResult();
 			file = mappingService.map(fileEntity, File.class);

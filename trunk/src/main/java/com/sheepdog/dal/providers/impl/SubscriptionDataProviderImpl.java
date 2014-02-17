@@ -29,16 +29,15 @@ public class SubscriptionDataProviderImpl extends BaseDataProviderImpl<Subscript
 			
 			//Load user by login
 			Criteria cr = session.createCriteria(UserEntity.class)
-					.add(Restrictions.eq("LOGIN", userName));
+					.add(Restrictions.eq("login", userName));
 			cr.setMaxResults(1);
 			UserEntity userEntity = (UserEntity) cr.uniqueResult();
 			
 			//Load all users' subscriptions
 			cr = session.createCriteria(SubscriptionEntity.class)
-					.add(Restrictions.eq("USER_ID", userEntity.getId()));
+					.add(Restrictions.eq("userEntity.id", userEntity.getId()));
 			@SuppressWarnings("unchecked")
 			List<SubscriptionEntity> subscriptionList = cr.list();
-			
 			for (SubscriptionEntity se: subscriptionList) {
 				FileEntity fileEntity = se.getFileEntity();
 				File file = mappingService.map(fileEntity, File.class);
@@ -59,12 +58,12 @@ public class SubscriptionDataProviderImpl extends BaseDataProviderImpl<Subscript
 			
 			//load file with qname from dbase
 			Criteria crfile = session.createCriteria(FileEntity.class)
-					.add(Restrictions.eq("QUALIFIED_NAME", qualifiedName));
+					.add(Restrictions.eq("qualifiedName", qualifiedName));
 			FileEntity fe = (FileEntity)crfile.uniqueResult();
 			
 			//load subscriptions by file's id
 			Criteria crsub = session.createCriteria(SubscriptionEntity.class)
-					.add(Restrictions.eq("FILE_ID", fe.getId()));
+					.add(Restrictions.eq("fileEntity.id", fe.getId()));
 			sublist = crsub.list();
 		} catch (Exception ex) {
 			LOG.error("Error loading subscriptions", ex.getMessage());

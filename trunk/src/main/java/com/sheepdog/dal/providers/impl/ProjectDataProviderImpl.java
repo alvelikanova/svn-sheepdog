@@ -19,7 +19,7 @@ public class ProjectDataProviderImpl extends BaseDataProviderImpl<ProjectEntity,
 		try{
 			Criteria cr = sessionFactory.getCurrentSession()
 					.createCriteria(ProjectEntity.class)
-					.add(Restrictions.eq("URL", url));
+					.add(Restrictions.eq("url", url));
 			cr.setMaxResults(1);
 			ProjectEntity projectEntity = (ProjectEntity) cr.uniqueResult();
 			project = mappingService.map(projectEntity, Project.class);	
@@ -36,7 +36,7 @@ public class ProjectDataProviderImpl extends BaseDataProviderImpl<ProjectEntity,
 		try{
 			Criteria cr = sessionFactory.getCurrentSession()
 					.createCriteria(ProjectEntity.class)
-					.add(Restrictions.eq("NAME", projectName));
+					.add(Restrictions.eq("name", projectName));
 			cr.setMaxResults(1);
 			ProjectEntity projectEntity = (ProjectEntity) cr.uniqueResult();
 			project = mappingService.map(projectEntity, Project.class);	
