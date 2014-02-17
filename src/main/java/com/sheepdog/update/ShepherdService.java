@@ -1,6 +1,5 @@
 package com.sheepdog.update;
 
-import org.springframework.stereotype.Service;
 
 /**
  * ShepherdService check updates from repository, update DB and invoke methods
@@ -9,7 +8,7 @@ import org.springframework.stereotype.Service;
  * @author Ivan Arkhipov
  * 
  */
-@Service
+
 public interface ShepherdService {
 
 	/**
