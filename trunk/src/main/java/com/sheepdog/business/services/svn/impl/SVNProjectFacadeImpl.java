@@ -13,6 +13,7 @@ import javax.security.auth.RefreshFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.tmatesoft.svn.core.io.SVNRepository;
 
@@ -37,6 +38,15 @@ public class SVNProjectFacadeImpl implements SVNProjectFacade {
 	@Autowired
 	private SVNRepositoryManager repositoryManager;
 
+	@Value("${repository.url}")
+	private String repoUrl;
+	
+	@Value("${repository.login}")
+	private String repoLogin;
+	
+	@Value("${repository.password}")
+	private String repoPass;
+	
 	/**
 	 * Logger object.
 	 */
@@ -87,27 +97,26 @@ public class SVNProjectFacadeImpl implements SVNProjectFacade {
 	@Override
 	public void createMainConnection() throws RefreshFailedException, InvalidURLException,
 			RepositoryAuthenticationExceptoin, IOException {
-		Properties prop = new Properties();
-		String propertyPath = "src/main/resources/project.properties";
+		
+//		Properties prop = new Properties();
+//		String propertyPath = "src/main/resources/project.properties";
+//
+//		try (InputStream is = new FileInputStream(new File(propertyPath))) {
+//
+//			prop.load(is);
+//
+//		} catch (FileNotFoundException e) {
+//			LOG.error(e.getMessage() + " " + propertyPath); // TODO
+//			throw new RefreshFailedException();
+//		} catch (InvalidPropertiesFormatException e) {
+//			LOG.error(e.getMessage() + " " + propertyPath); // TODO
+//			throw new RefreshFailedException();
+//		} catch (IOException e) {
+//			LOG.error(e.getMessage() + " " + propertyPath); // TODO
+//			throw new RefreshFailedException();
+//		}
 
-		try (InputStream is = new FileInputStream(new File(propertyPath))) {
-
-			prop.load(is);
-
-		} catch (FileNotFoundException e) {
-			LOG.error(e.getMessage() + " " + propertyPath); // TODO
-			throw new RefreshFailedException();
-		} catch (InvalidPropertiesFormatException e) {
-			LOG.error(e.getMessage() + " " + propertyPath); // TODO
-			throw new RefreshFailedException();
-		} catch (IOException e) {
-			LOG.error(e.getMessage() + " " + propertyPath); // TODO
-			throw new RefreshFailedException();
-		}
-
-		repositoryManager.createMainConnection(prop.getProperty("repository.url"),
-				prop.getProperty("repository.login"), prop.getProperty("repository.password"));
-
+		repositoryManager.createMainConnection(repoUrl, repoLogin, repoPass);
 	}
 
 	public SVNRepositoryManager getRepositoryManager() {
