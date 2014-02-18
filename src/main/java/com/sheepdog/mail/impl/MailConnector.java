@@ -27,6 +27,7 @@ import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -55,26 +56,31 @@ public class MailConnector {
 	/**
 	 * Host of mail server.
 	 */
+	@Value("${server.host}")
 	private String host;
 
 	/**
 	 * Login of app on mail server.
 	 */
+	@Value("${server.login}")
 	private String senderLogin;
 
 	/**
 	 * Password of app on mail server.
 	 */
+	@Value("${server.password}")
 	private String senderPassword;
 
 	/**
 	 * Path of Velocity HTML template for subscription email.
 	 */
+	@Value("${template.subscription}")
 	private String subscriptionTemplatePath;
 
 	/**
 	 * Path of Velocity HTML template for tweet email.
 	 */
+	@Value("${template.tweet}")
 	private String tweetTemplatePath;
 
 	/**
@@ -262,27 +268,26 @@ public class MailConnector {
 	 *             if file not exist, unavailable or incorrect.
 	 */
 	private void loadProps() throws RefreshFailedException {
-		Properties prop = new Properties();
-		String propertyPath = "src/main/resources/mail.properties";
-		try (InputStream is = new FileInputStream(new File(propertyPath))) {
-
-			prop.load(is);
-			host = prop.getProperty("server.host");
-			senderLogin = prop.getProperty("server.login");
-			senderPassword = prop.getProperty("server.password");
-			subscriptionTemplatePath = prop.getProperty("template.subscription");
-			tweetTemplatePath = prop.getProperty("template.tweet");
-		} catch (FileNotFoundException e) {
-			LOG.error(e.getMessage() + " " + propertyPath); // TODO
-			throw new RefreshFailedException();
-		} catch (InvalidPropertiesFormatException e) {
-			LOG.error(e.getMessage() + " " + propertyPath); // TODO
-			throw new RefreshFailedException();
-		} catch (IOException e) {
-			LOG.error(e.getMessage() + " " + propertyPath); // TODO
-			throw new RefreshFailedException();
-		}
-
+//		Properties prop = new Properties();
+//		String propertyPath = "src/main/resources/mail.properties";
+//		try (InputStream is = new FileInputStream(new File(propertyPath))) {
+//
+//			prop.load(is);
+//			host = prop.getProperty("server.host");
+//			senderLogin = prop.getProperty("server.login");
+//			senderPassword = prop.getProperty("server.password");
+//			subscriptionTemplatePath = prop.getProperty("template.subscription");
+//			tweetTemplatePath = prop.getProperty("template.tweet");
+//		} catch (FileNotFoundException e) {
+//			LOG.error(e.getMessage() + " " + propertyPath); // TODO
+//			throw new RefreshFailedException();
+//		} catch (InvalidPropertiesFormatException e) {
+//			LOG.error(e.getMessage() + " " + propertyPath); // TODO
+//			throw new RefreshFailedException();
+//		} catch (IOException e) {
+//			LOG.error(e.getMessage() + " " + propertyPath); // TODO
+//			throw new RefreshFailedException();
+//		}
 	}
 
 	/**
