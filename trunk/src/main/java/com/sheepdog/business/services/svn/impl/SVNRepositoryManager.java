@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.tmatesoft.svn.core.SVNAuthenticationException;
@@ -31,6 +33,11 @@ import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
 public class SVNRepositoryManager {
 
 	/**
+	 * Logger object.
+	 */
+	public static final Logger LOG = LoggerFactory.getLogger(SVNRepositoryManager.class);
+
+	/**
 	 * Map containing SVNRepository object of Project object.
 	 */
 	private Map<User, SVNRepository> repositories = new ConcurrentHashMap<User, SVNRepository>(0);
@@ -40,7 +47,7 @@ public class SVNRepositoryManager {
 	}
 
 	/**
-	 * Create and setup new repository connection.
+	 * Create and setup new repository connection for user.
 	 * 
 	 * @param user
 	 *            User object containing authentication info and Project object
@@ -60,25 +67,30 @@ public class SVNRepositoryManager {
 	public boolean addSVNProjectConnection(User user) throws InvalidURLException, IllegalArgumentException,
 			IOException, RepositoryAuthenticationExceptoin {
 
-		if (user == null || user.getProject() == null)
+		if (user == null || user.getProject() == null) {
+			LOG.info("Creating connection is failed, because User object is invalid.");
 			throw new IllegalArgumentException("Invalid User object: ");
-
-		if (repositories.get(user) != null)
-			return true;
+		}
+		if (repositories.get(user) != null) {
+			repositories.remove(user);
+		}
 
 		SVNRepository repo;
 
 		try {
 			repo = createSVNProjectConnection(user);
 		} catch (SVNException e) {
+			LOG.info("Creating connection is failed, because User object is invalid.");
 			throw new InvalidURLException(user.getProject().getUrl());
 		}
 
 		try {
 			repo.testConnection();
 		} catch (SVNAuthenticationException e) {
+			LOG.info("Creating connection is failed, because user authentication is failed.");
 			throw new RepositoryAuthenticationExceptoin(user);
 		} catch (SVNException e) {
+			LOG.info("Creating connection is failed, because connection is failed.");
 			throw new IOException("Failed connection to URL:" + user.getProject().getUrl());
 		}
 
@@ -100,14 +112,14 @@ public class SVNRepositoryManager {
 
 		SVNRepository repo = repositories.get(user);
 
-		if (repo == null)
+		if (repo == null) {
 			new IllegalArgumentException("Invalid User object: " + user.getLogin());
-
+		}
 		return repo;
 	}
 
 	/**
-	 * Create main connection to repository.
+	 * Create a main connection to repository.
 	 * 
 	 * @param url
 	 *            URL of repository.
@@ -147,6 +159,9 @@ public class SVNRepositoryManager {
 		} catch (SVNException e) {
 			throw new IOException("Failed connection to URL:" + tempUser.getProject().getUrl());
 		}
+
+		// User.getUpdateUser().setProject(new Project(projectName, url)); TODO
+		// Add Project object to UPDATE_USER
 
 		repositories.put(User.getUpdateUser(), repo);
 	}

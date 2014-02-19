@@ -29,11 +29,9 @@ import org.tmatesoft.svn.core.io.ISVNReporter;
 import org.tmatesoft.svn.core.io.ISVNReporterBaton;
 import org.tmatesoft.svn.core.io.SVNRepository;
 
-
-
-
 import com.sheepdog.business.domain.entities.File;
 import com.sheepdog.business.domain.entities.FileTreeComposite;
+import com.sheepdog.business.domain.entities.Project;
 import com.sheepdog.business.domain.entities.Revision;
 import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
@@ -63,7 +61,7 @@ public class SVNFileServiceImpl implements SVNFileService {
 	private SVNProjectFacade projectFacade;
 
 	public SVNFileServiceImpl() {
-		
+
 	}
 
 	/*
@@ -103,14 +101,21 @@ public class SVNFileServiceImpl implements SVNFileService {
 
 		LinkedList<File> files = editor.getFiles();
 
-		try {
-			for (File f : files)
-				f.setProject(user.getProject());
+		Project currentProject = user.getProject();
 
-			files = setNameFieldsToManyFiles(files);
-		} catch (NullPointerException e) {
-			if (files == null || files.isEmpty())
-				return new FileTreeComposite();
+		if (currentProject == null || currentProject.getName() == null || currentProject.getUrl() == null) {
+			LOG.warn("User containing invalid Project object");
+			throw new IllegalArgumentException("Invalid user.");
+		}
+
+		if (files == null || files.isEmpty()) {
+			LOG.warn("Can't load files from repository:" + currentProject.getUrl() + ".(or repository is empty)");
+			return new FileTreeComposite(File.getRootDir(), new HashMap<>(0));
+		}
+
+		for (File f : files) {
+			f.setProject(currentProject);
+			setNameFieldsToOneFile(f);
 		}
 
 		FileTreeComposite root = createComposite(files, dirProps, fileProps);
@@ -259,23 +264,6 @@ public class SVNFileServiceImpl implements SVNFileService {
 			throw new InvalidParameterException("That file is not containing a text: " + file.getPath());
 		}
 		return content;
-	}
-
-	/**
-	 * Complete all File objects by name and qualified name of file.
-	 * 
-	 * @param files
-	 *            Set of files.
-	 * @return Completed Files objects.
-	 * @throws NullPointerException
-	 */
-	private LinkedList<File> setNameFieldsToManyFiles(LinkedList<File> files) throws NullPointerException {
-
-		for (File f : files) {
-			f = setNameFieldsToOneFile(f);
-		}
-
-		return files;
 	}
 
 	/**
