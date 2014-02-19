@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * FileTreeComposite class is required for creating hierarchy of files tree.
  * 
@@ -12,6 +15,11 @@ import java.util.TreeSet;
  * 
  */
 public class FileTreeComposite implements Comparable<FileTreeComposite> {
+
+	/**
+	 * Logger object.
+	 */
+	public static final Logger LOG = LoggerFactory.getLogger(FileTreeComposite.class);
 
 	private FileTreeComposite parent = null;
 
@@ -90,24 +98,25 @@ public class FileTreeComposite implements Comparable<FileTreeComposite> {
 
 	/*
 	 * @throws NullPointerException if ftc, files or filename strings is null.
-	 * 
-	 * @throws IllegalArgumentException if this object and ftc are not in one
-	 * level of FileTreeComposite hierarchy.
 	 */
 	@Override
-	public int compareTo(FileTreeComposite ftc) throws NullPointerException, IllegalArgumentException {
+	public int compareTo(FileTreeComposite ftc) {
 
 		if (this == ftc) {
 			return 0;
 		}
 
 		if (!ftc.getParent().equals(this.getParent())) {
-			throw new IllegalArgumentException();
+			LOG.warn("File tree hierarhy is broken.");
 		}
 
-		int compare = this.getFile().getName().compareTo(ftc.getFile().getName());
+		int compare = 1;
 
+		try {
+			compare = this.getFile().getName().compareTo(ftc.getFile().getName());
+		} catch (NullPointerException e) {
+			LOG.error("Invalid FileTreeComposites");
+		}
 		return compare;
 	}
-
 }

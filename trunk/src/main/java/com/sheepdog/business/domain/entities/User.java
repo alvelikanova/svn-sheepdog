@@ -4,6 +4,8 @@ public class User extends PersistentEntity<Integer> {
 
 	private static final long serialVersionUID = 5292401382106106765L;
 
+	private static User updateUser;
+
 	private Project project;
 
 	private String login;
@@ -13,6 +15,11 @@ public class User extends PersistentEntity<Integer> {
 	private String password;
 
 	private boolean admin = Boolean.FALSE;
+
+	static {
+		updateUser = new User();
+		updateUser.setLogin("UPDATE_USER");
+	}
 
 	public User() {
 	}
@@ -24,7 +31,8 @@ public class User extends PersistentEntity<Integer> {
 	 * @param email
 	 * @param password
 	 */
-	public User(Project project, String login, String email, String password, boolean admin) {
+	public User(Project project, String login, String email, String password,
+			boolean admin) {
 		super();
 		this.project = project;
 		this.login = login;
@@ -43,7 +51,8 @@ public class User extends PersistentEntity<Integer> {
 	 * @param password
 	 * @param admin
 	 */
-	public User(Project project, String login, String firstName, String lastName, String email, String password, boolean admin) {
+	public User(Project project, String login, String firstName,
+			String lastName, String email, String password, boolean admin) {
 		super();
 		this.project = project;
 		this.login = login;
@@ -57,11 +66,9 @@ public class User extends PersistentEntity<Integer> {
 	/**
 	 * Get user for update service.
 	 * 
-	 * @return 
+	 * @return
 	 */
 	public static User getUpdateUser() {
-		User updateUser = new User();
-		updateUser.setLogin("UPDATE_USER");
 		return updateUser;
 	}
 
