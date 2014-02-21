@@ -13,9 +13,33 @@
 
 	<ui:define name="content">
 		<div>
-			<h3>This is FILES page</h3>
+
+			<h:form id="form">
+
+<p:commandButton action="#{fileTreeBean.loadData}" value=" TEST load files"></p:commandButton>
+
+				<p:treeTable id="file_tree" value="#{fileTreeBean.root}"
+					selection="#{fileTreeBean.selectedNode}" var="ftc"
+					scrollWidth="true" selectionMode="single">
+
+					<p:column style="width:150px">
+						<f:facet name="header">  
+               				Name  
+           				</f:facet>
+           				
+						<h:outputText value="#{ftc.file.name}" />
+					</p:column>
+
+
+				</p:treeTable>
+
+
+			</h:form>
+
+
+
 		</div>
-	    
+
 	</ui:define>
 
 	<ui:define name="footer">

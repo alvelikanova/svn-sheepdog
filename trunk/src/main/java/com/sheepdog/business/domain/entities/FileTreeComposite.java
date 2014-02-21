@@ -29,6 +29,8 @@ public class FileTreeComposite implements Comparable<FileTreeComposite> {
 
 	private Map property = new HashMap<>(0);
 
+	private boolean subscribed;
+	
 	public FileTreeComposite() {
 
 	}
@@ -89,6 +91,14 @@ public class FileTreeComposite implements Comparable<FileTreeComposite> {
 
 	public void setProperty(Map property) {
 		this.property = property;
+	}
+
+	public boolean isSubscribed() {
+		return subscribed;
+	}
+
+	public void setSubscribed(boolean subscribed) {
+		this.subscribed = subscribed;
 	}
 
 	@Override

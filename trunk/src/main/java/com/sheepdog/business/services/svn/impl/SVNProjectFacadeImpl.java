@@ -91,6 +91,10 @@ public class SVNProjectFacadeImpl implements SVNProjectFacade {
 	@Override
 	public void createMainConnection() throws RefreshFailedException, InvalidURLException,
 			RepositoryAuthenticationExceptoin, IOException {
+		
+		if(repoUrl == null || repoLogin == null || repoPass == null){
+			throw new RefreshFailedException();
+		}
 
 		repositoryManager.createMainConnection(repoUrl, repoLogin, repoPass);
 	}
