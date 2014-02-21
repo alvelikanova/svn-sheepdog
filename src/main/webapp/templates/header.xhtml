@@ -11,14 +11,29 @@
 	<h:outputStylesheet name="css/sheepdog.css"></h:outputStylesheet>
 	<h:form>
 
-		<p:tabMenu activeIndex="#{tabHeaderBean.activeIndex}"
-			style="width: 100%">
-			<p:menuitem value="Changelog" action="#{tabHeaderBean.toChangelog}" />
-			<p:menuitem value="Files" action="#{tabHeaderBean.toFiles}" />
+		<p:tabMenu activeIndex="#{tabHeaderBean.activeIndex}" >
+
+			<p:menuitem>
+				<p:graphicImage value="resources/images/dog.png" cache="false"/>
+			</p:menuitem>
+
+			<p:menuitem value="Admin"
+				action="#{tabHeaderBean.updateIndex(1, '/admin/adminpage.xhtml')}" />
+
+			<p:menuitem value="Changelog"
+				action="#{tabHeaderBean.updateIndex(2,'/protected/changelog.xhtml')}" />
+
+			<p:menuitem value="Files"
+				action="#{tabHeaderBean.updateIndex(3,'/protected/files.xhtml')}" />
+
 			<p:menuitem value="Subscriptions"
-				action="#{tabHeaderBean.toSubscriptions}" />
-			<p:menuitem value="Profile" action="#{tabHeaderBean.toProfile}" />
-			<p:menuitem value="LOGOUT" actionListener="#{tabHeaderBean.toLogout}" />
+				action="#{tabHeaderBean.updateIndex(4,'/protected/subscriptions.xhtml')}" />
+
+			<p:menuitem value="Profile"
+				action="#{tabHeaderBean.updateIndex(5, '/protected/profile.xhtml')}" />
+
+			<p:menuitem value="LOGOUT" action="#{logoutBean.doLogout}" />
+
 		</p:tabMenu>
 
 	</h:form>

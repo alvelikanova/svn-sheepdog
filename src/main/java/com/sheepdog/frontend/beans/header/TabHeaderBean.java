@@ -1,45 +1,28 @@
 package com.sheepdog.frontend.beans.header;
 
-import javax.enterprise.context.SessionScoped;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 
 @ManagedBean(name = "tabHeaderBean")
 @SessionScoped
 public class TabHeaderBean {
 
-	private int activeIndex = 0;
+	private int activeIndex = 2;
 
-	public String toChangelog() {
-		activeIndex = 0;
-
-		return "changelog";
+	
+	public TabHeaderBean(){
+		
 	}
-
-	public String toFiles() {
-		activeIndex = 1;
-
-		return "files";
-	}
-
-	public String toSubscriptions() {
-		activeIndex = 2;
-
-		return "subscriptions";
-	}
-
-	public String toProfile() {
-		activeIndex = 3;
-
-		return "profile";
-	}
-
-	public String toLogout() {
-		activeIndex = 4;
-
-		return "/";
+	
+	public String updateIndex(Long index, String url) {
+		setActiveIndex(index.intValue());
+		
+//		return url + "?faces-redirect=true"; TODO
+		return url;
 	}
 
 	public int getActiveIndex() {
+		
 		return activeIndex;
 	}
 

@@ -1,11 +1,7 @@
 .headerMenuItems {
-	margin-right : 0;
-	
-	
+	margin-right: 0;
 }
 
-.ui-menuitem-text
-{
-font-weight: normal;
-text-decoration: none;
+.ui-menu .ui-menuitem {
+    float:right!important;
 }
