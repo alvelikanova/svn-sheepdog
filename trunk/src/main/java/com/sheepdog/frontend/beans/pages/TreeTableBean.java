@@ -6,8 +6,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
 import javax.security.auth.RefreshFailedException;
 
 import org.primefaces.model.DefaultTreeNode;
@@ -15,6 +13,7 @@ import org.primefaces.model.TreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.sheepdog.business.domain.entities.FileTreeComposite;
@@ -25,10 +24,9 @@ import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
 import com.sheepdog.business.services.svn.SVNFileService;
 import com.sheepdog.business.services.svn.SVNProjectFacade;
 
-@Component
-@ManagedBean(name = "fileTreeBean")
-@SessionScoped
-public class TreeTableBean implements Serializable{
+@Component(value = "fileTreeBean")
+@Scope("session")
+public class TreeTableBean implements Serializable {
 
 	/**
 	 * 
@@ -52,7 +50,9 @@ public class TreeTableBean implements Serializable{
 
 	private Collection<TreeNode> files = new LinkedList<>();
 
-	//@PostConstruct TODO
+	
+	// TODO set parameter User object of authenticated user
+	@PostConstruct
 	public void loadData() {
 
 		// test initialization block. TODO replace this to the singleton of main
@@ -72,9 +72,8 @@ public class TreeTableBean implements Serializable{
 
 		FileTreeComposite rootFTC = null;
 
-		
 		// test initialization TODO replace this to the singleton of main state
-		User.getUpdateUser().setProject(new Project("sheepdog", "sdasdsad")); 
+		User.getUpdateUser().setProject(new Project("sheepdog", "sdasdsad"));
 
 		try {
 			rootFTC = fs.getAllFiles(User.getUpdateUser());
@@ -96,8 +95,6 @@ public class TreeTableBean implements Serializable{
 		}
 	}
 
-	
-
 	private void printComposite(FileTreeComposite ftc, TreeNode parent) {
 
 		TreeNode current = new DefaultTreeNode(ftc, parent);
@@ -111,11 +108,10 @@ public class TreeTableBean implements Serializable{
 		}
 
 	}
-	
-	
+
 	private void feedback(String string) {
 		// TODO some feedback by primefaces messages or growl ??
-		
+
 	}
 
 	public TreeNode getRoot() {
@@ -142,16 +138,8 @@ public class TreeTableBean implements Serializable{
 		this.files = files;
 	}
 
-	public SVNProjectFacade getProjFacade() {
-		return projFacade;
-	}
-
 	public void setProjFacade(SVNProjectFacade projFacade) {
 		this.projFacade = projFacade;
-	}
-
-	public SVNFileService getFs() {
-		return fs;
 	}
 
 	public void setFs(SVNFileService fs) {

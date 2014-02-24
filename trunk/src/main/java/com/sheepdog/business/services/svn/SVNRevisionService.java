@@ -3,7 +3,6 @@ package com.sheepdog.business.services.svn;
 import java.io.IOException;
 import java.util.Set;
 
-import org.springframework.stereotype.Service;
 
 import com.sheepdog.business.domain.entities.File;
 import com.sheepdog.business.domain.entities.User;
@@ -17,7 +16,6 @@ import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
  * @author Ivan Arkhipov.
  * 
  */
-@Service
 public interface SVNRevisionService {
 
 	/**

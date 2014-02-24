@@ -13,21 +13,44 @@
 
 	<ui:define name="content">
 		<div>
-
+			<h:outputStylesheet name="css/sheepdog.css"></h:outputStylesheet>
 			<h:form id="form">
 
-<p:commandButton action="#{fileTreeBean.loadData}" value=" TEST load files"></p:commandButton>
 
 				<p:treeTable id="file_tree" value="#{fileTreeBean.root}"
 					selection="#{fileTreeBean.selectedNode}" var="ftc"
-					scrollWidth="true" selectionMode="single">
+					selectionMode="single" liveResize="true" styleClass="fileTreeTable">
 
-					<p:column style="width:150px">
+					<p:column style="text-align: left!important">
 						<f:facet name="header">  
                				Name  
            				</f:facet>
-           				
+
 						<h:outputText value="#{ftc.file.name}" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">  
+               				  Revision
+           				</f:facet>
+
+						<h:outputText value="#{ftc.lastRev}" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">  
+               				Author  
+           				</f:facet>
+
+						<h:outputText value="#{ftc.lastAuthor}" />
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">  
+               				Date 
+           				</f:facet>
+
+						<h:outputText value="#{ftc.lastDate}" />
 					</p:column>
 
 
@@ -41,6 +64,8 @@
 		</div>
 
 	</ui:define>
+
+
 
 	<ui:define name="footer">
 		<div />

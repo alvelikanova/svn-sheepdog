@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import javax.security.auth.RefreshFailedException;
 
-import org.springframework.stereotype.Service;
 import org.tmatesoft.svn.core.io.SVNRepository;
 
 import com.sheepdog.business.domain.entities.User;
@@ -17,7 +16,7 @@ import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
  * @author Ivan Arkhipov.
  * 
  */
-@Service
+
 public interface SVNProjectFacade {
 
 	/**
