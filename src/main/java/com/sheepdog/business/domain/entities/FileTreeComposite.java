@@ -30,7 +30,7 @@ public class FileTreeComposite implements Comparable<FileTreeComposite> {
 	private Map property = new HashMap<>(0);
 
 	private boolean subscribed;
-	
+
 	public FileTreeComposite() {
 
 	}
@@ -59,6 +59,39 @@ public class FileTreeComposite implements Comparable<FileTreeComposite> {
 		this.childs.add(composite);
 
 		return this;
+	}
+
+	public String getLastRev() {
+		String lastRevNo = "";
+		lastRevNo = property.get("svn:entry:committed-rev").toString();
+
+		if (lastRevNo == null) {
+			return "";
+		}
+
+		return lastRevNo;
+	}
+
+	public String getLastAuthor() {
+		String lastAuthor = "";
+		lastAuthor = property.get("svn:entry:last-author").toString();
+
+		if (lastAuthor == null) {
+			return "";
+		}
+		return lastAuthor;
+	}
+
+	public String getLastDate() {
+		String lastDate;
+		lastDate = property.get("svn:entry:committed-date").toString();
+
+		if (lastDate == null) {
+			return "";
+		}
+
+		return lastDate.substring(0, 9) + " " + lastDate.substring(11, 19);
+
 	}
 
 	public FileTreeComposite getParent() {
@@ -123,6 +156,15 @@ public class FileTreeComposite implements Comparable<FileTreeComposite> {
 		int compare = 1;
 
 		try {
+
+			if (this.getFile().isDir() && !ftc.getFile().isDir()) {
+				return -1;
+			}
+
+			if (!this.getFile().isDir() && ftc.getFile().isDir()) {
+				return 1;
+			}
+
 			compare = this.getFile().getName().compareTo(ftc.getFile().getName());
 		} catch (NullPointerException e) {
 			LOG.error("Invalid FileTreeComposites");

@@ -2,7 +2,6 @@ package com.sheepdog.business.services.svn;
 
 import java.io.IOException;
 import java.security.InvalidParameterException;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,7 +19,7 @@ import com.sheepdog.business.services.svn.impl.TypeOfFileChanges;
  * @author Ivan Arkhipov.
  * 
  */
-// @Service
+
 public interface SVNFileService {
 
 	/**

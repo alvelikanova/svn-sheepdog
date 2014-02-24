@@ -3,5 +3,9 @@
 }
 
 .ui-menu .ui-menuitem {
-    float:right!important;
+	float: right !important;
+}
+
+.fileTreeTable {
+	text-align: center;
 }

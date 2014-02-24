@@ -7,21 +7,23 @@
 <h:head />
 
 <h:body>
-	
+
 	<h:outputStylesheet name="css/default.css" />
-	
+
 	<div id="page">
 		<div id="header">
 			<ui:insert name="header">
-		<!--		<ui:include src="/templates/noTabHeader.xhtml" />-->
-				 
+
 				<ui:include src="/templates/header.xhtml" />
-				 
+
 			</ui:insert>
 		</div>
+		
 		<div id="content">
 			<ui:insert name="content" />
 		</div>
+		
+		
 		<div id="footer">
 			<ui:insert name="footer">
 				<ui:include src="/templates/footer.xhtml" />

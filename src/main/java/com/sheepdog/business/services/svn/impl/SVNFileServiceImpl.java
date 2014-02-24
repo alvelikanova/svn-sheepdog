@@ -60,6 +60,7 @@ public class SVNFileServiceImpl implements SVNFileService {
 	@Autowired
 	private SVNProjectFacade projectFacade;
 
+
 	public SVNFileServiceImpl() {
 
 	}
@@ -117,6 +118,7 @@ public class SVNFileServiceImpl implements SVNFileService {
 			f.setProject(currentProject);
 			setNameFieldsToOneFile(f);
 		}
+
 
 		FileTreeComposite root = createComposite(files, dirProps, fileProps);
 
@@ -329,14 +331,15 @@ public class SVNFileServiceImpl implements SVNFileService {
 			}
 		}
 
+		root.setFile(File.getRootDir());
+
 		for (FileTreeComposite ftc : levelFiles.get(1)) {
+			ftc.setParent(root);
 
 			root.addChild(ftc);
 
 			fillComposite(ftc, levelFiles, 1);
 		}
-
-		root.setFile(File.getRootDir());
 
 		return root;
 	}
@@ -365,14 +368,19 @@ public class SVNFileServiceImpl implements SVNFileService {
 
 		if (levelDown != null) {
 
-			String tempPath;
+			String parentPath;
+
+			String childPath;
 
 			Collection<FileTreeComposite> completeComposite = new LinkedList<>();
 
 			for (FileTreeComposite ftc : levelDown) {
-				tempPath = ftc.getFile().getPath();
+				parentPath = composite.getFile().getPath();
 
-				if (tempPath.split("/")[tempPath.split("/").length - 2].equals(composite.getFile().getName())) {
+				childPath = ftc.getFile().getPath();
+
+				if (childPath.equals(parentPath + "/" + ftc.getFile().getName())) {
+
 					composite.addChild(ftc);
 					completeComposite.add(ftc);
 				}
