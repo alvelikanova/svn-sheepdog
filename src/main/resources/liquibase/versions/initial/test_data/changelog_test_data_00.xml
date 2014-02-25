@@ -39,7 +39,7 @@
 			<column name="first_name">Bichev</column>
 			<column name="last_name">Vladimir</column>
 			<column name="email">Fvl.bichev@gmail.com</column>
-			<column name="password">gj9fm3CC6ur8</column>
+			<column name="password">RYCy98dlDdldbMUPwYAieAtjcOvD17H6zwg4dPUgxUM=</column>
 			<column name="project_id">1</column>
 		</insert>
 
@@ -49,7 +49,7 @@
 			<column name="first_name">Velikanova</column>
 			<column name="last_name">Alena</column>
 			<column name="email">velikanova.alenka@gmail.com</column>
-			<column name="password">dm4pf4MS7zu8</column>
+			<column name="password">8+roLW3uCSW+guKJatWVhCu3C729yLtgfe2nWTJkpbc=</column>
 			<column name="project_id">1</column>
 		</insert>
 
@@ -59,7 +59,7 @@
 			<column name="first_name">Ivan</column>
 			<column name="last_name">Arkhipov</column>
 			<column name="email">ivan.spread@gmail.com</column>
-			<column name="password">fc9uy8NM5dK8</column>
+			<column name="password">CngEXOKkIu2Z2jo3I3lBMs2jn7jwj0VZ/kEJO+NPRIQ=</column>
 			<column name="project_id">1</column>
 		</insert>
 
@@ -69,7 +69,7 @@
 			<column name="first_name">Shemetova</column>
 			<column name="last_name">Lubov</column>
 			<column name="email">slastena.pro@gmail.com</column>
-			<column name="password">Tc9wP9qz7pT4</column>
+			<column name="password">scrKhbUQk091cav3dqHc3N0SEBPpLqLGSfC3Cg61vPs=</column>
 			<column name="project_id">1</column>
 		</insert>
 
@@ -79,7 +79,7 @@
 			<column name="first_name">Nazin</column>
 			<column name="last_name">Sergey</column>
 			<column name="email">sirjant0038@gmail.com</column>
-			<column name="password">PASSWORD</column>
+			<column name="password">y+xROPHpMmsqWjsPby67hqqi/4eeUTiUWOlfjOrOL5A=</column>
 			<column name="project_id">1</column>
 		</insert>
 

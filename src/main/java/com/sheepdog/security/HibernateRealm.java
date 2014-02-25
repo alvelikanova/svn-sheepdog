@@ -6,13 +6,16 @@ import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.SimpleAccount;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.sheepdog.business.domain.entities.User;
@@ -53,13 +56,14 @@ public class HibernateRealm extends AuthorizingRealm {
 		if (user == null) {
 			throw new UnknownAccountException(String.format("Can't find account info for login=%s", login));
 		} else {
-			String password = new String(utoken.getPassword());
-			if (ObjectUtils.compare(user.getPassword(), password) == 0) {
-				SimpleAccount account = new SimpleAccount(login, password, getName());
-				return account;
-			} else {
-				throw new IncorrectCredentialsException();
-			}
+			SimpleAuthenticationInfo saInfo = new SimpleAuthenticationInfo(login, user.getPassword(), getName());
+            saInfo.setCredentialsSalt(ByteSource.Util.bytes(login));
+            
+//            if (getCredentialsMatcher().doCredentialsMatch(token, saInfo)) 
+				return saInfo;
+//            else {
+//				throw new IncorrectCredentialsException();
+//			}
 		}
 	}
 
