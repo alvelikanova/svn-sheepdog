@@ -6,7 +6,14 @@
 	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
 	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
 
-	<bean id="hibernateRealm" name="hibernateRealm"  class="com.sheepdog.security.HibernateRealm" />
+  	<bean id="credentialsMatcher" class="org.apache.shiro.authc.credential.Sha256CredentialsMatcher" >
+		<property value="false" name="storedCredentialsHexEncoded"/>
+		<property value="1024" name="hashIterations"/>
+	</bean> 
+
+	<bean id="hibernateRealm" class="com.sheepdog.security.HibernateRealm" name="hibernateRealm">
+		<property name="credentialsMatcher" ref="credentialsMatcher"/>
+	</bean>
 	
 	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
 		<property name="realm" ref="hibernateRealm" />
@@ -33,7 +40,7 @@
 	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
 		<property name="securityManager" ref="securityManager" />
 		<property name="loginUrl" value="/public/login.xhtml" />
-		<property name="successUrl" value="/protected/hello.xhtml" />
+		<property name="successUrl" value="/" />
 		<property name="unauthorizedUrl" value="/public/unauthorized.xhtml" />
 
 		<property name="filterChainDefinitions">
