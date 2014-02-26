@@ -21,6 +21,7 @@ import com.sheepdog.business.domain.entities.Project;
 import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.exceptions.InvalidURLException;
 import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
+import com.sheepdog.business.services.SubscriptionManagementService;
 import com.sheepdog.business.services.svn.SVNFileService;
 import com.sheepdog.business.services.svn.SVNProjectFacade;
 
@@ -43,6 +44,9 @@ public class TreeTableBean implements Serializable {
 
 	@Autowired
 	private SVNFileService fs;
+	
+	@Autowired
+	private SubscriptionManagementService subscrService;
 
 	private TreeNode root = new DefaultTreeNode("root", null);;
 
@@ -96,7 +100,9 @@ public class TreeTableBean implements Serializable {
 	}
 
 	private void printComposite(FileTreeComposite ftc, TreeNode parent) {
-
+		
+//		if(subscrService.isSubscribed(ftc.getFile(), User user)){         TODO
+//ftc.setSubscribed(true);}
 		TreeNode current = new DefaultTreeNode(ftc, parent);
 
 		files.add(current);
@@ -144,6 +150,10 @@ public class TreeTableBean implements Serializable {
 
 	public void setFs(SVNFileService fs) {
 		this.fs = fs;
+	}
+
+	public void setSubscrService(SubscriptionManagementService subscrService) {
+		this.subscrService = subscrService;
 	}
 
 }

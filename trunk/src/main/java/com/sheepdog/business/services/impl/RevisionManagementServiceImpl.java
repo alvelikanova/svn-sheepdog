@@ -1,5 +1,7 @@
 package com.sheepdog.business.services.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -13,23 +15,22 @@ import com.sheepdog.dal.entities.RevisionEntity;
 import com.sheepdog.dal.providers.RevisionDataProvider;
 
 @Service
-public class RevisionManagementServiceImpl implements RevisionManagementService{
+public class RevisionManagementServiceImpl implements RevisionManagementService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(RevisionManagementServiceImpl.class);
 
 	@Autowired
 	private RevisionDataProvider revisionDataProvider;
-	
+
 	@Override
 	public Revision getCurrentRevision() {
 		Revision revision = null;
 		try {
 			revision = revisionDataProvider.getLatestRevision();
-		}
-		catch(Exception ex){
+		} catch (Exception ex) {
 			LOG.error("Error loading revision", ex.getMessage());
 		}
-		if (revision==null) {
+		if (revision == null) {
 			revision = new Revision();
 			revision.setRevisionNo(0);
 		}
@@ -38,9 +39,18 @@ public class RevisionManagementServiceImpl implements RevisionManagementService{
 
 	@Override
 	public void saveRevisions(Set<Revision> r) {
-		for(Revision revision: r) {
+		for (Revision revision : r) {
 			revisionDataProvider.save(revision, RevisionEntity.class);
 		}
+	}
+
+	@Override
+	public List<Revision> getAllRevisions() {
+		List<Revision> dbRevision = new ArrayList<>(0);
+
+		dbRevision.addAll(revisionDataProvider.findAll(RevisionEntity.class, Revision.class));
+
+		return dbRevision;
 	}
 
 }

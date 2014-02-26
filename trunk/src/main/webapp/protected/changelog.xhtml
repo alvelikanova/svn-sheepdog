@@ -12,11 +12,70 @@
 	</ui:define>
 
 	<ui:define name="content">
-		<div>
-			<h3>This is CHANGELOG page</h3>
-		</div>
 
-	
+		<form>
+			<p:dataTable id="changelog" var="rev"
+				value="#{changelogBean.dbRevisions}">
+
+				<p:ajax event="rowToggle"
+					listener="#{changelogBean.loadRevisionFiles}" />
+
+				<p:column style="width:2%">
+					<p:rowToggler />
+				</p:column>
+
+
+				<p:column>
+					<f:facet name="header">  
+                    Revision  
+            </f:facet>
+					<h:outputText value="#{rev.revisionNo}" />
+				</p:column>
+
+				<p:column>
+					<f:facet name="header">  
+                    Author  
+            </f:facet>
+					<h:outputText value="#{rev.author}" />
+				</p:column>
+
+				<p:column>
+					<f:facet name="header">  
+                    Date  
+            </f:facet>
+					<h:outputText value="#{rev.date}" />
+				</p:column>
+
+				<p:column>
+					<f:facet name="header">  
+                    Comment  
+            </f:facet>
+					<h:outputText value="#{rev.comment}" />
+				</p:column>
+
+				<p:rowExpansion>
+					<p:dataTable id="revFiles" var="file"
+						value="#{changelogBean.files}">
+
+						<p:column>
+							<f:facet name="header">
+							Changed File
+						</f:facet>
+							<h:outputText value="#{file.key.name}" />
+						</p:column>
+
+						<p:column>
+							<f:facet name="header">
+							Action
+						</f:facet>
+							<h:outputText value="#{file.value}" />
+						</p:column>
+
+					</p:dataTable>
+				</p:rowExpansion>
+
+			</p:dataTable>
+		</form>
 	</ui:define>
 
 	<ui:define name="footer">
