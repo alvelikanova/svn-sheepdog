@@ -12,10 +12,42 @@
 	</ui:define>
 
 	<ui:define name="content">
-		<div>
-			<h3>This is SUBSCRIPTIONS page</h3>
-		</div>
-	    
+
+		<p:dataTable id="subscrTable" var="subscr"
+			value="#{subscriptionBean.subscriptions}" paginator="true" rows="10"
+			paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+			rowsPerPageTemplate="10,20,30" styleClass="fileTreeTable">
+
+			<p:column filterBy="name" sortBy="subscr.file.name"
+				filterMatchMode="contains">
+				<f:facet name="header">  
+                File  
+            </f:facet>
+				<h:outputText value="#{subscr.file.name}" />
+			</p:column>
+
+			<p:column filterBy="qualifiedName" sortBy="subscr.file.qualifiedName"
+				filterMatchMode="contains">
+				<f:facet name="header">  
+                Path  
+            </f:facet>
+				<h:outputText value="#{subscr.file.qualifiedName}" />
+			</p:column>
+
+
+			<p:column width="20">
+				<f:facet name="header">  
+                Subscription  
+            </f:facet>
+				<p:selectBooleanCheckbox value="true" id="checkBox">
+					<p:ajax update="checkBox"
+						listener="#{subscriptionBean.subscriptionChange(subscr)}" />
+				</p:selectBooleanCheckbox>
+			</p:column>
+
+
+		</p:dataTable>
+
 	</ui:define>
 
 	<ui:define name="footer">

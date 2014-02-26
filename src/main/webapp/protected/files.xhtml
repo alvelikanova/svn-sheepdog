@@ -21,6 +21,10 @@
 					selection="#{fileTreeBean.selectedNode}" var="ftc"
 					selectionMode="single" liveResize="true" styleClass="fileTreeTable">
 
+					<p:ajax event="select" update=":form:cont "
+						listener="#{fileContentBean.select}"
+						oncomplete="PF('fileDialog').show()" />
+
 					<p:column style="text-align: left!important">
 						<f:facet name="header">  
                				Name  
@@ -53,9 +57,51 @@
 						<h:outputText value="#{ftc.lastDate}" />
 					</p:column>
 
+					<p:column id="subscr_column">
+						<f:facet name="header">  
+               				Subscription 
+           				</f:facet>
+
+						<p:selectBooleanCheckbox value="#{ftc.subscribed}">
+							<p:ajax update="file_tree"
+								listener="#{subscriptionBean.subscriptionCheck(ftc.file, ftc.subscribed)}" />
+						</p:selectBooleanCheckbox>
+					</p:column>
+
+
+
 
 				</p:treeTable>
 
+
+				<p:dialog header="File Menu" widgetVar="fileDialog" dynamic="true"
+					showEffect="clip" hideEffect="drop" modal="true"
+					style="width: 80%!important; height:70%!important">
+
+					<f:facet name="header">
+						<p:panelGrid columns="2">
+							<p:panelGrid columns="2">
+								<h:outputText value="Revision: " />
+
+								<p:selectOneMenu id="selectMenu"
+									value="#{fileContentBean.selectedRev}" effect="fade"
+									converter="javax.faces.Integer">
+									<p:ajax event="change" update="cont"
+										listener="#{fileContentBean.loadContent}" />
+
+									<f:selectItem itemLabel="Select Revision" itemValue="" />
+									<f:selectItems value="#{fileContentBean.revisions}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+
+						</p:panelGrid>
+					</f:facet>
+
+					<p:inputTextarea id="cont" value="#{fileContentBean.content}"
+						autoResize="false" readonly="true" style="margin:2%!important" />
+
+
+				</p:dialog>
 
 			</h:form>
 

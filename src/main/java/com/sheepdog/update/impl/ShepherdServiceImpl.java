@@ -290,6 +290,7 @@ public class ShepherdServiceImpl extends HttpServlet implements ShepherdService 
 		for (Map.Entry<File, TypeOfFileChanges> entry : tempFiles.entrySet()) {
 			if (TypeOfFileChanges.ADDED.equals(entry.getValue())) {
 				subscriptions.put(new Subscription(user, entry.getKey()), TypeOfFileChanges.ADDED);
+//				fileManagementService.saveFile(entry.getKey()); TODO
 			}
 		}
 		return subscriptions;

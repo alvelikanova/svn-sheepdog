@@ -12,7 +12,7 @@ public class Revision extends PersistentEntity<Integer> {
 	private String author;
 	private String comment;
 
-	private Date date = new Date();
+	private Date date = new Date();//TODO ??????/
 
 	public Revision() {
 	}
