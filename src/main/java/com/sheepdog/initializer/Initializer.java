@@ -66,7 +66,7 @@ public class Initializer {
 	@Value("${reset.onstart}")
 	private String reset;
 
-	@PostConstruct
+	//@PostConstruct
 	public void startup() {
 
 		dbCheck();

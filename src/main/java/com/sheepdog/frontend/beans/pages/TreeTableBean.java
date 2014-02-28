@@ -13,6 +13,7 @@ import org.primefaces.model.TreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -48,6 +49,15 @@ public class TreeTableBean implements Serializable {
 	@Autowired
 	private SubscriptionManagementService subscrService;
 
+	@Value("${repository.url}")
+	private String repoUrl;
+
+	@Value("${repository.login}")
+	private String repoLogin;
+
+	@Value("${repository.password}")
+	private String repoPass;
+
 	private TreeNode root = new DefaultTreeNode("root", null);;
 
 	private TreeNode selectedNode = null;
@@ -57,6 +67,23 @@ public class TreeTableBean implements Serializable {
 	// TODO set parameter User object of authenticated user
 	@PostConstruct
 	public void loadData() {
+		// test initialization block. TODO replace this to the singleton of main
+		// state
+		try {
+			projFacade.createMainConnection(repoUrl, repoLogin, repoPass);
+		} catch (InvalidURLException e) {
+			LOG.warn("Failed to create main connection. Url:" + e.getUrl() + "is invalid.");
+			// TODO feedback for exceptions
+		} catch (RepositoryAuthenticationExceptoin e) {
+			LOG.warn("Failed to create main connection. Authentication is failed.");
+		} catch (RefreshFailedException e) {
+			LOG.warn("Failed to create main connection. Can't load properties.");
+		} catch (IOException e) {
+			LOG.warn("Failed to create main connection. " + e.getMessage());
+		}
+
+		// test initialization TODO replace this to the singleton of main state
+		User.getUpdateUser().setProject(new Project("sheepdog", "sdasdsad"));
 
 		FileTreeComposite rootFTC = null;
 
