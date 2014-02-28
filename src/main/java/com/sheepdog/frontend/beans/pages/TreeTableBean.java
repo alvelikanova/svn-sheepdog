@@ -44,7 +44,7 @@ public class TreeTableBean implements Serializable {
 
 	@Autowired
 	private SVNFileService fs;
-	
+
 	@Autowired
 	private SubscriptionManagementService subscrService;
 
@@ -54,30 +54,11 @@ public class TreeTableBean implements Serializable {
 
 	private Collection<TreeNode> files = new LinkedList<>();
 
-	
 	// TODO set parameter User object of authenticated user
 	@PostConstruct
 	public void loadData() {
 
-		// test initialization block. TODO replace this to the singleton of main
-		// state
-		try {
-			projFacade.createMainConnection();
-		} catch (InvalidURLException e) {
-			LOG.warn("Failed to create main connection. Url:" + e.getUrl() + "is invalid.");
-			// TODO feedback for exceptions
-		} catch (RepositoryAuthenticationExceptoin e) {
-			LOG.warn("Failed to create main connection. Authentication is failed.");
-		} catch (RefreshFailedException e) {
-			LOG.warn("Failed to create main connection. Can't load properties.");
-		} catch (IOException e) {
-			LOG.warn("Failed to create main connection. " + e.getMessage());
-		}
-
 		FileTreeComposite rootFTC = null;
-
-		// test initialization TODO replace this to the singleton of main state
-		User.getUpdateUser().setProject(new Project("sheepdog", "sdasdsad"));
 
 		try {
 			rootFTC = fs.getAllFiles(User.getUpdateUser());
@@ -100,9 +81,9 @@ public class TreeTableBean implements Serializable {
 	}
 
 	private void printComposite(FileTreeComposite ftc, TreeNode parent) {
-		
-//		if(subscrService.isSubscribed(ftc.getFile(), User user)){         TODO
-//ftc.setSubscribed(true);}
+
+		// if(subscrService.isSubscribed(ftc.getFile(), User user)){ TODO
+		// ftc.setSubscribed(true);}
 		TreeNode current = new DefaultTreeNode(ftc, parent);
 
 		files.add(current);

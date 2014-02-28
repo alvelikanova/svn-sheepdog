@@ -7,7 +7,6 @@ import javax.security.auth.RefreshFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.tmatesoft.svn.core.io.SVNRepository;
 
@@ -31,15 +30,6 @@ public class SVNProjectFacadeImpl implements SVNProjectFacade {
 	 */
 	@Autowired
 	private SVNRepositoryManager repositoryManager;
-
-	@Value("${repository.url}")
-	private String repoUrl;
-
-	@Value("${repository.login}")
-	private String repoLogin;
-
-	@Value("${repository.password}")
-	private String repoPass;
 
 	/**
 	 * Logger object.
@@ -89,14 +79,14 @@ public class SVNProjectFacadeImpl implements SVNProjectFacade {
 	 * ()
 	 */
 	@Override
-	public void createMainConnection() throws RefreshFailedException, InvalidURLException,
-			RepositoryAuthenticationExceptoin, IOException {
-		
-		if(repoUrl == null || repoLogin == null || repoPass == null){
+	public void createMainConnection(String url, String login, String password) throws RefreshFailedException,
+			InvalidURLException, RepositoryAuthenticationExceptoin, IOException {
+
+		if (url == null || login == null || password == null) {
 			throw new RefreshFailedException();
 		}
 
-		repositoryManager.createMainConnection(repoUrl, repoLogin, repoPass);
+		repositoryManager.createMainConnection(url, login, password);
 	}
 
 	public SVNRepositoryManager getRepositoryManager() {
