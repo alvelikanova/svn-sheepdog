@@ -3,32 +3,33 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui">
-<head>
-<title>Insert title here</title>
-</head>
-<body>
-	<h2>Login</h2>
-	<h:form id="login">
-		<h:panelGrid columns="3">
-			<h:outputLabel for="username" value="Username:" />
-			<h:inputText id="username" required="true" />
-			<h:message for="username" />
-
-			<h:outputLabel for="password" value="Password" />
-			<h:inputSecret id="password" required="true" />
-			<h:message for="password" />
-
-			<h:outputLabel for="rememberMe" value="Remember Me" />
-			<h:selectBooleanCheckbox id="rememberMe" />
-			<h:panelGroup />
-
-			<h:panelGroup />
-			<h:commandButton value="Login" />
-			<h:panelGroup styleClass="error"
-				rendered="#{not facesContext.validationFailed}">
-                #{shiroLoginFailure}
-            </h:panelGroup>
-		</h:panelGrid>
+<h:head>
+</h:head>
+<h:body>
+	<h:form id="login">  
+	    <p:panel header="Login" style="margin-bottom:10px;">  
+	        <p:messages id="messages" autoUpdate="true" closable="true" 
+	        	infoStyle="color:green" errorStyle="color:red" warnClass="color:orange"/> 
+	        <h:panelGrid columns="3">  
+	            <h:outputLabel for="username" value="Username: *" />  
+	            <p:inputText id="username" value="#{authenticationBean.username}" required="true" label="Username">  
+	                <f:validateLength minimum="2" />  
+	            </p:inputText>  
+	            <p:message for="username" />  
+	  
+	            <h:outputLabel for="password" value="Password: *" />  
+	            <p:password id="password" value="#{authenticationBean.password}" required="true" label="Password"/>  
+	            <p:message for="password" />  
+	            
+	            <h:outputLabel for="rememberMe" value="Remember Me" />
+				<p:selectBooleanCheckbox id="rememberMe" value="#{authenticationBean.remember}" />
+				<h:panelGroup />
+				
+	            <h:panelGroup />
+				<p:commandButton value="Login" action="#{authenticationBean.doLogin}"/>
+				<h:panelGroup/>
+	        </h:panelGrid>  
+	    </p:panel>   
 	</h:form>
-</body>
+</h:body>
 </html>
