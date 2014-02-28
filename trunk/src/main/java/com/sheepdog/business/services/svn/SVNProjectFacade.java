@@ -58,6 +58,13 @@ public interface SVNProjectFacade {
 	 * Creating main connection to repository. Load properties of connection
 	 * from property file.
 	 * 
+	 * @param url
+	 *            URL of repository.
+	 * @param login
+	 *            Login of main connection.
+	 * @param password
+	 *            Password of main connection.
+	 * 
 	 * @throws RefreshFailedException
 	 *             if properties loading is failed.
 	 * @throws InvalidURLException
@@ -69,7 +76,7 @@ public interface SVNProjectFacade {
 	 * @throws RepositoryAuthenticationExceptoin
 	 *             if repository authentication is failed.
 	 */
-	public void createMainConnection() throws RefreshFailedException, InvalidURLException,
-			RepositoryAuthenticationExceptoin, IOException;
+	public void createMainConnection(String url, String login, String password) throws RefreshFailedException,
+			InvalidURLException, RepositoryAuthenticationExceptoin, IOException;
 
 }
