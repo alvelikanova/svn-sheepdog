@@ -15,19 +15,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sheepdog.dal.exceptions.DaoException;
 import com.sheepdog.infrastructure.services.MappingService;
 import com.sheepdog.utils.CollectionUtils;
 import com.sheepdog.dal.providers.pagination.FilterOption;
 import com.sheepdog.dal.providers.pagination.SortOption;
-import com.sheepdog.dal.providers.base.GenericDataProvider;
 import com.sheepdog.dal.providers.base.PageableDataProvider;
 import com.sheepdog.dal.providers.pagination.LoadOptions;
 import com.sheepdog.dal.providers.pagination.PagedList;
 
 @Repository
-public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implements GenericDataProvider<T, K, ID>, PageableDataProvider<T, K>{
+public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implements PageableDataProvider<T, K, ID>{
 
 	protected static final Logger LOG = LoggerFactory.getLogger(BaseDataProviderImpl.class);
 
@@ -36,6 +36,8 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
 	
 	@Autowired
 	protected MappingService mappingService;
+	
+	@Transactional
 	@Override
 	public PagedList<K> getObjects(LoadOptions loadOptions, Class<T> dalEntityClass, Class<K> domainEntityClass) {
         Session session = sessionFactory.getCurrentSession();
@@ -68,6 +70,7 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
         return result;
 	}
 
+	@Transactional
 	@Override
 	public void save(K entity, Class<T> dalEntityClass) throws DaoException {
 		Session session = sessionFactory.getCurrentSession();
@@ -82,7 +85,7 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
 		}
 	}
 	
-	
+	@Transactional
 	@Override
 	public void merge(K entity, Class<T> dalEntityClass) throws DaoException{
 		Session session = sessionFactory.getCurrentSession();
@@ -111,6 +114,7 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
 //		}
 //	}
 
+	@Transactional
 	@Override
 	public void delete(K entity, Class<T> dalEntityClass) throws DaoException{
 		Session session = sessionFactory.getCurrentSession();
@@ -125,8 +129,9 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
 		}
 	}
 
+	@Transactional
 	@Override
-	public K findById(Class<T> dalEntityClass, Class<K> domainEntityClass, Integer id) {
+	public K findById(Class<T> dalEntityClass, Class<K> domainEntityClass, ID id) {
 		Session session = sessionFactory.getCurrentSession();
 		K businessEntity = null;
 		try {
@@ -142,6 +147,7 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
 		return businessEntity;
 	}
 
+	@Transactional
 	@Override
 	public List<K> findAll(Class<T> dalEntityClass, Class<K> domainEntityClass) {		
 		Session session = sessionFactory.getCurrentSession();
@@ -167,24 +173,13 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
 		List<FilterOption> filters = loadOptions.getFilters();
 		if (CollectionUtils.hasItems(filters)) {
 			for (FilterOption f : filters) {
-				source.add(Restrictions.eq(f.getField(), f.getValue()));
-			}
-		}
-
-		List<SortOption> sorts = loadOptions.getSorts();
-		Collections.sort(sorts);
-
-		if (CollectionUtils.hasItems(sorts)) {
-			for (SortOption s : sorts) {
-				switch (s.getSortDirection()) {
-				case ASCENDING:
-					source.addOrder(Order.asc(s.getSortField()));
-					break;
-				case DESCENDING:
-					source.addOrder(Order.desc(s.getSortField()));
-					break;
-				default:
-					break;
+				if (f.getField().equals("id")) {
+					Integer id = Integer.valueOf(f.getValue().toString());
+					source.add(
+							Restrictions.eq(f.getField(), id));
+				} else {
+					source.add(
+							Restrictions.like(f.getField(), f.getValue()+"%"));
 				}
 			}
 		}
@@ -192,6 +187,25 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
 		if (countOnly) {
 			source.setProjection(Projections.rowCount());
 		} else {
+			
+			List<SortOption> sorts = loadOptions.getSorts();
+			Collections.sort(sorts);
+
+			if (CollectionUtils.hasItems(sorts)) {
+				for (SortOption s : sorts) {
+					switch (s.getSortDirection()) {
+					case ASCENDING:
+						source.addOrder(Order.asc(s.getSortField()));
+						break;
+					case DESCENDING:
+						source.addOrder(Order.desc(s.getSortField()));
+						break;
+					default:
+						break;
+					}
+				}
+			}
+			
 			source.setFirstResult(loadOptions.getSkipItems());
 			source.setMaxResults(loadOptions.getTakeItems());
 		}

@@ -5,9 +5,9 @@ import java.util.List;
 import com.sheepdog.business.domain.entities.File;
 import com.sheepdog.business.domain.entities.Subscription;
 import com.sheepdog.dal.entities.SubscriptionEntity;
-import com.sheepdog.dal.providers.base.GenericDataProvider;
+import com.sheepdog.dal.providers.base.PageableDataProvider;
 
-public interface SubscriptionDataProvider extends GenericDataProvider<SubscriptionEntity, Subscription, Integer>{
+public interface SubscriptionDataProvider extends PageableDataProvider<SubscriptionEntity, Subscription, Integer>{
 	List<File> getFilesByUserName(String userName);
 	List<Subscription> getSubscriptionsByQualifiedName(String qualifiedName);
 }

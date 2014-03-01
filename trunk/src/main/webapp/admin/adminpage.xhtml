@@ -14,6 +14,35 @@
 		<div>
 			<h3>This shouldn't be displayed if you're not admin</h3>
 		</div>
+		<div>
+			<h3>List Of Users</h3>
+			<h:form id="form">  
+			    <p:dataTable var="user" value="#{lazyUsersDataModel}" paginator="true" rows="5"  
+			                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"  
+			                 rowsPerPageTemplate="1,2,5" selectionMode="single" selection="#{usersBean.selectedUser}" id="userTable" lazy="true">  
+			  
+					<p:column headerText="ID" sortBy="id" filterBy="#{user.id}">
+						<h:outputText value="#{user.id}" />
+					</p:column>
+				
+					<p:column headerText="Login" sortBy="login" filterBy="#{user.login}">
+						<h:outputText value="#{user.login}" />
+					</p:column>
+				
+					<p:column headerText="First Name" sortBy="firstName" filterBy="#{user.firstName}">
+						<h:outputText value="#{user.firstName}" />
+					</p:column>
+				
+					<p:column headerText="Last Name" sortBy="lastName" filterBy="#{user.lastName}">
+						<h:outputText value="#{user.lastName}" />
+					</p:column>
+				
+					<p:column headerText="E-mail" sortBy="email" filterBy="#{user.email}">
+						<h:outputText value="#{user.email}" />
+					</p:column> 
+			    </p:dataTable>  
+			</h:form>
+		</div>
 	</ui:define>
 
 	<ui:define name="footer">

@@ -7,6 +7,6 @@ public interface GenericDataProvider<T, K, ID extends Serializable> {
 	public void save(K entity, Class<T> dalEntityClass);
 	public void merge(K entity, Class<T> dalEntityClass);
 	public void delete(K entity, Class<T> dalEntityClass); 
-	public K findById(Class<T> dalEntityClass, Class<K> domainEntityClass, Integer id);
+	public K findById(Class<T> dalEntityClass, Class<K> domainEntityClass, ID id);
 	public List<K> findAll(Class<T> dalEntityClass, Class<K> domainEntityClass);
 }
