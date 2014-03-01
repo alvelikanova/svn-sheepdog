@@ -49,6 +49,7 @@ public class SubscriptionDataProviderImpl extends BaseDataProviderImpl<Subscript
 		return resultList;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Transactional
 	@Override
 	public List<Subscription> getSubscriptionsByQualifiedName(String qualifiedName) {
