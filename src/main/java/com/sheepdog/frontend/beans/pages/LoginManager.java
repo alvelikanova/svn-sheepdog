@@ -5,6 +5,7 @@ import java.io.Serializable;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
 import org.apache.shiro.SecurityUtils;
@@ -60,7 +61,8 @@ public class LoginManager implements Serializable {
 
         try {
             subject.login(token);
-            FacesContext.getCurrentInstance().getExternalContext().redirect("/svn-sheepdog/");
+            ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+            ec.redirect(ec.getRequestContextPath());
 //            if (subject.hasRole("admin")) {
 //                FacesContext.getCurrentInstance().getExternalContext().redirect("admin/index.xhtml");
 //            }
