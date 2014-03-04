@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -45,26 +46,27 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
         PagedList<K> result = new PagedList<>();
 
         try {
-                Criteria countCriteria = session.createCriteria(dalEntityClass);
-                fillCriteria(countCriteria, loadOptions, true);
+            Criteria countCriteria = session.createCriteria(dalEntityClass);
+            fillCriteria(countCriteria, loadOptions, true);
 
-                long rowsCount = (long) countCriteria.uniqueResult();
+            long rowsCount = (long) countCriteria.uniqueResult();
 
-                if (rowsCount > 0) {
-                        Criteria criteria = session.createCriteria(dalEntityClass);
-                        fillCriteria(criteria, loadOptions, false);
+            if (rowsCount > 0) {
+                Criteria criteria = session.createCriteria(dalEntityClass);
+                fillCriteria(criteria, loadOptions, false);
 
-                        @SuppressWarnings("unchecked")
-						List<T> dataEntities = criteria.list();
-                        for (T de : dataEntities) {
-                                K domainEntity = mappingService.map(de, domainEntityClass);
-                                result.add(domainEntity);
-                        }
+                @SuppressWarnings("unchecked")
+				List<T> dataEntities = criteria.list();
+                for (T de : dataEntities) {
+                        K domainEntity = mappingService.map(de, domainEntityClass);
+                        result.add(domainEntity);
                 }
-
-                result.setTotalSize(rowsCount);
+            }
+            result.setTotalSize(rowsCount);
+        } catch (HibernateException ex) {
+        	LOG.error("Hibernate error occured while getting objects", ex.getMessage());
         } catch (Exception ex) {
-                LOG.error("Error occured in BaseDataProviderImpl", ex.getMessage());
+        	LOG.error("Unknown error occured while getting objects", ex.getMessage());
         }
 
         return result;
@@ -78,24 +80,28 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
 		try {
 			T dataEntity = mappingService.map(entity, dalEntityClass);
 			session.saveOrUpdate(dataEntity);
-			
+		} catch (HibernateException ex) {
+        	LOG.error("Hibernate error occured while creating or updating data entity", ex.getMessage());	
+        	throw new DaoException(ex);
 		} catch (Exception ex) {
-			LOG.error("Error creating or updating data entity", ex.getMessage());
+			LOG.error("Unknown error occured while creating or updating data entity", ex.getMessage());
 			throw new DaoException(ex);
 		}
 	}
 	
 	@Transactional
 	@Override
-	public void merge(K entity, Class<T> dalEntityClass) throws DaoException{
+	public void merge(K entity, Class<T> dalEntityClass) throws DaoException {
 		Session session = sessionFactory.getCurrentSession();
 
 		try {
 			T dataEntity = mappingService.map(entity, dalEntityClass);
 			session.merge(dataEntity);
-			
+		} catch (HibernateException ex) {
+        	LOG.error("Hibernate error occured while merging data entity", ex.getMessage());	
+        	throw new DaoException(ex);
 		} catch (Exception ex) {
-			LOG.error("Error creating or updating data entity", ex.getMessage());
+			LOG.error("Unknown error occured while merging data entity", ex.getMessage());
 			throw new DaoException(ex);
 		}
 	}
@@ -122,9 +128,11 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
 		try {
 			T dataEntity = mappingService.map(entity, dalEntityClass);
 			session.delete(dataEntity);
-			
+		} catch (HibernateException ex) {
+        	LOG.error("Hibernate error occured while deleting data entity", ex.getMessage());	
+        	throw new DaoException(ex);
 		} catch (Exception ex) {
-			LOG.error("Error deleting data entity", ex.getMessage());
+			LOG.error("Unknown error occured while deleting data entity", ex.getMessage());
 			throw new DaoException(ex);
 		}
 	}
@@ -140,9 +148,10 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
 			@SuppressWarnings("unchecked")
 			T dalEntity = (T) cr.uniqueResult();
 			businessEntity = mappingService.map(dalEntity, domainEntityClass);
-		}
-		catch (Exception ex) {
-			LOG.error("Error loading business entity", ex.getMessage());
+		} catch (HibernateException ex) {
+        	LOG.error("Hibernate error occured while loading business entity", ex.getMessage());	
+		} catch (Exception ex) {
+			LOG.error("Unknown error occured while loading business entity", ex.getMessage());
 		}
 		return businessEntity;
 	}
@@ -162,8 +171,10 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
 				K businessEntity = mappingService.map(de, domainEntityClass);
 				businessEntities.add(businessEntity);
 			}
+		} catch (HibernateException ex) {
+        	LOG.error("Hibernate error occured while loading business entities", ex.getMessage());	
 		} catch (Exception ex) {
-			LOG.error("Error loading business entities", ex.getMessage());
+			LOG.error("Unknown error occured while loading business entities", ex.getMessage());
 		}
 		
 		return businessEntities;

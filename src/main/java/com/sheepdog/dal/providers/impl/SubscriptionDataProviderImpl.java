@@ -4,16 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.criterion.Projection;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.internal.CriteriaImpl.Subcriteria;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sheepdog.business.domain.entities.File;
 import com.sheepdog.business.domain.entities.Subscription;
+import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.dal.entities.FileEntity;
 import com.sheepdog.dal.entities.SubscriptionEntity;
 import com.sheepdog.dal.entities.UserEntity;
+import com.sheepdog.dal.exceptions.DaoException;
 import com.sheepdog.dal.providers.SubscriptionDataProvider;
 
 @Repository
@@ -43,8 +49,10 @@ public class SubscriptionDataProviderImpl extends BaseDataProviderImpl<Subscript
 				File file = mappingService.map(fileEntity, File.class);
 				resultList.add(file);
 			}
+		} catch (HibernateException ex) {
+        	LOG.error("Hibernate error occured while getting files by username", ex.getMessage());
 		} catch (Exception ex) {
-			LOG.error("Error loading files", ex.getMessage());
+			LOG.error("Unknown error occured while getting files by username", ex.getMessage());
 		}
 		return resultList;
 	}
@@ -66,10 +74,80 @@ public class SubscriptionDataProviderImpl extends BaseDataProviderImpl<Subscript
 			Criteria crsub = session.createCriteria(SubscriptionEntity.class)
 					.add(Restrictions.eq("fileEntity.id", fe.getId()));
 			sublist = crsub.list();
+		} catch (HibernateException ex) {
+        	LOG.error("Hibernate error occured while getting subscriptions by qualified name", ex.getMessage());
 		} catch (Exception ex) {
-			LOG.error("Error loading subscriptions", ex.getMessage());
+			LOG.error("Unknown error occured while getting subscriptions by qualified name", ex.getMessage());
 		}
 		return sublist;
 	}
 
+	@Transactional
+	@Override
+	public void deleteSubscription(User user, File file) {
+		try{
+			Session session = sessionFactory.getCurrentSession();
+			Criteria fileCriteria = session.createCriteria(FileEntity.class)
+					.add(Restrictions.eq("qualifiedName", file.getQualifiedName()));
+			FileEntity fe = (FileEntity)fileCriteria.uniqueResult();
+			Criteria subscrCriteria = session.createCriteria(SubscriptionEntity.class)
+					.add(Restrictions.and(
+							Restrictions.eq("fileEntity.id", fe.getId()), 
+							Restrictions.eq("userEntity.id", user.getId())));
+			SubscriptionEntity se = (SubscriptionEntity) subscrCriteria.uniqueResult();
+			session.delete(se);
+		} catch (HibernateException ex) {
+        	LOG.error("Hibernate error occured while deleting subscription", ex.getMessage());
+		} catch (Exception ex) {
+			LOG.error("Unknown error occured while deleting subscription", ex.getMessage());
+		}
+	}
+	
+	@Transactional
+	@Override
+	public void createSubscription(User user, File file) {
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			
+			Criteria fileCriteria = session.createCriteria(FileEntity.class)
+					.add(Restrictions.eq("qualifiedName", file.getQualifiedName()));
+			FileEntity fe = (FileEntity)fileCriteria.uniqueResult();
+			
+			File f = mappingService.map(fe, File.class);
+			
+			Subscription s = new Subscription(user, f);
+			save(s, SubscriptionEntity.class);
+		} catch (HibernateException ex) {
+        	LOG.error("Hibernate error occured while creating subscription", ex.getMessage());
+		} catch (Exception ex) {
+			LOG.error("Unknown error occured while creating subscription", ex.getMessage());
+		}
+	}
+	
+	@Transactional
+	@Override
+	public boolean isSubscribed(User user, File file) throws DaoException {
+		long rows = 0;
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			Criteria fileCriteria = session.createCriteria(FileEntity.class)
+					.add(Restrictions.eq("qualifiedName", file.getQualifiedName()));
+			FileEntity fe = (FileEntity)fileCriteria.uniqueResult();
+	
+			Criteria subscrCriteria = session.createCriteria(SubscriptionEntity.class)
+					.add(Restrictions.and(
+							Restrictions.eq("fileEntity.id", fe.getId()), 
+							Restrictions.eq("userEntity.id", user.getId())))
+							.setProjection(Projections.rowCount());
+			rows = (long) subscrCriteria.uniqueResult();
+			return (rows!=0);
+		} catch (HibernateException ex) {
+        	LOG.error("Hibernate error occured while checking subscription", ex.getMessage());
+        	throw new DaoException(ex);
+		} catch (Exception ex) {
+			LOG.error("Unknown error occured while checking subscription", ex.getMessage());
+			throw new DaoException(ex);
+		}
+	}
 }
+	

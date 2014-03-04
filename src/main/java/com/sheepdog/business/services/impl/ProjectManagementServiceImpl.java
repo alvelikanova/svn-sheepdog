@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.sheepdog.business.domain.entities.Project;
 import com.sheepdog.business.services.ProjectManagementService;
+import com.sheepdog.dal.entities.ProjectEntity;
 import com.sheepdog.dal.providers.ProjectDataProvider;
 
 @Service
@@ -22,4 +23,14 @@ public class ProjectManagementServiceImpl implements ProjectManagementService {
 		return projectDataProvider.getCurrentProject();
 	}
 
+	@Override
+	public void deleteCurrentProject(){
+		Project project = projectDataProvider.getCurrentProject();
+		projectDataProvider.delete(project, ProjectEntity.class);
+	}
+	
+	@Override
+	public void saveProject(Project project){
+		projectDataProvider.save(project, ProjectEntity.class);
+	}
 }
