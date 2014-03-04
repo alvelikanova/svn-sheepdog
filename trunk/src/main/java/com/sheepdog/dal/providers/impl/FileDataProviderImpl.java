@@ -1,6 +1,7 @@
 package com.sheepdog.dal.providers.impl;
 
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,8 +24,10 @@ public class FileDataProviderImpl extends BaseDataProviderImpl<FileEntity, File,
 			cr.setMaxResults(1);
 			FileEntity fileEntity = (FileEntity) cr.uniqueResult();
 			file = mappingService.map(fileEntity, File.class);
-		} catch (Exception ex){
-			LOG.error("Error loading file", ex.getMessage());
+		} catch (HibernateException ex) {
+        	LOG.error("Hibernate error occured while loading file by qualified name", ex.getMessage());
+        } catch (Exception ex) {
+			LOG.error("Unknown error occured while loading file by qualified name", ex.getMessage());
 		}
 		return file;
 	}

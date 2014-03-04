@@ -1,6 +1,7 @@
 package com.sheepdog.dal.providers.impl;
 
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,8 +24,10 @@ public class ProjectDataProviderImpl extends BaseDataProviderImpl<ProjectEntity,
 			cr.setMaxResults(1);
 			ProjectEntity projectEntity = (ProjectEntity) cr.uniqueResult();
 			project = mappingService.map(projectEntity, Project.class);	
-		} catch (Exception ex) {
-			LOG.error("Error loading project", ex.getMessage());
+		} catch (HibernateException ex) {
+        	LOG.error("Hibernate error occured while loading project by url", ex.getMessage());
+        } catch (Exception ex) {
+			LOG.error("Unknown error occured while loading project by url", ex.getMessage());
 		}
 		return project;
 	}
@@ -40,8 +43,10 @@ public class ProjectDataProviderImpl extends BaseDataProviderImpl<ProjectEntity,
 			cr.setMaxResults(1);
 			ProjectEntity projectEntity = (ProjectEntity) cr.uniqueResult();
 			project = mappingService.map(projectEntity, Project.class);	
-		} catch (Exception ex) {
-			LOG.error("Error loading project", ex.getMessage());
+		} catch (HibernateException ex) {
+        	LOG.error("Hibernate error occured while loading project by name", ex.getMessage());
+        } catch (Exception ex) {
+			LOG.error("Unknown error occured while loading project by name", ex.getMessage());
 		}
 		return project;
 	}
@@ -50,11 +55,17 @@ public class ProjectDataProviderImpl extends BaseDataProviderImpl<ProjectEntity,
 	@Override
 	public Project getCurrentProject() {
 		Project project = null;
-		Criteria cr = sessionFactory.getCurrentSession()
-				.createCriteria(ProjectEntity.class);
-		cr.setMaxResults(1);
-		ProjectEntity pe = (ProjectEntity)cr.uniqueResult();
-		project = mappingService.map(pe, Project.class);
+		try {
+			Criteria cr = sessionFactory.getCurrentSession()
+					.createCriteria(ProjectEntity.class);
+			cr.setMaxResults(1);
+			ProjectEntity pe = (ProjectEntity)cr.uniqueResult();
+			project = mappingService.map(pe, Project.class);
+		} catch (HibernateException ex) {
+        	LOG.error("Hibernate error occured while loading current project", ex.getMessage());
+        } catch (Exception ex) {
+			LOG.error("Unknown error occured while loading current project", ex.getMessage());
+		}
 		return project;
 	}
 

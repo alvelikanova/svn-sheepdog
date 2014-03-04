@@ -1,7 +1,10 @@
 package com.sheepdog.dal.providers.impl;
 
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,8 +22,11 @@ public class RevisionDataProviderImpl extends BaseDataProviderImpl<RevisionEntit
 		try {
 			revision.setComment(comment);
 			save(revision, RevisionEntity.class);
+		} catch (HibernateException ex) {
+        	LOG.error("Hibernate error occured while creating revision with comment", ex.getMessage());
+        	throw new DaoException(ex);
 		} catch (Exception ex) {
-			LOG.error("Error creating revision", ex.getMessage());
+			LOG.error("unknown error occured while creating revision with comment", ex.getMessage());
 			throw new DaoException(ex);
 		}
 	}
@@ -30,15 +36,19 @@ public class RevisionDataProviderImpl extends BaseDataProviderImpl<RevisionEntit
 	public Revision getLatestRevision(){
 		Revision revision = null;
 		try{
-			Criteria cr = sessionFactory.getCurrentSession()
+			Session session = sessionFactory.getCurrentSession();
+			Criteria cr = session
 				    .createCriteria(RevisionEntity.class)
 				    .setProjection(Projections.max("revisionNo"));
 			cr.setMaxResults(1);
+			int latestRevisionNumber = (int)cr.uniqueResult();
+			cr = session.createCriteria(RevisionEntity.class).add(Restrictions.eq("revisionNo", latestRevisionNumber));
 			RevisionEntity re = (RevisionEntity)cr.uniqueResult();
 			revision = mappingService.map(re, Revision.class);
-		} catch (Exception ex){
-			LOG.error("Error loading revision", ex.getMessage());
-			throw new DaoException(ex);
+		} catch (HibernateException ex) {
+        	LOG.error("Hibernate error occured while getting latest revision", ex.getMessage());
+		} catch (Exception ex) {
+			LOG.error("Unknown error occured while getting latest revision", ex.getMessage());
 		}
 		return revision;
 	}

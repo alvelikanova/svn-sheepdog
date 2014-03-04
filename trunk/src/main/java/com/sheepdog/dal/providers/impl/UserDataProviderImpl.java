@@ -1,6 +1,7 @@
 package com.sheepdog.dal.providers.impl;
 
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,8 +23,10 @@ public class UserDataProviderImpl extends BaseDataProviderImpl<UserEntity,User,I
 		cr.setMaxResults(1);
 		UserEntity userEntity = (UserEntity) cr.uniqueResult();
 		user =	mappingService.map(userEntity, User.class);
+		} catch (HibernateException ex) {
+        	LOG.error("Hibernate error occured while getting user by login", ex.getMessage());
 		} catch (Exception ex){
-			LOG.error("Error loading user", ex.getMessage());
+			LOG.error("Unknown error occured while getting user by login", ex.getMessage());
 		}
 		return user;
 	}
@@ -38,8 +41,10 @@ public class UserDataProviderImpl extends BaseDataProviderImpl<UserEntity,User,I
 		cr.setMaxResults(1);
 		UserEntity userEntity = (UserEntity) cr.uniqueResult();
 		user =	mappingService.map(userEntity, User.class);
-		} catch (Exception ex){
-			LOG.error("Error loading user", ex.getMessage());
+		} catch (HibernateException ex) {
+        	LOG.error("Hibernate error occured while getting user by email", ex.getMessage());
+		} catch (Exception ex) {
+			LOG.error("Unknown error occured while getting user by email", ex.getMessage());
 		}
 		return user;
 	}
