@@ -85,6 +85,9 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 
 		for (Iterator entries = logEntries.iterator(); entries.hasNext();) {
 			SVNLogEntry logEntry = (SVNLogEntry) entries.next();
+			if (logEntry.getRevision() == 1) {
+				continue;
+			}
 			revisions.add(new Revision(user.getProject(), (int) logEntry.getRevision(), logEntry.getAuthor(), logEntry
 					.getMessage(), logEntry.getDate()));
 		}

@@ -5,8 +5,11 @@ import java.io.Serializable;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 
-@ManagedBean(name = "tabHeaderBean")
-@SessionScoped
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+@Component(value = "tabHeaderBean")
+@Scope("session")
 public class TabHeaderBean implements Serializable {
 
 	/**
@@ -22,8 +25,8 @@ public class TabHeaderBean implements Serializable {
 	public String updateIndex(Long index, String url) {
 		setActiveIndex(index.intValue());
 
-		// return url + "?faces-redirect=true"; TODO
-		return url;
+		return url + "?faces-redirect=true";
+		// return url;TODO
 	}
 
 	public int getActiveIndex() {

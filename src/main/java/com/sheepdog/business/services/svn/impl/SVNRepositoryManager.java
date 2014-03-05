@@ -96,6 +96,8 @@ public class SVNRepositoryManager {
 
 		repositories.put(user, repo);
 
+		LOG.info("Connection for user: " + user.getLogin() + " was added.");
+
 		return true;
 	}
 
@@ -160,10 +162,8 @@ public class SVNRepositoryManager {
 			throw new IOException("Failed connection to URL:" + tempUser.getProject().getUrl());
 		}
 
-		// User.getUpdateUser().setProject(new Project(projectName, url)); TODO
-		// Add Project object to UPDATE_USER
-
 		repositories.put(User.getUpdateUser(), repo);
+		LOG.info("Main connection to repository (URL: " + url + " ) was created");
 	}
 
 	/**

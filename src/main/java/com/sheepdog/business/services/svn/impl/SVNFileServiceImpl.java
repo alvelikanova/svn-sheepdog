@@ -60,7 +60,6 @@ public class SVNFileServiceImpl implements SVNFileService {
 	@Autowired
 	private SVNProjectFacade projectFacade;
 
-
 	public SVNFileServiceImpl() {
 
 	}
@@ -118,7 +117,6 @@ public class SVNFileServiceImpl implements SVNFileService {
 			f.setProject(currentProject);
 			setNameFieldsToOneFile(f);
 		}
-
 
 		FileTreeComposite root = createComposite(files, dirProps, fileProps);
 
@@ -245,7 +243,7 @@ public class SVNFileServiceImpl implements SVNFileService {
 		}
 
 		if (nodeKind == SVNNodeKind.NONE || nodeKind == SVNNodeKind.DIR)
-			throw new InvalidParameterException("That file is not exist: " + file.getPath());
+			throw new InvalidParameterException("That file is directory or not exist: " + file.getPath());
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		SVNProperties properties = new SVNProperties();
