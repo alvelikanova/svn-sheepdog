@@ -66,14 +66,17 @@ public class Initializer {
 	@Value("${reset.onstart}")
 	private String reset;
 
-	//@PostConstruct
+	@PostConstruct
 	public void startup() {
+		LOG.info("Starting application. ====================================================");
 
 		dbCheck();
 
 		createConnections();
 
 		checkDBRevisions();
+
+		LOG.info("Configuration over. ======================================================");
 
 	}
 
@@ -101,6 +104,8 @@ public class Initializer {
 		// projectService.saveProject(newProject); TODO
 
 		User.getUpdateUser().setProject(projectService.getCurrentProject());
+
+		LOG.info("Was added new project: " + newProject.getName());
 	}
 
 	private void createConnections() {
@@ -137,6 +142,7 @@ public class Initializer {
 
 	private void checkDBRevisions() {
 		long dbLastRev = rms.getCurrentRevision().getRevisionNo();
+
 		long repoLastRev = 1;
 		try {
 			repoLastRev = svnRevisionService.getLastRevision(User.getUpdateUser()).getRevisionNo();
@@ -149,7 +155,11 @@ public class Initializer {
 		}
 
 		if (dbLastRev < repoLastRev) {
+			LOG.info("Load revisions from repository. Last DB revision is " + dbLastRev + ". Last repo revision is "
+					+ repoLastRev);
 			rms.saveRevisions(loadRevisionsFromRepo(dbLastRev));
+		} else if (dbLastRev == repoLastRev) {
+			LOG.info("DB containing actual info. =================================================");
 		} else {
 			LOG.error("DB info is invalid for project:" + projectName + " from url:" + repoUrl
 					+ " Check all parameters or set reset.onstart = "
@@ -169,6 +179,7 @@ public class Initializer {
 		} catch (IOException e) {
 			LOG.warn("Failed to get revisions from repo. " + e.getMessage());
 		}
+
 		return revisions;
 
 	}

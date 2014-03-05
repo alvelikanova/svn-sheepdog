@@ -2,12 +2,16 @@ package com.sheepdog.frontend.beans.templates;
 
 import java.io.IOException;
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.faces.model.SelectItem;
 
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.NodeSelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -20,6 +24,7 @@ import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
 import com.sheepdog.business.services.svn.SVNFileService;
 import com.sheepdog.business.services.svn.SVNRevisionService;
+import com.sheepdog.frontend.beans.pages.LoginManager;
 
 @Component(value = "fileContentBean")
 @Scope("session")
@@ -31,6 +36,9 @@ public class FileContentBean {
 	@Autowired
 	private SVNRevisionService revService;
 
+	@Autowired
+	private LoginManager loginManager;
+
 	private String content;
 
 	private Integer selectedRev;
@@ -39,7 +47,7 @@ public class FileContentBean {
 
 	// private List<Revision> revisions = new ArrayList<>(0);
 
-	private Set<Integer> revisions = new TreeSet<>();
+	private Set<String> revisions = new TreeSet<>();
 
 	private File file;
 
@@ -57,19 +65,21 @@ public class FileContentBean {
 			loadRevisions();
 			loadContent();
 		}
+		RequestContext.getCurrentInstance().update(":file_form:cont");
 	}
 
 	public void loadContent() {
 
-		int revision = -1;
+		int revision = 0;
 		if (selectedRev != null) {
 			revision = selectedRev;
 		}
+		if (revision == 0) {
+			revision = -1;
+		}
 
 		try {
-			content = fileService.getFileContent(User.getUpdateUser(), file, revision);// TODO
-																						// ACTUAL
-																						// USER
+			content = fileService.getFileContent(loginManager.getCurrentUser(), file, revision);
 		} catch (InvalidParameterException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -103,7 +113,7 @@ public class FileContentBean {
 
 		if (fileRevisions != null) {
 			for (Revision r : fileRevisions) {
-				revisions.add(r.getRevisionNo());
+				revisions.add(String.valueOf(r.getRevisionNo()));
 			}
 
 		}
@@ -138,11 +148,11 @@ public class FileContentBean {
 		this.selectedRev = selectedRev;
 	}
 
-	public Set<Integer> getRevisions() {
+	public Set<String> getRevisions() {
 		return revisions;
 	}
 
-	public void setRevisions(Set<Integer> revisions) {
+	public void setRevisions(Set<String> revisions) {
 		this.revisions = revisions;
 	}
 }

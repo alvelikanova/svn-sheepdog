@@ -14,16 +14,38 @@
 	<ui:define name="content">
 		<div>
 			<h:outputStylesheet name="css/sheepdog.css"></h:outputStylesheet>
-			<h:form id="form">
+			<h:form id="file_form">
+
+
 
 
 				<p:treeTable id="file_tree" value="#{fileTreeBean.root}"
 					selection="#{fileTreeBean.selectedNode}" var="ftc"
-					selectionMode="single" liveResize="true" styleClass="fileTreeTable">
+					selectionMode="single" liveResize="true" styleClass="fileTreeTable"
+					emptyMessage="Loading files...">
 
-					<p:ajax event="select" update=":form:cont "
+					<p:ajax event="select" update=":file_form:cont "
 						listener="#{fileContentBean.select}"
 						oncomplete="PF('fileDialog').show()" />
+
+					<f:facet name="header">
+						<p:toolbar style="margin: 0!important; width: 50%">
+							<p:toolbarGroup align="left">
+								<p:commandButton
+									actionListener="#{fileTreeBean.setNeedToReload()}"
+									action="#{fileTreeBean.loadData()}" icon="ui-icon-refresh"
+									title="Refresh" />
+								<p:separator />
+								<p:commandButton actionListener="#{fileTreeBean.expandeAll()}"
+									update="file_tree" icon="ui-icon-plus" title="Expande all" />
+								<p:commandButton actionListener="#{fileTreeBean.collapseAll()}"
+									update="file_tree" icon="ui-icon-minus" title="Collapse all" />
+
+							</p:toolbarGroup>
+						</p:toolbar>
+
+
+					</f:facet>
 
 					<p:column style="text-align: left!important">
 						<f:facet name="header">  
@@ -74,6 +96,12 @@
 				</p:treeTable>
 
 
+				<p:remoteCommand name="lazyload"
+					actionListener="#{fileTreeBean.loadData()}" autoRun="true">
+
+				</p:remoteCommand>
+
+
 				<p:dialog header="File Menu" widgetVar="fileDialog" dynamic="true"
 					showEffect="clip" hideEffect="drop" modal="true"
 					style="width: 80%!important; height:70%!important">
@@ -84,12 +112,11 @@
 								<h:outputText value="Revision: " />
 
 								<p:selectOneMenu id="selectMenu"
-									value="#{fileContentBean.selectedRev}" effect="fade"
-									converter="javax.faces.Integer">
+									value="#{fileContentBean.selectedRev}" effect="fade">
 									<p:ajax event="change" update="cont"
 										listener="#{fileContentBean.loadContent}" />
 
-									<f:selectItem itemLabel="Select Revision" itemValue="" />
+									<f:selectItem itemLabel="Select Revision" itemValue="#{null}" />
 									<f:selectItems value="#{fileContentBean.revisions}" />
 								</p:selectOneMenu>
 							</p:panelGrid>
@@ -103,8 +130,9 @@
 
 				</p:dialog>
 
-			</h:form>
 
+			</h:form>
+			<p:growl id="feedback" showDetail="true" sticky="true" />
 
 
 		</div>
