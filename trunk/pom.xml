@@ -228,7 +228,7 @@
 				</configuration>
 			</plugin>
 			
-			<!-- plugin>
+			<plugin>
                 <groupId>org.jboss.as.plugins</groupId>
                 <artifactId>jboss-as-maven-plugin</artifactId>
                 <version>7.5.Final</version>
@@ -240,7 +240,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin> -->
+            </plugin> 
 		</plugins>
 	</build>
 
@@ -277,7 +277,7 @@
 			<id>cloudbees</id> 
 			<properties>
 				<jdbc.driver.class.name>com.mysql.jdbc.Driver</jdbc.driver.class.name>
-				<jdbc.url>jdbc:mysql:// ec2-23-21-211-172.compute-1.amazonaws.com:3306/sheepdogdb</jdbc.url>
+				<jdbc.url>jdbc:mysql://ec2-23-21-211-172.compute-1.amazonaws.com:3306/sheepdogdb</jdbc.url>
 				<jdbc.username>sheepdog</jdbc.username>
 				<jdbc.password>Vaiph0ch</jdbc.password>
 				<hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
