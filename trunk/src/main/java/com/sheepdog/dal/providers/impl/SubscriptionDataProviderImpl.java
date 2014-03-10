@@ -27,7 +27,7 @@ public class SubscriptionDataProviderImpl extends BaseDataProviderImpl<Subscript
 
 	@Transactional
 	@Override
-	public List<File> getFilesByUserName(String userName) {
+	public List<File> getFilesByUserName(String userName) throws DaoException {
 		List<File> resultList = null;
 		try {
 			resultList = new ArrayList<>();
@@ -51,8 +51,10 @@ public class SubscriptionDataProviderImpl extends BaseDataProviderImpl<Subscript
 			}
 		} catch (HibernateException ex) {
         	LOG.error("Hibernate error occured while getting files by username", ex.getMessage());
+        	throw new DaoException(ex);
 		} catch (Exception ex) {
 			LOG.error("Unknown error occured while getting files by username", ex.getMessage());
+			throw new DaoException(ex);
 		}
 		return resultList;
 	}
@@ -60,7 +62,7 @@ public class SubscriptionDataProviderImpl extends BaseDataProviderImpl<Subscript
 	@SuppressWarnings("unchecked")
 	@Transactional
 	@Override
-	public List<Subscription> getSubscriptionsByQualifiedName(String qualifiedName) {
+	public List<Subscription> getSubscriptionsByQualifiedName(String qualifiedName) throws DaoException {
 		List <Subscription> sublist = null;
 		try {
 			Session session = sessionFactory.getCurrentSession();
@@ -76,15 +78,17 @@ public class SubscriptionDataProviderImpl extends BaseDataProviderImpl<Subscript
 			sublist = crsub.list();
 		} catch (HibernateException ex) {
         	LOG.error("Hibernate error occured while getting subscriptions by qualified name", ex.getMessage());
+        	throw new DaoException(ex);
 		} catch (Exception ex) {
 			LOG.error("Unknown error occured while getting subscriptions by qualified name", ex.getMessage());
+			throw new DaoException(ex);
 		}
 		return sublist;
 	}
 
 	@Transactional
 	@Override
-	public void deleteSubscription(User user, File file) {
+	public void deleteSubscription(User user, File file) throws DaoException {
 		try{
 			Session session = sessionFactory.getCurrentSession();
 			Criteria fileCriteria = session.createCriteria(FileEntity.class)
@@ -98,14 +102,16 @@ public class SubscriptionDataProviderImpl extends BaseDataProviderImpl<Subscript
 			session.delete(se);
 		} catch (HibernateException ex) {
         	LOG.error("Hibernate error occured while deleting subscription", ex.getMessage());
+        	throw new DaoException(ex);
 		} catch (Exception ex) {
 			LOG.error("Unknown error occured while deleting subscription", ex.getMessage());
+			throw new DaoException(ex);
 		}
 	}
 	
 	@Transactional
 	@Override
-	public void createSubscription(User user, File file) {
+	public void createSubscription(User user, File file) throws DaoException {
 		try {
 			Session session = sessionFactory.getCurrentSession();
 			
@@ -119,8 +125,10 @@ public class SubscriptionDataProviderImpl extends BaseDataProviderImpl<Subscript
 			save(s, SubscriptionEntity.class);
 		} catch (HibernateException ex) {
         	LOG.error("Hibernate error occured while creating subscription", ex.getMessage());
+        	throw new DaoException(ex);
 		} catch (Exception ex) {
 			LOG.error("Unknown error occured while creating subscription", ex.getMessage());
+			throw new DaoException(ex);
 		}
 	}
 	

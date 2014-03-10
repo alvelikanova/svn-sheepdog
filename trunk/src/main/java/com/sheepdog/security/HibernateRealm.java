@@ -42,8 +42,7 @@ public class HibernateRealm extends AuthorizingRealm {
 		    throw new AuthorizationException("Could not find user with specified login");
 		}
 		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-		if (user.isAdmin()) 
-			info.addRole("ADMIN");
+		info.addRole(user.getRole());
 		return info;
 	}
 
@@ -58,12 +57,7 @@ public class HibernateRealm extends AuthorizingRealm {
 		} else {
 			SimpleAuthenticationInfo saInfo = new SimpleAuthenticationInfo(login, user.getPassword(), getName());
             saInfo.setCredentialsSalt(ByteSource.Util.bytes(login));
-            
-//            if (getCredentialsMatcher().doCredentialsMatch(token, saInfo)) 
-				return saInfo;
-//            else {
-//				throw new IncorrectCredentialsException();
-//			}
+			return saInfo;
 		}
 	}
 

@@ -13,7 +13,46 @@
 
 	<ui:define name="content">
 		<div>
-			<h3>This is PROFILE page</h3>
+			<h:form id="form"> 
+			    <p:panel id="panel" header="User Profile" style="margin-bottom:10px;">  
+			        <p:growl id="msg" showDetail="true" sticky="true"/>
+			        <h:panelGrid columns="2">  
+			        
+			            <h:outputLabel for="login" value="Login: *" />  
+			            <p:inputText id="login"   
+			                value="#{usersBean.login}" required="true" label="Login">  
+			                <f:validateLength minimum="4" />  
+			            </p:inputText>    
+			                
+			            <h:outputLabel for="firstName" value="First Name: *" />  
+			            <p:inputText id="firstName"   
+			                value="#{usersBean.firstName}" required="true" label="First Name"/> 
+			              
+			            <h:outputLabel for="lastName" value="Last Name: *" />  
+			            <p:inputText id="lastName"   
+			                value="#{usersBean.lastName}" required="true" label="Last Name"/> 
+			                
+			            <h:outputLabel for="email" value="Email: *" />  
+			            <p:inputText id="email"   
+			                value="#{usersBean.email}" required="true" label="Email"/>  
+			            
+			            <h:outputLabel for="oldPassword" value="Old password: *" />  
+			            <p:password id="oldPassword"   
+			                value="#{usersBean.oldPassword}" required="true" label="Old password"/>  
+			            
+			            <h:outputLabel for="newPassword1" value="New password: *" />  
+			            <p:password id="newPassword1" match="newPassword2"  
+			                value="#{usersBean.newPassword}" required="true" label="New password"/>  
+			            
+			            <h:outputLabel for="newPassword2" value="Confirm new password: *" />  
+			            <p:password id="newPassword2"   
+			                value="#{usersBean.newPassword}" required="true" label="Confirm new password"/>  
+			                      
+			            <p:commandButton value="Change data" update=":form:msg"/> 
+			        	<p:commandButton value="Verify SVN" update=":form:msg"/>  
+			        </h:panelGrid> 
+			    </p:panel>  
+		    </h:form>
 		</div>
 	    
 	</ui:define>

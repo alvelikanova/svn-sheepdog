@@ -8,4 +8,5 @@ public interface UserDataProvider extends PageableDataProvider<UserEntity,User,I
 	User getUserByLogin(String login);
 	User getUserByEmail(String email);
 	void changePassword(User user, String password);
+	void deleteUserById(Integer id);
 }
