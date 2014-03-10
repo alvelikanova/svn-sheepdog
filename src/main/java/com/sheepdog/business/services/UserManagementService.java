@@ -8,4 +8,7 @@ public interface UserManagementService {
 	User getUserByLogin(String login);
 
 	List<User> getAllUsers();
+	
+	void saveUser(User user);
+	void deleteUserById(Integer id);
 }

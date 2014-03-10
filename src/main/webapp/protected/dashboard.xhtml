@@ -18,11 +18,11 @@
 	    <h:panelGroup rendered="#{not empty request.remoteUser}">
 	        You're logged in as #{request.remoteUser}.
 	        <br/>
-	        <h:panelGroup rendered="#{request.isUserInRole('ADMIN')}">
+	        <h:panelGroup rendered="#{request.isUserInRole('admin')}">
 	            You're an ADMIN user!
 	            <br/>
 	        </h:panelGroup>
-	        <h:panelGroup rendered="#{not request.isUserInRole('ADMIN')}">
+	        <h:panelGroup rendered="#{not request.isUserInRole('admin')}">
 	            You're not an ADMIN user!
 	        </h:panelGroup>
 	    </h:panelGroup>

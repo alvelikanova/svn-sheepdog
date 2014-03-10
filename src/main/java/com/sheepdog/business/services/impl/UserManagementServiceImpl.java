@@ -28,4 +28,14 @@ public class UserManagementServiceImpl implements UserManagementService {
 		return userDataProvider.findAll(UserEntity.class, User.class);
 	}
 
+	@Override
+	public void saveUser(User user) {
+		userDataProvider.save(user, UserEntity.class);
+	}
+
+	@Override
+	public void deleteUserById(Integer id) {
+		userDataProvider.deleteUserById(id);
+	}
+
 }

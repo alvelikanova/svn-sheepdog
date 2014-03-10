@@ -33,7 +33,7 @@ public class RevisionDataProviderImpl extends BaseDataProviderImpl<RevisionEntit
 	
 	@Transactional
 	@Override
-	public Revision getLatestRevision(){
+	public Revision getLatestRevision() throws DaoException {
 		Revision revision = null;
 		try{
 			Session session = sessionFactory.getCurrentSession();
@@ -47,8 +47,10 @@ public class RevisionDataProviderImpl extends BaseDataProviderImpl<RevisionEntit
 			revision = mappingService.map(re, Revision.class);
 		} catch (HibernateException ex) {
         	LOG.error("Hibernate error occured while getting latest revision", ex.getMessage());
+        	throw new DaoException(ex);
 		} catch (Exception ex) {
 			LOG.error("Unknown error occured while getting latest revision", ex.getMessage());
+			throw new DaoException(ex);
 		}
 		return revision;
 	}

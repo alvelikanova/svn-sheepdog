@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sheepdog.business.domain.entities.Project;
 import com.sheepdog.dal.entities.ProjectEntity;
+import com.sheepdog.dal.exceptions.DaoException;
 import com.sheepdog.dal.providers.ProjectDataProvider;
 
 @Repository
@@ -15,7 +16,7 @@ public class ProjectDataProviderImpl extends BaseDataProviderImpl<ProjectEntity,
 
 	@Transactional
 	@Override
-	public Project findProjectByUrl(String url) {
+	public Project findProjectByUrl(String url) throws DaoException {
 		Project project = null;
 		try{
 			Criteria cr = sessionFactory.getCurrentSession()
@@ -26,15 +27,17 @@ public class ProjectDataProviderImpl extends BaseDataProviderImpl<ProjectEntity,
 			project = mappingService.map(projectEntity, Project.class);	
 		} catch (HibernateException ex) {
         	LOG.error("Hibernate error occured while loading project by url", ex.getMessage());
+        	throw new DaoException(ex);
         } catch (Exception ex) {
 			LOG.error("Unknown error occured while loading project by url", ex.getMessage());
+			throw new DaoException(ex);
 		}
 		return project;
 	}
 
 	@Transactional
 	@Override
-	public Project findProjectByName(String projectName) {
+	public Project findProjectByName(String projectName) throws DaoException {
 		Project project = null;
 		try{
 			Criteria cr = sessionFactory.getCurrentSession()
@@ -45,15 +48,17 @@ public class ProjectDataProviderImpl extends BaseDataProviderImpl<ProjectEntity,
 			project = mappingService.map(projectEntity, Project.class);	
 		} catch (HibernateException ex) {
         	LOG.error("Hibernate error occured while loading project by name", ex.getMessage());
+        	throw new DaoException(ex);
         } catch (Exception ex) {
 			LOG.error("Unknown error occured while loading project by name", ex.getMessage());
+			throw new DaoException(ex);
 		}
 		return project;
 	}
 
 	@Transactional
 	@Override
-	public Project getCurrentProject() {
+	public Project getCurrentProject() throws DaoException {
 		Project project = null;
 		try {
 			Criteria cr = sessionFactory.getCurrentSession()
@@ -63,8 +68,10 @@ public class ProjectDataProviderImpl extends BaseDataProviderImpl<ProjectEntity,
 			project = mappingService.map(pe, Project.class);
 		} catch (HibernateException ex) {
         	LOG.error("Hibernate error occured while loading current project", ex.getMessage());
+        	throw new DaoException(ex);
         } catch (Exception ex) {
 			LOG.error("Unknown error occured while loading current project", ex.getMessage());
+			throw new DaoException(ex);
 		}
 		return project;
 	}

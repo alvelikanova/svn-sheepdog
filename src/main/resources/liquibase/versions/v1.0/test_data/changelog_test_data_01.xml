@@ -6,7 +6,7 @@
 	<changeSet id="user_table_test_data_v1.0" author="velikanova.alenka"
 		context="v1.0">
 		<update tableName="user_">
-			<column name="admin" type="boolean">true</column>
+			<column name="role_">admin</column>
         	<where>id=1</where>
 		</update>
 	</changeSet>

@@ -32,7 +32,7 @@ public class UserEntity implements java.io.Serializable {
 	private String lastName;
 	private String email;
 	private String password;
-	private boolean admin;
+	private String role;
 	private Set<SubscriptionEntity> subscriptionEntities = new HashSet<SubscriptionEntity>(
 			0);
 
@@ -40,26 +40,26 @@ public class UserEntity implements java.io.Serializable {
 	}
 
 	public UserEntity(ProjectEntity projectEntity, String login,
-			String firstName, String lastName, String email, String password, boolean admin) {
+			String firstName, String lastName, String email, String password, String role) {
 		this.projectEntity = projectEntity;
 		this.login = login;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
 		this.password = password;
-		this.admin = admin;
+		this.role = role;
 	}
 
 	public UserEntity(ProjectEntity projectEntity, String login,
 			String firstName, String lastName, String email, String password,
-			boolean admin, Set<SubscriptionEntity> subscriptionEntities) {
+			String role, Set<SubscriptionEntity> subscriptionEntities) {
 		this.projectEntity = projectEntity;
 		this.login = login;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
 		this.password = password;
-		this.admin = admin;
+		this.role = role;
 		this.subscriptionEntities = subscriptionEntities;
 	}
 
@@ -129,13 +129,13 @@ public class UserEntity implements java.io.Serializable {
 		this.password = password;
 	}
 	
-	@Column(name = "ADMIN", nullable = false)
-	public boolean isAdmin() {
-		return this.admin;
+	@Column(name = "ROLE_", nullable = false)
+	public String getRole() {
+		return this.role;
 	}
 
-	public void setAdmin(boolean admin) {
-		this.admin = admin;
+	public void setRole(String role) {
+		this.role = role;
 	}
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "userEntity")

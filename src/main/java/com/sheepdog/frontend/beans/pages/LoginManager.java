@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
@@ -22,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.services.UserManagementService;
+import com.sheepdog.frontend.beans.templates.FeedbackBean;
 
 @Component(value = "authenticationBean")
 @Scope("session")
@@ -35,7 +35,8 @@ public class LoginManager implements Serializable {
 
 	@Autowired
 	private UserManagementService ums;
-
+	@Autowired
+	private FeedbackBean feedback;
 	private User currentUser = null;
 
 	public User getCurrentUser() {
@@ -66,11 +67,6 @@ public class LoginManager implements Serializable {
 		this.remember = remember;
 	}
 
-	private void facesError(String message) {
-		FacesContext.getCurrentInstance()
-				.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, message, null));
-	}
-
 	public void doLogin() {
 		Subject subject = SecurityUtils.getSubject();
 
@@ -90,11 +86,11 @@ public class LoginManager implements Serializable {
 			currentUser = ums.getUserByLogin(getUsername());
 
 		} catch (UnknownAccountException ex) {
-			facesError("Unknown account");
+			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Authentication error", "Unknown account");
 		} catch (IncorrectCredentialsException ex) {
-			facesError("Wrong password");
+			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Authentication error", "Wrong password");
 		} catch (AuthenticationException e) {
-			facesError("Authentication failed");
+			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Authentication error", "Authentication failed");
 		} catch (IOException ex) {
 			LOG.error(ex.getMessage(), ex);
 		} finally {

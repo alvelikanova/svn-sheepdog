@@ -40,7 +40,7 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
 	
 	@Transactional
 	@Override
-	public PagedList<K> getObjects(LoadOptions loadOptions, Class<T> dalEntityClass, Class<K> domainEntityClass) {
+	public PagedList<K> getObjects(LoadOptions loadOptions, Class<T> dalEntityClass, Class<K> domainEntityClass) throws DaoException {
         Session session = sessionFactory.getCurrentSession();
 
         PagedList<K> result = new PagedList<>();
@@ -65,8 +65,10 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
             result.setTotalSize(rowsCount);
         } catch (HibernateException ex) {
         	LOG.error("Hibernate error occured while getting objects", ex.getMessage());
+        	throw new DaoException(ex);
         } catch (Exception ex) {
         	LOG.error("Unknown error occured while getting objects", ex.getMessage());
+        	throw new DaoException(ex);
         }
 
         return result;
@@ -122,7 +124,7 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
 
 	@Transactional
 	@Override
-	public void delete(K entity, Class<T> dalEntityClass) throws DaoException{
+	public void delete(K entity, Class<T> dalEntityClass) throws DaoException {
 		Session session = sessionFactory.getCurrentSession();
 
 		try {
@@ -139,7 +141,7 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
 
 	@Transactional
 	@Override
-	public K findById(Class<T> dalEntityClass, Class<K> domainEntityClass, ID id) {
+	public K findById(Class<T> dalEntityClass, Class<K> domainEntityClass, ID id) throws DaoException {
 		Session session = sessionFactory.getCurrentSession();
 		K businessEntity = null;
 		try {
@@ -149,16 +151,18 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
 			T dalEntity = (T) cr.uniqueResult();
 			businessEntity = mappingService.map(dalEntity, domainEntityClass);
 		} catch (HibernateException ex) {
-        	LOG.error("Hibernate error occured while loading business entity", ex.getMessage());	
+        	LOG.error("Hibernate error occured while loading business entity", ex.getMessage());
+        	throw new DaoException(ex);
 		} catch (Exception ex) {
 			LOG.error("Unknown error occured while loading business entity", ex.getMessage());
+			throw new DaoException(ex);
 		}
 		return businessEntity;
 	}
 
 	@Transactional
 	@Override
-	public List<K> findAll(Class<T> dalEntityClass, Class<K> domainEntityClass) {		
+	public List<K> findAll(Class<T> dalEntityClass, Class<K> domainEntityClass) throws DaoException {		
 		Session session = sessionFactory.getCurrentSession();
 
 		List<K> businessEntities = new ArrayList<>();
@@ -172,9 +176,11 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
 				businessEntities.add(businessEntity);
 			}
 		} catch (HibernateException ex) {
-        	LOG.error("Hibernate error occured while loading business entities", ex.getMessage());	
+        	LOG.error("Hibernate error occured while loading business entities", ex.getMessage());
+        	throw new DaoException(ex);
 		} catch (Exception ex) {
 			LOG.error("Unknown error occured while loading business entities", ex.getMessage());
+			throw new DaoException(ex);
 		}
 		
 		return businessEntities;
@@ -184,14 +190,7 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
 		List<FilterOption> filters = loadOptions.getFilters();
 		if (CollectionUtils.hasItems(filters)) {
 			for (FilterOption f : filters) {
-				if (f.getField().equals("id")) {
-					Integer id = Integer.valueOf(f.getValue().toString());
-					source.add(
-							Restrictions.eq(f.getField(), id));
-				} else {
-					source.add(
-							Restrictions.like(f.getField(), f.getValue()+"%"));
-				}
+				source.add(Restrictions.like(f.getField(), "%"+f.getValue()+"%"));
 			}
 		}
 
