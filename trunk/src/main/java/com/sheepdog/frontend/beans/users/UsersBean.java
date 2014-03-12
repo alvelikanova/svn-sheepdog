@@ -4,15 +4,13 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import javax.faces.application.FacesMessage;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
-
+import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.sheepdog.business.services.UserManagementService;
+import com.sheepdog.dal.exceptions.DaoException;
 import com.sheepdog.frontend.beans.templates.FeedbackBean;
 
 @Component
@@ -92,9 +90,15 @@ public class UsersBean implements Serializable {
 		feedback.feedback(FacesMessage.SEVERITY_INFO, "Save User", "Method was called");
 	}
 	
-	public void deleteUser(Integer id) throws IOException {
-		ums.deleteUserById(id);
-		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-	    ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
+	public void deleteUser(Integer id) {
+		try {
+			ums.deleteUserById(id);
+			RequestContext.getCurrentInstance().update("form");
+			feedback.feedback(FacesMessage.SEVERITY_INFO, "Delete User", "User was deleted");
+		} catch (DaoException ex) {
+			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error", "Data access error");
+		} catch (Exception ex) {
+			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error", "Unknown error");
+		}
 	}
 }
