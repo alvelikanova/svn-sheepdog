@@ -6,10 +6,8 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.internal.CriteriaImpl.Subcriteria;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -156,6 +154,25 @@ public class SubscriptionDataProviderImpl extends BaseDataProviderImpl<Subscript
 			LOG.error("Unknown error occured while checking subscription", ex.getMessage());
 			throw new DaoException(ex);
 		}
+	}
+
+	@Transactional
+	@Override
+	public List<Subscription> getSubscriptionsByUser(User user) throws DaoException {
+		List<Subscription> resultList = new ArrayList<>();
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			Criteria subscrCriteria = session.createCriteria(SubscriptionEntity.class)
+					.add(Restrictions.eq("userEntity.id", user.getId()));
+			resultList = subscrCriteria.list();
+		} catch (HibernateException ex) {
+        	LOG.error("Hibernate error occured while checking subscription", ex.getMessage());
+        	throw new DaoException(ex);
+		} catch (Exception ex) {
+			LOG.error("Unknown error occured while checking subscription", ex.getMessage());
+			throw new DaoException(ex);
+		} 
+		return resultList;
 	}
 }
 	

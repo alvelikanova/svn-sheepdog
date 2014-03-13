@@ -14,4 +14,5 @@ public interface SubscriptionDataProvider extends PageableDataProvider<Subscript
 	void deleteSubscription(User user, File file);
 	void createSubscription(User user, File file);
 	boolean isSubscribed(User user, File file);
+	List<Subscription> getSubscriptionsByUser(User user);
 }
