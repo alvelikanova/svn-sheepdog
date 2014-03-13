@@ -40,7 +40,7 @@ public class SVNRepositoryManager {
 	/**
 	 * Map containing SVNRepository object of Project object.
 	 */
-	private Map<User, SVNRepository> repositories = new ConcurrentHashMap<User, SVNRepository>(0);
+	private Map<String, SVNRepository> repositories = new ConcurrentHashMap<String, SVNRepository>(0);
 
 	public SVNRepositoryManager() {
 
@@ -94,7 +94,7 @@ public class SVNRepositoryManager {
 			throw new IOException("Failed connection to URL:" + user.getProject().getUrl());
 		}
 
-		repositories.put(user, repo);
+		repositories.put(user.getLogin(), repo);
 
 		LOG.info("Connection for user: " + user.getLogin() + " was added.");
 
@@ -112,10 +112,11 @@ public class SVNRepositoryManager {
 	 */
 	public SVNRepository getRepositoryConnection(User user) throws IllegalArgumentException {
 
-		SVNRepository repo = repositories.get(user);
+		SVNRepository repo = repositories.get(user.getLogin());
 
 		if (repo == null) {
 			new IllegalArgumentException("Invalid User object: " + user.getLogin());
+			LOG.warn("Invalid User object: " + user.getLogin());
 		}
 		return repo;
 	}
@@ -162,7 +163,7 @@ public class SVNRepositoryManager {
 			throw new IOException("Failed connection to URL:" + tempUser.getProject().getUrl());
 		}
 
-		repositories.put(User.getUpdateUser(), repo);
+		repositories.put(User.getUpdateUser().getLogin(), repo);
 		LOG.info("Main connection to repository (URL: " + url + " ) was created");
 	}
 

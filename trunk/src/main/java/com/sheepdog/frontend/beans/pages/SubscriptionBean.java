@@ -5,14 +5,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.faces.context.FacesContext;
+
+import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.sheepdog.business.domain.entities.File;
+import com.sheepdog.business.domain.entities.FileTreeComposite;
 import com.sheepdog.business.domain.entities.Subscription;
 import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.services.FileManagementService;
+import com.sheepdog.business.services.RevisionManagementService;
 import com.sheepdog.business.services.SubscriptionManagementService;
 
 @Component(value = "subscriptionBean")
@@ -20,50 +25,74 @@ import com.sheepdog.business.services.SubscriptionManagementService;
 public class SubscriptionBean {
 
 	@Autowired
+	private LoginManager lm;
+
+	@Autowired
 	private SubscriptionManagementService subscrService;
 
 	@Autowired
 	private FileManagementService fs;
 
+	@Autowired
+	private RevisionManagementService rms;
+
 	private List<Subscription> subscriptions = new ArrayList<>(0);
 
 	public void deleteSubscription(File file) {
 
-		// subscrService.delete(file); TODO
+		subscrService.createSubscription(lm.getCurrentUser(), file);
 
 	}
 
 	public void deleteSubscription(Subscription subscription) {
 
-		// subscrService.delete(subscr); TODO
+		subscrService.deleteSubscription(subscription);
 
 	}
 
 	public void createSubscription(File file) {
-		User user = null;// TODO GET ACTIVE USER
+		File dbFile = fs.getFileByQualifiedName(file.getQualifiedName());
 
-		// fs.saveFile(file);TODO
+		if (dbFile == null) {
+			file.setRevision(rms.getCurrentRevision());
+			fs.saveFile(file);
+			dbFile = fs.getFileByQualifiedName(file.getQualifiedName());
+		}
 
 		Set<Subscription> sub = new HashSet<>();
-		sub.add(new Subscription(user, file));
+		sub.add(new Subscription(lm.getCurrentUser(), dbFile));
 
 		subscrService.saveSubscriptions(sub);
 	}
 
 	public void saveSubscription(Subscription subscription) {
+
 		Set<Subscription> subSet = new HashSet<>();
 		subSet.add(subscription);
 
 		subscrService.saveSubscriptions(subSet);
 	}
 
-	public void subscriptionCheck(File file, Boolean flag) {
-		if (flag) {
-			createSubscription(file);
+	public void subscriptionCheck(FileTreeComposite ftc) {
+		if (!ftc.isSubscribed()) {
+			createSubscription(ftc.getFile());
+			ftc.setSubscribed(true);
+
 		} else {
-			deleteSubscription(file);
+			deleteSubscription(ftc.getFile());
+			ftc.setSubscribed(false);
 		}
 
+	}
+
+	public void reloadSubscriptions() {
+		System.out.println("RELOAD+++++++++++++++++++++++++++++++++++++++++++++++");
+		subscriptions.clear();
+		subscriptions.addAll(subscrService.getSubscriptionsByUser(lm.getCurrentUser()));
+
+		System.out.println("Subscr size " + subscriptions.size());
+
+		RequestContext.getCurrentInstance().update("subscr_form:subscrTable");
 	}
 
 	public void subscriptionChange(Subscription subscription) {
@@ -78,17 +107,12 @@ public class SubscriptionBean {
 	}
 
 	public List<Subscription> getSubscriptions() {
-//		subscrService.getAllsubscr//TODO
-		
+
 		return subscriptions;
 	}
 
 	public void setSubscriptions(List<Subscription> subscriptions) {
 		this.subscriptions = subscriptions;
-	}
-
-	public void setSubscrService(SubscriptionManagementService subscrService) {
-		this.subscrService = subscrService;
 	}
 
 }

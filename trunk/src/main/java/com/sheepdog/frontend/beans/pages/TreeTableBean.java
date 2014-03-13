@@ -97,8 +97,6 @@ public class TreeTableBean implements Serializable {
 		FileTreeComposite rootFTC = null;
 
 		try {
-			projFacade.addSVNProjectConnection(currentUser);// TODO
-
 			rootFTC = fs.getAllFiles(currentUser);
 		} catch (IllegalArgumentException e) {
 			LOG.info("Failed to get files from repository. " + e.getMessage());
@@ -126,8 +124,9 @@ public class TreeTableBean implements Serializable {
 
 	private void printComposite(FileTreeComposite ftc, TreeNode parent) {
 
-		// if(subscrService.isSubscribed(ftc.getFile(), User user)){ TODO
-		// ftc.setSubscribed(true);}
+//		if (subscrService.isSubscribed(loginManager.getCurrentUser(), ftc.getFile())) {
+//			ftc.setSubscribed(true);
+//		}TODO
 		TreeNode current = new DefaultTreeNode(ftc, parent);
 
 		files.add(current);

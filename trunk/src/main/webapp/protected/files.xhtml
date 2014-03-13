@@ -86,7 +86,7 @@
 
 						<p:selectBooleanCheckbox value="#{ftc.subscribed}">
 							<p:ajax update="file_tree"
-								listener="#{subscriptionBean.subscriptionCheck(ftc.file, ftc.subscribed)}" />
+								listener="#{subscriptionBean.subscriptionCheck(ftc)}" />
 						</p:selectBooleanCheckbox>
 					</p:column>
 

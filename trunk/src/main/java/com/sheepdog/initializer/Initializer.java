@@ -96,16 +96,15 @@ public class Initializer {
 	}
 
 	private void reloadProject(Project mainProject) {
-		if (mainProject != null) {
-			// projectService.deleteProject(); TODO
-		}
-		Project newProject = new Project(projectName, repoUrl);
-
+		// if (mainProject != null) {
+		// projectService.deleteCurrentProject();
+		// }
+		// Project newProject = new Project(projectName, repoUrl);
 		// projectService.saveProject(newProject); TODO
 
 		User.getUpdateUser().setProject(projectService.getCurrentProject());
 
-		LOG.info("Was added new project: " + newProject.getName());
+		// LOG.info("Was added new project: " + newProject.getName());
 	}
 
 	private void createConnections() {
@@ -121,7 +120,7 @@ public class Initializer {
 			LOG.warn("Failed to create main connection. " + e.getMessage());
 		}
 
-		List<User> dbUsers = new ArrayList<>(0);// userService.getAllUsers; TODO
+		List<User> dbUsers = userService.getAllUsers();
 
 		for (User u : dbUsers) {
 			try {
@@ -178,6 +177,11 @@ public class Initializer {
 			LOG.warn("Failed to get revisions from repo. Not registred user or project.");
 		} catch (IOException e) {
 			LOG.warn("Failed to get revisions from repo. " + e.getMessage());
+		}
+		Project currentProject = projectService.getCurrentProject();
+
+		for (Revision r : revisions) {
+			r.setProject(currentProject);
 		}
 
 		return revisions;

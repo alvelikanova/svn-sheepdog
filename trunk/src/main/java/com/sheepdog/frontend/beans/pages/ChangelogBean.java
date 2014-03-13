@@ -7,7 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.ToggleEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +27,7 @@ import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
 import com.sheepdog.business.services.RevisionManagementService;
 import com.sheepdog.business.services.svn.SVNFileService;
 import com.sheepdog.business.services.svn.impl.TypeOfFileChanges;
+import com.sheepdog.frontend.beans.templates.FeedbackBean;
 
 @Component(value = "changelogBean")
 @Scope("session")
@@ -38,6 +44,12 @@ public class ChangelogBean implements Serializable {
 	public static final Logger LOG = LoggerFactory.getLogger(ChangelogBean.class);
 
 	@Autowired
+	private FeedbackBean feedback;
+
+	@Autowired
+	private LoginManager lm;
+
+	@Autowired
 	private RevisionManagementService rms;
 
 	@Autowired
@@ -45,54 +57,62 @@ public class ChangelogBean implements Serializable {
 
 	private List<Revision> dbRevisions = new ArrayList<>(0);
 
-	private Map<File, TypeOfFileChanges> revisionFiles = new HashMap<>(0);
+	private List<Map.Entry<File, TypeOfFileChanges>> revisionFiles = new ArrayList<>(0);
 
 	public void loadRevisionFiles(ToggleEvent event) {
-		User user = User.getUpdateUser();// TODO
+		System.out.println("VIZOV");
+
+		User user = lm.getCurrentUser();
+
+		System.out.println("VIZOV" + user.getLogin());
+		Revision r = (Revision) event.getData();
+		System.out.println("NO REV " + r.getRevisionNo());
+
+		revisionFiles.clear();
 
 		try {
-			revisionFiles = svnFileService.getFilesByRevision(user, (Revision) event.getData());
+			revisionFiles.addAll(svnFileService.getFilesByRevision(user, (Revision) event.getData()).entrySet());
 		} catch (IllegalArgumentException e) {
-			LOG.info("Failed to get files from repository. " + e.getMessage());
-			// TODO feedback for exceptions
+			LOG.info("Failed to get revision files from repository. " + e.getMessage());
+			feedback.feedback(FacesMessage.SEVERITY_WARN, "Registration problem.",
+					"Check your profile or contact to your administrator.");
 		} catch (RepositoryAuthenticationExceptoin e) {
 			LOG.warn("Failed to get all files. Authentication is failed.");
-			feedback("Failed to get all files. Authentication is failed.");
+			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Authentication is failed.",
+					"Check your autentication info in profile page and Verify connection.");
 		} catch (IOException e) {
 			LOG.warn("Failed to get all files. " + e.getMessage());
-			feedback("Failed to get all files. " + e.getMessage());
+			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Connetion to repository is failed.",
+					"Check your profile or contact to your administrator.");
 		}
 
-	}
-
-	private void feedback(String string) {
-		// TODO Auto-generated method stub
+		for (Map.Entry<File, TypeOfFileChanges> entry : revisionFiles)
+			System.out.println("File " + entry.getKey().getName());
 
 	}
 
 	public List<Map.Entry<File, TypeOfFileChanges>> getFiles() {
 
-		Set<Map.Entry<File, TypeOfFileChanges>> fileSet = revisionFiles.entrySet();
-		return new ArrayList<Map.Entry<File, TypeOfFileChanges>>(fileSet);
+		return revisionFiles;
 
 	}
 
-	public List<Revision> getDbRevisions() {
-		//dbRevisions = rms.getAllRevisions(); TODO
+	public void loadRevisionFromDB() {
+		Set<Revision> revSet = new TreeSet<>();
+		revSet.addAll(rms.getAllRevisions());
 
+		dbRevisions.clear();
+		dbRevisions.addAll(revSet);
+
+		RequestContext.getCurrentInstance().update("changelog_form:changelog");
+	}
+
+	public List<Revision> getDbRevisions() {
 		return dbRevisions;
 	}
 
 	public void setDbRevisions(List<Revision> dbRevisions) {
 		this.dbRevisions = dbRevisions;
-	}
-
-	public Map<File, TypeOfFileChanges> getRevisionFiles() {
-		return revisionFiles;
-	}
-
-	public void setRevisionFiles(Map<File, TypeOfFileChanges> revisionFiles) {
-		this.revisionFiles = revisionFiles;
 	}
 
 }
