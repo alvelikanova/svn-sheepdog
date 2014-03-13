@@ -17,7 +17,7 @@ public class FileManagementServiceImpl implements FileManagementService {
 
 	@Autowired
 	private FileDataProvider fileDataProvider;
-	
+
 	@Override
 	public void saveFile(File file) {
 		fileDataProvider.save(file, FileEntity.class);
@@ -28,7 +28,13 @@ public class FileManagementServiceImpl implements FileManagementService {
 		String qualifiedName = file.getQualifiedName();
 		File dbfile = fileDataProvider.findFileByQualifiedName(qualifiedName);
 		dbfile.setRevision(file.getRevision());
-		fileDataProvider.save(dbfile, FileEntity.class);	
+		fileDataProvider.save(dbfile, FileEntity.class);
+	}
+
+	@Override
+	public File getFileByQualifiedName(String name) {
+		File file = fileDataProvider.findFileByQualifiedName(name);
+		return file;
 	}
 
 }

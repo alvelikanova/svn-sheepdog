@@ -21,7 +21,8 @@ import com.sheepdog.dal.exceptions.DaoException;
 import com.sheepdog.dal.providers.SubscriptionDataProvider;
 
 @Repository
-public class SubscriptionDataProviderImpl extends BaseDataProviderImpl<SubscriptionEntity,Subscription,Integer> implements SubscriptionDataProvider{
+public class SubscriptionDataProviderImpl extends BaseDataProviderImpl<SubscriptionEntity, Subscription, Integer>
+		implements SubscriptionDataProvider {
 
 	@Transactional
 	@Override
@@ -30,53 +31,52 @@ public class SubscriptionDataProviderImpl extends BaseDataProviderImpl<Subscript
 		try {
 			resultList = new ArrayList<>();
 			Session session = sessionFactory.getCurrentSession();
-			
-			//Load user by login
-			Criteria cr = session.createCriteria(UserEntity.class)
-					.add(Restrictions.eq("login", userName));
+
+			// Load user by login
+			Criteria cr = session.createCriteria(UserEntity.class).add(Restrictions.eq("login", userName));
 			cr.setMaxResults(1);
 			UserEntity userEntity = (UserEntity) cr.uniqueResult();
-			
-			//Load all users' subscriptions
-			cr = session.createCriteria(SubscriptionEntity.class)
-					.add(Restrictions.eq("userEntity.id", userEntity.getId()));
+
+			// Load all users' subscriptions
+			cr = session.createCriteria(SubscriptionEntity.class).add(
+					Restrictions.eq("userEntity.id", userEntity.getId()));
 			@SuppressWarnings("unchecked")
 			List<SubscriptionEntity> subscriptionList = cr.list();
-			for (SubscriptionEntity se: subscriptionList) {
+			for (SubscriptionEntity se : subscriptionList) {
 				FileEntity fileEntity = se.getFileEntity();
 				File file = mappingService.map(fileEntity, File.class);
 				resultList.add(file);
 			}
 		} catch (HibernateException ex) {
-        	LOG.error("Hibernate error occured while getting files by username", ex.getMessage());
-        	throw new DaoException(ex);
+			LOG.error("Hibernate error occured while getting files by username", ex.getMessage());
+			throw new DaoException(ex);
 		} catch (Exception ex) {
 			LOG.error("Unknown error occured while getting files by username", ex.getMessage());
 			throw new DaoException(ex);
 		}
 		return resultList;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Transactional
 	@Override
 	public List<Subscription> getSubscriptionsByQualifiedName(String qualifiedName) throws DaoException {
-		List <Subscription> sublist = null;
+		List<Subscription> sublist = null;
 		try {
 			Session session = sessionFactory.getCurrentSession();
-			
-			//load file with qname from dbase
-			Criteria crfile = session.createCriteria(FileEntity.class)
-					.add(Restrictions.eq("qualifiedName", qualifiedName));
-			FileEntity fe = (FileEntity)crfile.uniqueResult();
-			
-			//load subscriptions by file's id
-			Criteria crsub = session.createCriteria(SubscriptionEntity.class)
-					.add(Restrictions.eq("fileEntity.id", fe.getId()));
+
+			// load file with qname from dbase
+			Criteria crfile = session.createCriteria(FileEntity.class).add(
+					Restrictions.eq("qualifiedName", qualifiedName));
+			FileEntity fe = (FileEntity) crfile.uniqueResult();
+
+			// load subscriptions by file's id
+			Criteria crsub = session.createCriteria(SubscriptionEntity.class).add(
+					Restrictions.eq("fileEntity.id", fe.getId()));
 			sublist = crsub.list();
 		} catch (HibernateException ex) {
-        	LOG.error("Hibernate error occured while getting subscriptions by qualified name", ex.getMessage());
-        	throw new DaoException(ex);
+			LOG.error("Hibernate error occured while getting subscriptions by qualified name", ex.getMessage());
+			throw new DaoException(ex);
 		} catch (Exception ex) {
 			LOG.error("Unknown error occured while getting subscriptions by qualified name", ex.getMessage());
 			throw new DaoException(ex);
@@ -87,69 +87,67 @@ public class SubscriptionDataProviderImpl extends BaseDataProviderImpl<Subscript
 	@Transactional
 	@Override
 	public void deleteSubscription(User user, File file) throws DaoException {
-		try{
+		try {
 			Session session = sessionFactory.getCurrentSession();
-			Criteria fileCriteria = session.createCriteria(FileEntity.class)
-					.add(Restrictions.eq("qualifiedName", file.getQualifiedName()));
-			FileEntity fe = (FileEntity)fileCriteria.uniqueResult();
-			Criteria subscrCriteria = session.createCriteria(SubscriptionEntity.class)
-					.add(Restrictions.and(
-							Restrictions.eq("fileEntity.id", fe.getId()), 
+			Criteria fileCriteria = session.createCriteria(FileEntity.class).add(
+					Restrictions.eq("qualifiedName", file.getQualifiedName()));
+			FileEntity fe = (FileEntity) fileCriteria.uniqueResult();
+			Criteria subscrCriteria = session.createCriteria(SubscriptionEntity.class).add(
+					Restrictions.and(Restrictions.eq("fileEntity.id", fe.getId()),
 							Restrictions.eq("userEntity.id", user.getId())));
 			SubscriptionEntity se = (SubscriptionEntity) subscrCriteria.uniqueResult();
 			session.delete(se);
 		} catch (HibernateException ex) {
-        	LOG.error("Hibernate error occured while deleting subscription", ex.getMessage());
-        	throw new DaoException(ex);
+			LOG.error("Hibernate error occured while deleting subscription", ex.getMessage());
+			throw new DaoException(ex);
 		} catch (Exception ex) {
 			LOG.error("Unknown error occured while deleting subscription", ex.getMessage());
 			throw new DaoException(ex);
 		}
 	}
-	
+
 	@Transactional
 	@Override
 	public void createSubscription(User user, File file) throws DaoException {
 		try {
 			Session session = sessionFactory.getCurrentSession();
-			
-			Criteria fileCriteria = session.createCriteria(FileEntity.class)
-					.add(Restrictions.eq("qualifiedName", file.getQualifiedName()));
-			FileEntity fe = (FileEntity)fileCriteria.uniqueResult();
-			
+
+			Criteria fileCriteria = session.createCriteria(FileEntity.class).add(
+					Restrictions.eq("qualifiedName", file.getQualifiedName()));
+			FileEntity fe = (FileEntity) fileCriteria.uniqueResult();
+
 			File f = mappingService.map(fe, File.class);
-			
+
 			Subscription s = new Subscription(user, f);
 			save(s, SubscriptionEntity.class);
 		} catch (HibernateException ex) {
-        	LOG.error("Hibernate error occured while creating subscription", ex.getMessage());
-        	throw new DaoException(ex);
+			LOG.error("Hibernate error occured while creating subscription", ex.getMessage());
+			throw new DaoException(ex);
 		} catch (Exception ex) {
 			LOG.error("Unknown error occured while creating subscription", ex.getMessage());
 			throw new DaoException(ex);
 		}
 	}
-	
+
 	@Transactional
 	@Override
 	public boolean isSubscribed(User user, File file) throws DaoException {
 		long rows = 0;
 		try {
 			Session session = sessionFactory.getCurrentSession();
-			Criteria fileCriteria = session.createCriteria(FileEntity.class)
-					.add(Restrictions.eq("qualifiedName", file.getQualifiedName()));
-			FileEntity fe = (FileEntity)fileCriteria.uniqueResult();
-	
-			Criteria subscrCriteria = session.createCriteria(SubscriptionEntity.class)
-					.add(Restrictions.and(
-							Restrictions.eq("fileEntity.id", fe.getId()), 
-							Restrictions.eq("userEntity.id", user.getId())))
-							.setProjection(Projections.rowCount());
+			Criteria fileCriteria = session.createCriteria(FileEntity.class).add(
+					Restrictions.eq("qualifiedName", file.getQualifiedName()));
+			FileEntity fe = (FileEntity) fileCriteria.uniqueResult();
+
+			Criteria subscrCriteria = session
+					.createCriteria(SubscriptionEntity.class)
+					.add(Restrictions.and(Restrictions.eq("fileEntity.id", fe.getId()),
+							Restrictions.eq("userEntity.id", user.getId()))).setProjection(Projections.rowCount());
 			rows = (long) subscrCriteria.uniqueResult();
-			return (rows!=0);
+			return (rows != 0);
 		} catch (HibernateException ex) {
-        	LOG.error("Hibernate error occured while checking subscription", ex.getMessage());
-        	throw new DaoException(ex);
+			LOG.error("Hibernate error occured while checking subscription", ex.getMessage());
+			throw new DaoException(ex);
 		} catch (Exception ex) {
 			LOG.error("Unknown error occured while checking subscription", ex.getMessage());
 			throw new DaoException(ex);
@@ -160,19 +158,23 @@ public class SubscriptionDataProviderImpl extends BaseDataProviderImpl<Subscript
 	@Override
 	public List<Subscription> getSubscriptionsByUser(User user) throws DaoException {
 		List<Subscription> resultList = new ArrayList<>();
+		List<SubscriptionEntity> entityList = new ArrayList<>();
 		try {
 			Session session = sessionFactory.getCurrentSession();
-			Criteria subscrCriteria = session.createCriteria(SubscriptionEntity.class)
-					.add(Restrictions.eq("userEntity.id", user.getId()));
-			resultList = subscrCriteria.list();
+			Criteria subscrCriteria = session.createCriteria(SubscriptionEntity.class).add(
+					Restrictions.eq("userEntity.id", user.getId()));
+			entityList = subscrCriteria.list();
+			for (SubscriptionEntity se : entityList) {
+				Subscription subscr = mappingService.map(se, Subscription.class);
+				resultList.add(subscr);
+			}
 		} catch (HibernateException ex) {
-        	LOG.error("Hibernate error occured while checking subscription", ex.getMessage());
-        	throw new DaoException(ex);
+			LOG.error("Hibernate error occured while checking subscription", ex.getMessage());
+			throw new DaoException(ex);
 		} catch (Exception ex) {
 			LOG.error("Unknown error occured while checking subscription", ex.getMessage());
 			throw new DaoException(ex);
-		} 
+		}
 		return resultList;
 	}
 }
-	

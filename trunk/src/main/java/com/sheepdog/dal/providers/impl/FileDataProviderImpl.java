@@ -12,23 +12,25 @@ import com.sheepdog.dal.exceptions.DaoException;
 import com.sheepdog.dal.providers.FileDataProvider;
 
 @Repository
-public class FileDataProviderImpl extends BaseDataProviderImpl<FileEntity, File, Integer> implements FileDataProvider{
+public class FileDataProviderImpl extends BaseDataProviderImpl<FileEntity, File, Integer> implements FileDataProvider {
 
 	@Transactional
 	@Override
 	public File findFileByQualifiedName(String qualifiedName) throws DaoException {
 		File file = null;
-		try{
-			Criteria cr = sessionFactory.getCurrentSession()
-					.createCriteria(FileEntity.class)
+		try {
+			Criteria cr = sessionFactory.getCurrentSession().createCriteria(FileEntity.class)
 					.add(Restrictions.eq("qualifiedName", qualifiedName));
 			cr.setMaxResults(1);
 			FileEntity fileEntity = (FileEntity) cr.uniqueResult();
+			if (fileEntity == null) {
+				return null;
+			}
 			file = mappingService.map(fileEntity, File.class);
 		} catch (HibernateException ex) {
-        	LOG.error("Hibernate error occured while loading file by qualified name", ex.getMessage());
-        	throw new DaoException(ex);
-        } catch (Exception ex) {
+			LOG.error("Hibernate error occured while loading file by qualified name", ex.getMessage());
+			throw new DaoException(ex);
+		} catch (Exception ex) {
 			LOG.error("Unknown error occured while loading file by qualified name", ex.getMessage());
 			throw new DaoException(ex);
 		}
