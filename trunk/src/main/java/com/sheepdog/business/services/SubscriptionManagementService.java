@@ -1,4 +1,5 @@
 package com.sheepdog.business.services;
+import java.util.List;
 import java.util.Set;
 
 import com.sheepdog.business.domain.entities.File;
@@ -13,4 +14,5 @@ public interface SubscriptionManagementService {
 	Set<Subscription> getAllSubscriptions();
 	void createSubscription(User user, File file);
 	boolean isSubscribed(User user, File file);
+	List<Subscription> getSubscriptionsByUser(User user);
 }

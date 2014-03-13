@@ -79,4 +79,9 @@ public class SubscriptionManagementServiceImpl implements SubscriptionManagement
 	public boolean isSubscribed(User user, File file) {
 		return subscriptionDataProvider.isSubscribed(user, file);
 	}
+
+	@Override
+	public List<Subscription> getSubscriptionsByUser(User user) {
+		return subscriptionDataProvider.getSubscriptionsByUser(user);
+	}
 }
