@@ -29,14 +29,12 @@ public class FileEntity implements java.io.Serializable {
 	private String name;
 	private String qualifiedName;
 	private String creatorName;
-	private Set<SubscriptionEntity> subscriptionEntities = new HashSet<SubscriptionEntity>(
-			0);
+	private Set<SubscriptionEntity> subscriptionEntities = new HashSet<SubscriptionEntity>(0);
 
 	public FileEntity() {
 	}
 
-	public FileEntity(ProjectEntity projectEntity,
-			RevisionEntity revisionEntity, String name, String qualifiedName,
+	public FileEntity(ProjectEntity projectEntity, RevisionEntity revisionEntity, String name, String qualifiedName,
 			String creatorName) {
 		this.projectEntity = projectEntity;
 		this.revisionEntity = revisionEntity;
@@ -45,8 +43,7 @@ public class FileEntity implements java.io.Serializable {
 		this.creatorName = creatorName;
 	}
 
-	public FileEntity(ProjectEntity projectEntity,
-			RevisionEntity revisionEntity, String name, String qualifiedName,
+	public FileEntity(ProjectEntity projectEntity, RevisionEntity revisionEntity, String name, String qualifiedName,
 			String creatorName, Set<SubscriptionEntity> subscriptionEntities) {
 		this.projectEntity = projectEntity;
 		this.revisionEntity = revisionEntity;
@@ -105,7 +102,7 @@ public class FileEntity implements java.io.Serializable {
 		this.qualifiedName = qualifiedName;
 	}
 
-	@Column(name = "CREATOR_NAME", nullable = false, length = 128)
+	@Column(name = "CREATOR_NAME", nullable = true, length = 128)
 	public String getCreatorName() {
 		return this.creatorName;
 	}
@@ -119,8 +116,7 @@ public class FileEntity implements java.io.Serializable {
 		return this.subscriptionEntities;
 	}
 
-	public void setSubscriptionEntities(
-			Set<SubscriptionEntity> subscriptionEntities) {
+	public void setSubscriptionEntities(Set<SubscriptionEntity> subscriptionEntities) {
 		this.subscriptionEntities = subscriptionEntities;
 	}
 
