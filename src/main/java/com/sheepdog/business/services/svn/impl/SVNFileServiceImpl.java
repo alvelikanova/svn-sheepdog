@@ -141,6 +141,14 @@ public class SVNFileServiceImpl implements SVNFileService {
 
 		File tempFile;
 
+		if (projectFacade == null)
+			System.out.println("PROJ FACADE NULL");
+
+		if (projectFacade.getRepositoryConnection(user) == null)
+			System.out.println("REPO CONN == NULL");
+		
+		
+
 		try {
 			logEntries = projectFacade.getRepositoryConnection(user).log(new String[] { "" }, null,
 					revision.getRevisionNo(), revision.getRevisionNo(), true, true);
@@ -151,7 +159,7 @@ public class SVNFileServiceImpl implements SVNFileService {
 		} catch (SVNException e) {
 			LOG.info("Connection to repository failed. User: " + user.getLogin());
 			throw new IOException("Failed connection to URL:" + user.getProject().getUrl());
-		}
+		} 
 
 		for (Iterator entries = logEntries.iterator(); entries.hasNext();) {
 			SVNLogEntry logEntry = (SVNLogEntry) entries.next();

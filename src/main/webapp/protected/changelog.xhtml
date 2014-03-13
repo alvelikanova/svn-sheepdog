@@ -13,12 +13,16 @@
 
 	<ui:define name="content">
 
-		<form>
+		<h:form id="changelog_form">
+
+
 			<p:dataTable id="changelog" var="rev"
-				value="#{changelogBean.dbRevisions}">
+				value="#{changelogBean.dbRevisions}" paginator="true" rows="10"
+				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				rowsPerPageTemplate="10,20,30">
 
 				<p:ajax event="rowToggle"
-					listener="#{changelogBean.loadRevisionFiles}" />
+					listener="#{changelogBean.loadRevisionFiles}" update="revFiles" />
 
 				<p:column style="width:2%">
 					<p:rowToggler />
@@ -28,46 +32,47 @@
 				<p:column>
 					<f:facet name="header">  
                     Revision  
-            </f:facet>
+            		</f:facet>
 					<h:outputText value="#{rev.revisionNo}" />
 				</p:column>
 
 				<p:column>
 					<f:facet name="header">  
                     Author  
-            </f:facet>
+            		</f:facet>
 					<h:outputText value="#{rev.author}" />
 				</p:column>
 
 				<p:column>
 					<f:facet name="header">  
                     Date  
-            </f:facet>
+          			 </f:facet>
 					<h:outputText value="#{rev.date}" />
 				</p:column>
 
 				<p:column>
 					<f:facet name="header">  
                     Comment  
-            </f:facet>
+           			 </f:facet>
 					<h:outputText value="#{rev.comment}" />
 				</p:column>
 
-				<p:rowExpansion>
+				<p:rowExpansion id="changes">
+
 					<p:dataTable id="revFiles" var="file"
 						value="#{changelogBean.files}">
 
 						<p:column>
 							<f:facet name="header">
 							Changed File
-						</f:facet>
+							</f:facet>
 							<h:outputText value="#{file.key.name}" />
 						</p:column>
 
 						<p:column>
 							<f:facet name="header">
 							Action
-						</f:facet>
+							</f:facet>
 							<h:outputText value="#{file.value}" />
 						</p:column>
 
@@ -75,7 +80,15 @@
 				</p:rowExpansion>
 
 			</p:dataTable>
-		</form>
+
+			<p:remoteCommand name="revload"
+				actionListener="#{changelogBean.loadRevisionFromDB()}"
+				autoRun="true">
+
+			</p:remoteCommand>
+
+		</h:form>
+
 	</ui:define>
 
 	<ui:define name="footer">
