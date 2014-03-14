@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+<h:head />
+<h:body>
+
+	<p:dialog header="File Menu" widgetVar="fileDialog" dynamic="true"
+		showEffect="clip" hideEffect="drop" modal="true"
+		style="width: 80%!important; height:70%!important">
+
+		<f:facet name="header">
+			<p:panelGrid columns="2">
+				<p:panelGrid columns="2">
+					<h:outputText value="Revision: " />
+
+					<p:selectOneMenu id="selectMenu"
+						value="#{fileContentBean.selectedRev}" effect="fade">
+						<p:ajax event="change" update="cont"
+							listener="#{fileContentBean.loadContent}" />
+
+						<f:selectItem itemLabel="Select Revision" itemValue="#{null}" />
+						<f:selectItems value="#{fileContentBean.revisions}" />
+					</p:selectOneMenu>
+				</p:panelGrid>
+
+			</p:panelGrid>
+		</f:facet>
+
+		<p:inputTextarea id="cont" value="#{fileContentBean.content}"
+			autoResize="false" readonly="true" style="margin:2%!important" />
+
+
+	</p:dialog>
+
+
+
+</h:body>
+</html>

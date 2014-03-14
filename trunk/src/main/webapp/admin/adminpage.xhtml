@@ -12,69 +12,83 @@
 
 	<ui:define name="content">
 		<div>
-			<h:form id="addform"> 
-			    <p:panel id="panel" header="New User" style="margin-bottom:10px;">  
-			        <p:growl id="addmsg" showDetail="true" sticky="true"/>
-			        <h:panelGrid columns="2">  
-			            <h:outputLabel for="login" value="Login: *" />  
-			            <p:inputText id="login"   
-			                value="#{usersBean.login}" required="true" label="Login">  
-			                <f:validateLength minimum="4" />  
-			            </p:inputText>    
-			  
-			            <h:outputLabel for="role" value="Role: *" />  
-			            <p:inputText id="role"   
-			                value="#{usersBean.role}" required="true" label="Role"/>
-			                 
-			            <h:panelGroup /> 
-			        	<p:commandButton value="Add User" update=":addform:addmsg"   
-			             	action="#{usersBean.saveUser}" />  
-			        </h:panelGrid> 
-			    </p:panel>  
-		    </h:form>
+			<h:form id="addform">
+				<p:panel id="panel" header="New User" style="margin-bottom:10px;">
+					<ui:insert name="feedback">
+						<ui:include src="/templates/feedback.xhtml" />
+					</ui:insert>
+					<h:panelGrid columns="2">
+						<h:outputLabel for="login" value="Login: *" />
+						<p:inputText id="login" value="#{usersBean.login}" required="true"
+							label="Login">
+							<f:validateLength minimum="4" />
+						</p:inputText>
+
+						<h:outputLabel for="role" value="Role: *" />
+						<p:inputText id="role" value="#{usersBean.role}" required="true"
+							label="Role" />
+
+						<h:panelGroup />
+						<p:commandButton value="Add User" update=":addform:addmsg"
+							action="#{usersBean.saveUser}" />
+					</h:panelGrid>
+				</p:panel>
+			</h:form>
 		</div>
 		<div>
 			<h:form id="form">
-			<p:panel id="panel" header="List of users"> 
-			<p:growl id="msg" showDetail="true" sticky="true"/>
-			    <p:dataTable var="user" value="#{lazyUsersDataModel}" paginator="true" rows="5"  
-			                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"  
-			                 rowsPerPageTemplate="1,2,5" id="userTable" lazy="true">  
-				
-					<p:column headerText="Login" sortBy="login" filterBy="#{user.login}">
-						<h:outputText value="#{user.login}" />
-					</p:column>
-				
-					<p:column headerText="First Name" sortBy="firstName" filterBy="#{user.firstName}">
-						<h:outputText value="#{user.firstName}" />
-					</p:column>
-				
-					<p:column headerText="Last Name" sortBy="lastName" filterBy="#{user.lastName}">
-						<h:outputText value="#{user.lastName}" />
-					</p:column>
-				
-					<p:column headerText="Role" sortBy="role" filterBy="#{user.role}">
-						<h:outputText value="#{user.role}" />
-					</p:column>
-					
-					<p:column headerText="E-mail" sortBy="email" filterBy="#{user.email}">
-						<h:outputText value="#{user.email}" />
-					</p:column> 
-					
-					<p:column>
-					    <p:commandButton value="Delete" rendered="#{not request.remoteUser.equals(user.login)}" 
-							icon="ui-icon-circle-close" actionListener="#{usersBean.deleteUser(user.id)}" update=":form:msg">  
-					        <p:confirm header="Confirmation" message="Are you sure?" icon="ui-icon-alert" />  
-					    </p:commandButton>  
-					  
-					    <p:confirmDialog global="true" showEffect="fade" hideEffect="explode">  
-					        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>  
-					        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>       
-					    </p:confirmDialog> 
-					</p:column> 
-					
-			    </p:dataTable>
-			    </p:panel>  
+				<p:panel id="panel" header="List of users">
+					<p:growl id="msg" showDetail="true" sticky="true" />
+					<p:dataTable var="user" value="#{lazyUsersDataModel}"
+						paginator="true" rows="5"
+						paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+						rowsPerPageTemplate="1,2,5" id="userTable" lazy="true">
+
+						<p:column headerText="Login" sortBy="login"
+							filterBy="#{user.login}">
+							<h:outputText value="#{user.login}" />
+						</p:column>
+
+						<p:column headerText="First Name" sortBy="firstName"
+							filterBy="#{user.firstName}">
+							<h:outputText value="#{user.firstName}" />
+						</p:column>
+
+						<p:column headerText="Last Name" sortBy="lastName"
+							filterBy="#{user.lastName}">
+							<h:outputText value="#{user.lastName}" />
+						</p:column>
+
+						<p:column headerText="Role" sortBy="role" filterBy="#{user.role}">
+							<h:outputText value="#{user.role}" />
+						</p:column>
+
+						<p:column headerText="E-mail" sortBy="email"
+							filterBy="#{user.email}">
+							<h:outputText value="#{user.email}" />
+						</p:column>
+
+						<p:column>
+							<p:commandButton value="Delete"
+								rendered="#{not request.remoteUser.equals(user.login)}"
+								icon="ui-icon-circle-close"
+								actionListener="#{usersBean.deleteUser(user.id)}"
+								update=":form:msg">
+								<p:confirm header="Confirmation" message="Are you sure?"
+									icon="ui-icon-alert" />
+							</p:commandButton>
+
+							<p:confirmDialog global="true" showEffect="fade"
+								hideEffect="explode">
+								<p:commandButton value="Yes" type="button"
+									styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+								<p:commandButton value="No" type="button"
+									styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+							</p:confirmDialog>
+						</p:column>
+
+					</p:dataTable>
+				</p:panel>
 			</h:form>
 		</div>
 	</ui:define>

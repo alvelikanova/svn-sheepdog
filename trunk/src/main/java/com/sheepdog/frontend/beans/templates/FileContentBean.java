@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -13,6 +14,7 @@ import javax.faces.model.SelectItem;
 
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.NodeSelectEvent;
+import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -65,7 +67,23 @@ public class FileContentBean {
 			loadRevisions();
 			loadContent();
 		}
-		RequestContext.getCurrentInstance().update(":file_form:cont");
+		// RequestContext.getCurrentInstance().update(":file_form:cont");
+	}
+
+	public void selectDT(SelectEvent se) {
+
+		Entry entry = (Entry) se.getObject();
+
+		file = (File) entry.getKey();
+
+		if (file.isDir()) {
+			content = "This is directory.";
+		} else {
+			loadRevisions();
+			loadContent();
+		}
+		// RequestContext.getCurrentInstance().update(":changelog_form:cont");
+
 	}
 
 	public void loadContent() {

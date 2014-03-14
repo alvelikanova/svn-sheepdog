@@ -38,6 +38,7 @@ public class LoginManager implements Serializable {
 	@Autowired
 	private FeedbackBean feedback;
 	private User currentUser = null;
+	private boolean isAdmin = false;
 
 	public User getCurrentUser() {
 		return currentUser;
@@ -85,6 +86,8 @@ public class LoginManager implements Serializable {
 
 			currentUser = ums.getUserByLogin(getUsername());
 
+			isAdmin = "admin".equals(currentUser.getRole());
+
 		} catch (UnknownAccountException ex) {
 			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Authentication error", "Unknown account");
 		} catch (IncorrectCredentialsException ex) {
@@ -103,5 +106,9 @@ public class LoginManager implements Serializable {
 		LOG.trace("doLogout()");
 		SecurityUtils.getSubject().logout();
 		return "/public/login.xhtml?faces-redirect=true";
+	}
+
+	public boolean isAdmin() {
+		return isAdmin;
 	}
 }

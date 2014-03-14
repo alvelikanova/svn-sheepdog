@@ -55,11 +55,16 @@ public class ChangelogBean implements Serializable {
 	@Autowired
 	private SVNFileService svnFileService;
 
+	@Autowired
+	private TweetBean tweetBean;
+
 	private List<Revision> dbRevisions = new ArrayList<>(0);
 
 	private List<Map.Entry<File, TypeOfFileChanges>> revisionFiles = new ArrayList<>(0);
 
-	public void loadRevisionFiles(ToggleEvent event) {
+	private Map.Entry<File, TypeOfFileChanges> selectedFile = null;
+
+	private void loadRevisionFiles(ToggleEvent event) {
 		System.out.println("VIZOV");
 
 		User user = lm.getCurrentUser();
@@ -91,6 +96,13 @@ public class ChangelogBean implements Serializable {
 
 	}
 
+	public void loadFilesAndTweets(ToggleEvent event) {
+		loadRevisionFiles(event);
+
+		tweetBean.loadTweets((Revision) event.getData());
+
+	}
+
 	public List<Map.Entry<File, TypeOfFileChanges>> getFiles() {
 
 		return revisionFiles;
@@ -113,6 +125,14 @@ public class ChangelogBean implements Serializable {
 
 	public void setDbRevisions(List<Revision> dbRevisions) {
 		this.dbRevisions = dbRevisions;
+	}
+
+	public Map.Entry<File, TypeOfFileChanges> getSelectedFile() {
+		return selectedFile;
+	}
+
+	public void setSelectedFile(Map.Entry<File, TypeOfFileChanges> selectedFile) {
+		this.selectedFile = selectedFile;
 	}
 
 }

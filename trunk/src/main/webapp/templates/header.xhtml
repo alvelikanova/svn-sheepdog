@@ -11,14 +11,15 @@
 	<h:outputStylesheet name="css/sheepdog.css"></h:outputStylesheet>
 	<h:form>
 
-		<p:tabMenu activeIndex="#{tabHeaderBean.activeIndex}" >
+		<p:tabMenu activeIndex="#{tabHeaderBean.activeIndex}">
 
 			<p:menuitem>
-				<p:graphicImage value="resources/images/dog.png" cache="false"/>
+				<p:graphicImage value="resources/images/dog.png" cache="false" />
 			</p:menuitem>
 
 			<p:menuitem value="Admin"
-				action="#{tabHeaderBean.updateIndex(1, '/admin/adminpage.xhtml')}" />
+				action="#{tabHeaderBean.updateIndex(1, '/admin/adminpage.xhtml')}"
+				rendered="${tabHeaderBean.admin}" />
 
 			<p:menuitem value="Changelog"
 				action="#{tabHeaderBean.updateIndex(2,'/protected/changelog.xhtml')}" />
