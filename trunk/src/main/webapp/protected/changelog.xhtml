@@ -19,7 +19,7 @@
 			<p:dataTable id="changelog" var="rev"
 				value="#{changelogBean.dbRevisions}" paginator="true" rows="10"
 				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-				rowsPerPageTemplate="10,20,30">
+				rowsPerPageTemplate="10,20,30" styleClass="tables">
 
 				<f:facet name="header">
 					<p:commandButton
@@ -70,7 +70,7 @@
 						<p:dataTable id="revFiles" var="file"
 							value="#{changelogBean.files}"
 							selection="#{changelogBean.selectedFile}" selectionMode="single"
-							rowKey="#{file.key.name}" paginator="true" rows="10"
+							rowKey="#{file.key.name}" rows="10"
 							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
 							paginatorPosition="bottom">
 
@@ -122,18 +122,16 @@
 							</p:column>
 
 							<f:facet name="footer">
-
-
-								<p:inputTextarea requiredMessage="true" rows="150"
-									style="with: 80%; height: 100px" title="Your tweet here"
-									value="${tweetBean.tweetMessage}">
+								<p:panelGrid columns="1">
+									<p:inputTextarea requiredMessage="true" rows="150"
+										style="with: 80%; height: 100px" title="Your tweet here"
+										value="${tweetBean.tweetMessage}" />
 
 
 									<p:commandButton ajax="true"
 										actionListener="${tweetBean.saveTweet(rev)}" value="Send" />
+								</p:panelGrid>
 
-
-								</p:inputTextarea>
 
 							</f:facet>
 

@@ -142,20 +142,9 @@ public class TreeTableBean implements Serializable {
 	}
 
 	private void cleanRoot() {
-		// FileTreeComposite ftc = null;
-		//
-		// for (TreeNode tn : root.getChildren()) {
-		// // ftc = (FileTreeComposite) tn.getData();
-		// // System.out.println(ftc.getFile().getName());
-		// tn.setParent(null);
-		// }
-		// root.getChildren().clear();
+
 		root = new DefaultTreeNode("root", null);
 
-		// for (TreeNode tn : files) {
-		// tn.setParent(new DefaultTreeNode("none", null));
-		// tn.getChildren().clear();
-		// }
 		files.clear();
 
 	}

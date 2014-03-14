@@ -3,6 +3,9 @@ package com.sheepdog.frontend.beans.pages;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Component;
 import com.sheepdog.business.domain.entities.Revision;
 import com.sheepdog.business.domain.entities.Tweet;
 import com.sheepdog.business.services.TweetManagementService;
+import com.sheepdog.frontend.beans.templates.FeedbackBean;
 
 @Component(value = "tweetBean")
 @Scope("session")
@@ -20,6 +24,9 @@ public class TweetBean {
 
 	@Autowired
 	private LoginManager lm;
+
+	@Autowired
+	private FeedbackBean feedback;
 
 	private String tweetMessage;
 
@@ -36,9 +43,12 @@ public class TweetBean {
 	}
 
 	public void saveTweet(Revision revision) {
-		
-		System.out.println("SEND");
+
+		feedback.feedback(FacesMessage.SEVERITY_INFO, "SEND", tweetMessage);
+
 		Tweet tweet = new Tweet(revision, lm.getCurrentUser().getLogin(), tweetMessage);
+
+		tweetMessage = "";
 
 		// tms.saveTweet(tweet);
 

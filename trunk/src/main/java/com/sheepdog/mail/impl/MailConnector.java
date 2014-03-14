@@ -1,14 +1,8 @@
 package com.sheepdog.mail.impl;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.InvalidPropertiesFormatException;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -25,6 +19,8 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -246,8 +242,6 @@ public class MailConnector {
 	public void setup() throws RefreshFailedException {
 		isConfigured = false;
 
-		loadProps();
-
 		session = Session.getDefaultInstance(System.getProperties());
 
 		try {
@@ -262,35 +256,6 @@ public class MailConnector {
 	}
 
 	/**
-	 * Load property from config file.
-	 * 
-	 * @throws RefreshFailedException
-	 *             if file not exist, unavailable or incorrect.
-	 */
-	private void loadProps() throws RefreshFailedException {
-//		Properties prop = new Properties();
-//		String propertyPath = "src/main/resources/mail.properties";
-//		try (InputStream is = new FileInputStream(new File(propertyPath))) {
-//
-//			prop.load(is);
-//			host = prop.getProperty("server.host");
-//			senderLogin = prop.getProperty("server.login");
-//			senderPassword = prop.getProperty("server.password");
-//			subscriptionTemplatePath = prop.getProperty("template.subscription");
-//			tweetTemplatePath = prop.getProperty("template.tweet");
-//		} catch (FileNotFoundException e) {
-//			LOG.error(e.getMessage() + " " + propertyPath); // TODO
-//			throw new RefreshFailedException();
-//		} catch (InvalidPropertiesFormatException e) {
-//			LOG.error(e.getMessage() + " " + propertyPath); // TODO
-//			throw new RefreshFailedException();
-//		} catch (IOException e) {
-//			LOG.error(e.getMessage() + " " + propertyPath); // TODO
-//			throw new RefreshFailedException();
-//		}
-	}
-
-	/**
 	 * Create Velocity object and load templates from files.
 	 * 
 	 * @throws RefreshFailedException
@@ -299,6 +264,10 @@ public class MailConnector {
 	private void templateInit() throws RefreshFailedException {
 		try {
 			ve = new VelocityEngine();
+
+			ve.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+			ve.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+
 			ve.init();
 
 			context = new VelocityContext();

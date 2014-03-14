@@ -29,8 +29,7 @@
 							label="Role" />
 
 						<h:panelGroup />
-						<p:commandButton value="Add User" update=":addform:addmsg"
-							action="#{usersBean.saveUser}" />
+						<p:commandButton value="Add User" action="#{usersBean.saveUser}" />
 					</h:panelGrid>
 				</p:panel>
 			</h:form>
@@ -38,7 +37,6 @@
 		<div>
 			<h:form id="form">
 				<p:panel id="panel" header="List of users">
-					<p:growl id="msg" showDetail="true" sticky="true" />
 					<p:dataTable var="user" value="#{lazyUsersDataModel}"
 						paginator="true" rows="5"
 						paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
@@ -72,8 +70,7 @@
 							<p:commandButton value="Delete"
 								rendered="#{not request.remoteUser.equals(user.login)}"
 								icon="ui-icon-circle-close"
-								actionListener="#{usersBean.deleteUser(user.id)}"
-								update=":form:msg">
+								actionListener="#{usersBean.deleteUser(user.id)}">
 								<p:confirm header="Confirmation" message="Are you sure?"
 									icon="ui-icon-alert" />
 							</p:commandButton>
@@ -90,6 +87,9 @@
 					</p:dataTable>
 				</p:panel>
 			</h:form>
+			<ui:insert name="feedback">
+				<ui:include src="/templates/feedback.xhtml" />
+			</ui:insert>
 		</div>
 	</ui:define>
 

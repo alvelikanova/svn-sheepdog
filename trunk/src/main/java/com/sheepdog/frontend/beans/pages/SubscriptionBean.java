@@ -91,7 +91,7 @@ public class SubscriptionBean {
 		}
 		for (Subscription s : subscriptions) {
 			if (file.getQualifiedName().equals(s.getFile().getQualifiedName())) {
-				System.out.println(s.getFile().getQualifiedName());
+
 				return true;
 			}
 		}
@@ -100,28 +100,10 @@ public class SubscriptionBean {
 	}
 
 	public void reloadSubscriptions() {
-		System.out.println("RELOAD+++++++++++++++++++++++++++++++++++++++++++++++");
 		subscriptions.clear();
 		subscriptions.addAll(subscrService.getSubscriptionsByUser(lm.getCurrentUser()));
 
-		System.out.println("Subscr size " + subscriptions.size());
-
 		RequestContext.getCurrentInstance().update("subscr_form:subscrTable");
-	}
-
-	public void subscriptionChange(Subscription subscription) {
-		if (subscriptions.contains(subscription)) {
-			
-			System.out.println("SUCHESTVUET");
-			subscriptions.remove(subscription);
-			deleteSubscription(subscription);
-
-		} else {
-			System.out.println("NE  SUCHESTVUET");
-			subscriptions.add(subscription);
-			saveExistingSubscription(subscription);
-		}
-
 	}
 
 	public List<Subscription> getSubscriptions() {
