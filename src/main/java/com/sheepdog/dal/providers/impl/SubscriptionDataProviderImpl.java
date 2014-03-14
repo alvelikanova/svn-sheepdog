@@ -96,7 +96,10 @@ public class SubscriptionDataProviderImpl extends BaseDataProviderImpl<Subscript
 					Restrictions.and(Restrictions.eq("fileEntity.id", fe.getId()),
 							Restrictions.eq("userEntity.id", user.getId())));
 			SubscriptionEntity se = (SubscriptionEntity) subscrCriteria.uniqueResult();
-			session.delete(se);
+
+			if (se != null) {
+				session.delete(se);
+			}
 		} catch (HibernateException ex) {
 			LOG.error("Hibernate error occured while deleting subscription", ex.getMessage());
 			throw new DaoException(ex);
@@ -138,6 +141,10 @@ public class SubscriptionDataProviderImpl extends BaseDataProviderImpl<Subscript
 			Criteria fileCriteria = session.createCriteria(FileEntity.class).add(
 					Restrictions.eq("qualifiedName", file.getQualifiedName()));
 			FileEntity fe = (FileEntity) fileCriteria.uniqueResult();
+
+			if (fe == null) {
+				return false;
+			}
 
 			Criteria subscrCriteria = session
 					.createCriteria(SubscriptionEntity.class)

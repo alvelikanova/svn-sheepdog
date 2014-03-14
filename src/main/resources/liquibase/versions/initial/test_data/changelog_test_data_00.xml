@@ -121,7 +121,7 @@
 		<insert tableName="file">
 			<column name="id">1</column>
 			<column name="name">sqltool.rc</column>
-			<column name="qualified_name">https://svn-sheepdog.googlecode.com/svn/trunk/support/hsqldb_bat/sqltool.rc
+			<column name="qualified_name">SVN-Sheepdog/support/hsqldb_bat/sqltool.rc
 			</column>
 			<column name="creator_name">Bichev</column>
 			<column name="revision_id">1</column>
@@ -131,7 +131,7 @@
 		<insert tableName="file">
 			<column name="id">2</column>
 			<column name="name">pom.xml</column>
-			<column name="qualified_name">https://svn-sheepdog.googlecode.com/svn/trunk/pom.xml
+			<column name="qualified_name">SVN-Sheepdog/pom.xml
 			</column>
 			<column name="creator_name">Bichev</column>
 			<column name="revision_id">1</column>
@@ -141,7 +141,7 @@
 		<insert tableName="file">
 			<column name="id">3</column>
 			<column name="name">sheepdog_relations.png</column>
-			<column name="qualified_name">https://svn-sheepdog.googlecode.com/svn/trunk/support/sheepdog_relations.png
+			<column name="qualified_name">SVN-Sheepdog/support/sheepdog_relations.png
 			</column>
 			<column name="creator_name">Bichev</column>
 			<column name="revision_id">1</column>
