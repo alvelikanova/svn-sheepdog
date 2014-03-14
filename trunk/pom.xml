@@ -8,8 +8,8 @@
 	<name>SVN sheepdog webapp</name>
 	<url>https://code.google.com/p/java-quickstart</url>
 
-	<!-- If you are changing the pom.xml, delete this comment-->
-	
+	<!-- If you are changing the pom.xml, delete this comment -->
+
 	<properties>
 		<spring.version>3.2.4.RELEASE</spring.version>
 		<mojarra.version>2.2.4</mojarra.version>
@@ -38,7 +38,7 @@
 			<artifactId>joda-time</artifactId>
 			<version>2.3</version>
 		</dependency>
-		
+
 		<!-- SVNKit -->
 		<dependency>
 			<groupId>org.tmatesoft.svnkit</groupId>
@@ -47,16 +47,9 @@
 		</dependency>
 
 		<!-- JSF -->
-		<!-- dependency>
-			<groupId>com.sun.faces</groupId>
-			<artifactId>jsf-api</artifactId>
-			<version>${mojarra.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.faces</groupId>
-			<artifactId>jsf-impl</artifactId>
-			<version>${mojarra.version}</version>
-		</dependency -->
+		<!-- dependency> <groupId>com.sun.faces</groupId> <artifactId>jsf-api</artifactId> 
+			<version>${mojarra.version}</version> </dependency> <dependency> <groupId>com.sun.faces</groupId> 
+			<artifactId>jsf-impl</artifactId> <version>${mojarra.version}</version> </dependency -->
 		<dependency>
 			<groupId>org.primefaces</groupId>
 			<artifactId>primefaces</artifactId>
@@ -80,7 +73,7 @@
 			<artifactId>spring-aop</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
@@ -88,9 +81,9 @@
 		</dependency>
 
 		<dependency>
-		   <groupId>org.springframework</groupId>
-		   <artifactId>spring-context-support</artifactId>
-		   <version>${spring.version}</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${spring.version}</version>
 		</dependency>
 
 		<dependency>
@@ -155,16 +148,16 @@
 			<artifactId>shiro-all</artifactId>
 			<version>${shiro.version}</version>
 		</dependency>
-		
+
 		<dependency>
-		   <groupId>com.googlecode.ehcache-spring-annotations</groupId>
-		   <artifactId>ehcache-spring-annotations</artifactId>
-		   <version>1.2.0</version>
+			<groupId>com.googlecode.ehcache-spring-annotations</groupId>
+			<artifactId>ehcache-spring-annotations</artifactId>
+			<version>1.2.0</version>
 		</dependency>
 		<dependency>
-		   <groupId>net.sf.ehcache</groupId>
-		   <artifactId>ehcache</artifactId>
-		   <version>2.7.2</version>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+			<version>2.7.2</version>
 		</dependency>
 
 
@@ -174,12 +167,19 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>3.1</version>
 		</dependency>
-		
+
 		<!-- HTML Template -->
 		<dependency>
 			<groupId>org.apache.velocity</groupId>
 			<artifactId>velocity</artifactId>
 			<version>1.6.2</version>
+		</dependency>
+
+		<!-- Primefaces theme -->
+		<dependency>
+			<groupId>org.primefaces.themes</groupId>
+			<artifactId>bootstrap</artifactId>
+			<version>1.0.10</version>
 		</dependency>
 
 	</dependencies>
@@ -227,20 +227,9 @@
 					<changeLogFile>src/main/resources/liquibase/master.xml</changeLogFile>
 				</configuration>
 			</plugin>
-			
-			<plugin>
-                <groupId>org.jboss.as.plugins</groupId>
-                <artifactId>jboss-as-maven-plugin</artifactId>
-                <version>7.5.Final</version>
-                <executions>
-                    <execution>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>deploy</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin> 
+			<!-- <plugin> <groupId>org.jboss.as.plugins</groupId> <artifactId>jboss-as-maven-plugin</artifactId> -->
+			<!-- <version>7.5.Final</version> <executions> <execution> <phase>install</phase> -->
+			<!-- <goals> <goal>deploy</goal> </goals> </execution> </executions> </plugin> -->
 		</plugins>
 	</build>
 
@@ -274,7 +263,7 @@
 			</properties>
 		</profile>
 		<profile>
-			<id>cloudbees</id> 
+			<id>cloudbees</id>
 			<properties>
 				<jdbc.driver.class.name>com.mysql.jdbc.Driver</jdbc.driver.class.name>
 				<jdbc.url>jdbc:mysql://ec2-23-21-211-172.compute-1.amazonaws.com:3306/sheepdogdb</jdbc.url>
