@@ -3,14 +3,12 @@ package com.sheepdog.frontend.beans.pages;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.ToggleEvent;
@@ -65,18 +63,15 @@ public class ChangelogBean implements Serializable {
 	private Map.Entry<File, TypeOfFileChanges> selectedFile = null;
 
 	private void loadRevisionFiles(ToggleEvent event) {
-		System.out.println("VIZOV");
 
 		User user = lm.getCurrentUser();
 
-		System.out.println("VIZOV" + user.getLogin());
 		Revision r = (Revision) event.getData();
-		System.out.println("NO REV " + r.getRevisionNo());
 
 		revisionFiles.clear();
 
 		try {
-			revisionFiles.addAll(svnFileService.getFilesByRevision(user, (Revision) event.getData()).entrySet());
+			revisionFiles.addAll(svnFileService.getFilesByRevision(user, r).entrySet());
 		} catch (IllegalArgumentException e) {
 			LOG.info("Failed to get revision files from repository. " + e.getMessage());
 			feedback.feedback(FacesMessage.SEVERITY_WARN, "Registration problem.",
@@ -90,9 +85,6 @@ public class ChangelogBean implements Serializable {
 			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Connetion to repository is failed.",
 					"Check your profile or contact to your administrator.");
 		}
-
-		for (Map.Entry<File, TypeOfFileChanges> entry : revisionFiles)
-			System.out.println("File " + entry.getKey().getName());
 
 	}
 
