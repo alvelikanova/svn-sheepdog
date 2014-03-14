@@ -40,7 +40,7 @@ public class SubscriptionBean {
 
 	public void deleteSubscription(File file) {
 
-		subscrService.createSubscription(lm.getCurrentUser(), file);
+		subscrService.deleteSubscription(lm.getCurrentUser(), file);
 
 	}
 
@@ -65,7 +65,7 @@ public class SubscriptionBean {
 		subscrService.saveSubscriptions(sub);
 	}
 
-	public void saveSubscription(Subscription subscription) {
+	public void saveExistingSubscription(Subscription subscription) {
 
 		Set<Subscription> subSet = new HashSet<>();
 		subSet.add(subscription);
@@ -74,7 +74,7 @@ public class SubscriptionBean {
 	}
 
 	public void subscriptionCheck(FileTreeComposite ftc) {
-		if (!ftc.isSubscribed()) {
+		if (ftc.isSubscribed()) {
 			createSubscription(ftc.getFile());
 			ftc.setSubscribed(true);
 
@@ -82,6 +82,20 @@ public class SubscriptionBean {
 			deleteSubscription(ftc.getFile());
 			ftc.setSubscribed(false);
 		}
+
+	}
+
+	public boolean isSubscribed(File file) {
+		if (subscriptions.size() == 0) {
+			subscriptions.addAll(subscrService.getSubscriptionsByUser(lm.getCurrentUser()));
+		}
+		for (Subscription s : subscriptions) {
+			if (file.getQualifiedName().equals(s.getFile().getQualifiedName())) {
+				System.out.println(s.getFile().getQualifiedName());
+				return true;
+			}
+		}
+		return false;
 
 	}
 
@@ -97,11 +111,15 @@ public class SubscriptionBean {
 
 	public void subscriptionChange(Subscription subscription) {
 		if (subscriptions.contains(subscription)) {
-			deleteSubscription(subscription);
+			
+			System.out.println("SUCHESTVUET");
 			subscriptions.remove(subscription);
+			deleteSubscription(subscription);
+
 		} else {
+			System.out.println("NE  SUCHESTVUET");
 			subscriptions.add(subscription);
-			saveSubscription(subscription);
+			saveExistingSubscription(subscription);
 		}
 
 	}

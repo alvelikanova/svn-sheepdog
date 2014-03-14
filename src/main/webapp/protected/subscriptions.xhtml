@@ -15,35 +15,43 @@
 
 		<h:form id="subscr_form">
 
+			<f:event type="preRenderView"
+				listener="#{subscriptionBean.reloadSubscriptions()}" />
+
 			<p:dataTable id="subscrTable" var="subscr"
 				value="#{subscriptionBean.subscriptions}" paginator="true" rows="10"
 				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 				rowsPerPageTemplate="10,20,30" styleClass="fileTreeTable"
-				emptyMessage="Loading subscriptions....">
+				emptyMessage="No subscriptions.">
+
+
 
 				<p:column filterBy="file.name" sortBy="file.name"
 					filterMatchMode="contains">
 					<f:facet name="header">  
-                File  
-            </f:facet>
+           			     File  
+            		</f:facet>
 					<h:outputText value="#{subscr.file.name}" />
 				</p:column>
 
 				<p:column filterBy="file.qualifiedName" sortBy="file.qualifiedName"
 					filterMatchMode="contains">
 					<f:facet name="header">  
-                Path  
-            </f:facet>
+                		Path  
+         		    </f:facet>
+
 					<h:outputText value="#{subscr.file.qualifiedName}" />
 				</p:column>
 
 
 				<p:column width="20">
 					<f:facet name="header">  
-                Subscription  
-            </f:facet>
-					<p:selectBooleanCheckbox value="true" id="checkBox">
-						<p:ajax update="checkBox" process="@this"
+             		   Subscription  
+          			</f:facet>
+
+
+					<p:selectBooleanCheckbox value="#{true}" id="checkBox">
+						<p:ajax update="subscrTable"
 							listener="#{subscriptionBean.subscriptionChange(subscr)}" />
 					</p:selectBooleanCheckbox>
 				</p:column>
@@ -51,14 +59,14 @@
 
 			</p:dataTable>
 
-			<p:remoteCommand name="subscrload"
-				actionListener="#{subscriptionBean.reloadSubscriptions()}"
-				autoRun="true">
 
-			</p:remoteCommand>
 
 
 		</h:form>
+
+		<ui:insert name="feedback">
+			<ui:include src="/templates/feedback.xhtml" />
+		</ui:insert>
 	</ui:define>
 
 	<ui:define name="footer">

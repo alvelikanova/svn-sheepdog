@@ -12,7 +12,9 @@
 	</ui:define>
 
 	<ui:define name="content">
+
 		<div>
+
 			<h:outputStylesheet name="css/sheepdog.css"></h:outputStylesheet>
 			<h:form id="file_form">
 
@@ -85,7 +87,7 @@
            				</f:facet>
 
 						<p:selectBooleanCheckbox value="#{ftc.subscribed}">
-							<p:ajax update="file_tree"
+							<p:ajax update="subscr_column"
 								listener="#{subscriptionBean.subscriptionCheck(ftc)}" />
 						</p:selectBooleanCheckbox>
 					</p:column>
@@ -102,38 +104,15 @@
 				</p:remoteCommand>
 
 
-				<p:dialog header="File Menu" widgetVar="fileDialog" dynamic="true"
-					showEffect="clip" hideEffect="drop" modal="true"
-					style="width: 80%!important; height:70%!important">
-
-					<f:facet name="header">
-						<p:panelGrid columns="2">
-							<p:panelGrid columns="2">
-								<h:outputText value="Revision: " />
-
-								<p:selectOneMenu id="selectMenu"
-									value="#{fileContentBean.selectedRev}" effect="fade">
-									<p:ajax event="change" update="cont"
-										listener="#{fileContentBean.loadContent}" />
-
-									<f:selectItem itemLabel="Select Revision" itemValue="#{null}" />
-									<f:selectItems value="#{fileContentBean.revisions}" />
-								</p:selectOneMenu>
-							</p:panelGrid>
-
-						</p:panelGrid>
-					</f:facet>
-
-					<p:inputTextarea id="cont" value="#{fileContentBean.content}"
-						autoResize="false" readonly="true" style="margin:2%!important" />
-
-
-				</p:dialog>
-
+				<ui:insert name="file_content">
+					<ui:include src="/templates/file_content.xhtml" />
+				</ui:insert>
 
 			</h:form>
-			<p:growl id="feedback" showDetail="true" sticky="true" />
 
+			<ui:insert name="feedback">
+				<ui:include src="/templates/feedback.xhtml" />
+			</ui:insert>
 
 		</div>
 

@@ -21,8 +21,16 @@
 				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 				rowsPerPageTemplate="10,20,30">
 
+				<f:facet name="header">
+					<p:commandButton
+						actionListener="#{changelogBean.loadRevisionFromDB()}"
+						update="changelog" icon="ui-icon-refresh" title="Refresh"
+						style="float: left" />
+				</f:facet>
+
 				<p:ajax event="rowToggle"
-					listener="#{changelogBean.loadRevisionFiles}" update="revFiles" />
+					listener="#{changelogBean.loadFilesAndTweets}"
+					update="revFiles,tweets" />
 
 				<p:column style="width:2%">
 					<p:rowToggler />
@@ -58,28 +66,87 @@
 				</p:column>
 
 				<p:rowExpansion id="changes">
+					<p:panelGrid columns="2">
+						<p:dataTable id="revFiles" var="file"
+							value="#{changelogBean.files}"
+							selection="#{changelogBean.selectedFile}" selectionMode="single"
+							rowKey="#{file.key.name}" paginator="true" rows="10"
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+							paginatorPosition="bottom">
 
-					<p:dataTable id="revFiles" var="file"
-						value="#{changelogBean.files}">
+							<p:ajax event="rowSelect" update=":changelog_form:cont "
+								listener="#{fileContentBean.selectDT}"
+								oncomplete="PF('fileDialog').show()" />
 
-						<p:column>
 							<f:facet name="header">
+							Actions
+							</f:facet>
+
+							<p:column>
+								<f:facet name="header">
 							Changed File
 							</f:facet>
-							<h:outputText value="#{file.key.name}" />
-						</p:column>
+								<h:outputText value="#{file.key.name}" />
+							</p:column>
 
-						<p:column>
-							<f:facet name="header">
+							<p:column>
+								<f:facet name="header">
 							Action
 							</f:facet>
-							<h:outputText value="#{file.value}" />
-						</p:column>
+								<h:outputText value="#{file.value}" />
+							</p:column>
 
-					</p:dataTable>
+						</p:dataTable>
+
+						<p:dataTable id="tweets" var="tweet" value="#{tweetBean.tweets}"
+							emptyMessage="No tweets for revision." style="height: 100%"
+							scrollable="true">
+
+
+							<f:facet name="header">
+								Tweets
+							</f:facet>
+
+							<p:column>
+								<f:facet name="header">
+							Author
+							</f:facet>
+								<h:outputText value="#{tweet.author}" />
+							</p:column>
+
+							<p:column>
+								<f:facet name="header">
+							Tweet
+							</f:facet>
+								<h:outputText value="#{tweet.tweet}" />
+							</p:column>
+
+							<f:facet name="footer">
+
+
+								<p:inputTextarea requiredMessage="true" rows="150"
+									style="with: 80%; height: 100px" title="Your tweet here"
+									value="${tweetBean.tweetMessage}">
+
+
+									<p:commandButton ajax="true"
+										actionListener="${tweetBean.saveTweet(rev)}" value="Send" />
+
+
+								</p:inputTextarea>
+
+							</f:facet>
+
+						</p:dataTable>
+
+					</p:panelGrid>
+
+
 				</p:rowExpansion>
 
 			</p:dataTable>
+
+
 
 			<p:remoteCommand name="revload"
 				actionListener="#{changelogBean.loadRevisionFromDB()}"
@@ -87,7 +154,14 @@
 
 			</p:remoteCommand>
 
+			<ui:insert name="file_content">
+				<ui:include src="/templates/file_content.xhtml" />
+			</ui:insert>
+
 		</h:form>
+		<ui:insert name="feedback">
+			<ui:include src="/templates/feedback.xhtml" />
+		</ui:insert>
 
 	</ui:define>
 

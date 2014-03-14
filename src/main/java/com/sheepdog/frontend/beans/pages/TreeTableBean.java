@@ -53,7 +53,7 @@ public class TreeTableBean implements Serializable {
 	private SVNFileService fs;
 
 	@Autowired
-	private SubscriptionManagementService subscrService;
+	private SubscriptionBean subscrBean;
 
 	@Autowired
 	private LoginManager loginManager;
@@ -124,9 +124,11 @@ public class TreeTableBean implements Serializable {
 
 	private void printComposite(FileTreeComposite ftc, TreeNode parent) {
 
-//		if (subscrService.isSubscribed(loginManager.getCurrentUser(), ftc.getFile())) {
-//			ftc.setSubscribed(true);
-//		}TODO
+		if (subscrBean.isSubscribed(ftc.getFile())) {
+			ftc.setSubscribed(true);
+		} else {
+			ftc.setSubscribed(false);
+		}
 		TreeNode current = new DefaultTreeNode(ftc, parent);
 
 		files.add(current);
@@ -204,10 +206,6 @@ public class TreeTableBean implements Serializable {
 
 	public void setFs(SVNFileService fs) {
 		this.fs = fs;
-	}
-
-	public void setSubscrService(SubscriptionManagementService subscrService) {
-		this.subscrService = subscrService;
 	}
 
 	public void setNeedToReload() {
