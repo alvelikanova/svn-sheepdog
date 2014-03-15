@@ -19,8 +19,7 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public abstract class GenericDalEntity<ID extends Serializable> implements
 		Serializable {
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = -8974048124636154613L;
 	private ID id;
 
 	@Id

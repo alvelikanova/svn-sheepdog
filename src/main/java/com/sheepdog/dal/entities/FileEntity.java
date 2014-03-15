@@ -7,9 +7,6 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import static javax.persistence.GenerationType.IDENTITY;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -22,7 +19,7 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @Table(name = "FILE", uniqueConstraints = @UniqueConstraint(columnNames = "QUALIFIED_NAME"))
 public class FileEntity extends GenericDalEntity<Integer> implements java.io.Serializable {
-
+	private static final long serialVersionUID = 7792042871597123417L;
 	private ProjectEntity projectEntity;
 	private RevisionEntity revisionEntity;
 	private String name;

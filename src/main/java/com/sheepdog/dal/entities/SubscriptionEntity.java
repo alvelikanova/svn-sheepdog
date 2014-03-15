@@ -2,14 +2,8 @@ package com.sheepdog.dal.entities;
 
 // Generated 13.12.2013 11:09:05 by Hibernate Tools 4.0.0
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-
-import static javax.persistence.GenerationType.IDENTITY;
-
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -20,7 +14,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "SUBSCRIPTION")
 public class SubscriptionEntity extends GenericDalEntity<Integer> implements java.io.Serializable {
-
+	private static final long serialVersionUID = -5934848559501170236L;
 	private UserEntity userEntity;
 	private FileEntity fileEntity;
 

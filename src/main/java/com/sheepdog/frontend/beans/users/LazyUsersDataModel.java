@@ -1,7 +1,6 @@
 package com.sheepdog.frontend.beans.users;
 
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.SessionScoped;
 
 import org.hibernate.exception.JDBCConnectionException;
 import org.slf4j.Logger;
@@ -15,7 +14,6 @@ import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.dal.entities.UserEntity;
 import com.sheepdog.dal.exceptions.DaoException;
 import com.sheepdog.dal.providers.UserDataProvider;
-import com.sheepdog.dal.providers.impl.BaseDataProviderImpl;
 import com.sheepdog.dal.providers.pagination.LoadOptions;
 import com.sheepdog.dal.providers.pagination.PagedList;
 import com.sheepdog.frontend.beans.templates.FeedbackBean;

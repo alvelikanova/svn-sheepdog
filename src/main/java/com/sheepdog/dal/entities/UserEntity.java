@@ -8,11 +8,6 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-
-import static javax.persistence.GenerationType.IDENTITY;
-
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -26,7 +21,7 @@ import javax.persistence.UniqueConstraint;
 @Table(name = "USER_", uniqueConstraints = { @UniqueConstraint(columnNames = "LOGIN"),
 		@UniqueConstraint(columnNames = "EMAIL") })
 public class UserEntity extends GenericDalEntity<Integer> implements java.io.Serializable {
-
+	private static final long serialVersionUID = -3442285433645123475L;
 	private ProjectEntity projectEntity;
 	private String login;
 	private String firstName;
