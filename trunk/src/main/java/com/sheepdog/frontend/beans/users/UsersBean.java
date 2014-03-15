@@ -97,6 +97,7 @@ public class UsersBean implements Serializable {
 			Project project = projectManagementService.getCurrentProject();
 			User user = new User(project, login, firstName, lastName, email, "12345", role);
 			userManagementService.saveUser(user);
+			RequestContext.getCurrentInstance().update("form");
 			feedback.feedback(FacesMessage.SEVERITY_INFO, "Save User", "User was saved with id: " +user.getId());
 		} catch (DaoException ex) {
 			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error", "Data access error");

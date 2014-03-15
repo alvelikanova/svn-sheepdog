@@ -161,6 +161,7 @@ public class SubscriptionDataProviderImpl extends BaseDataProviderImpl<Subscript
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Transactional
 	@Override
 	public List<Subscription> getSubscriptionsByUser(User user) throws DaoException {

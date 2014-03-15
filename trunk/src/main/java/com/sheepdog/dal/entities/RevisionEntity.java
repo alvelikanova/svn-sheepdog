@@ -8,11 +8,6 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-
-import static javax.persistence.GenerationType.IDENTITY;
-
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -24,7 +19,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "REVISION")
 public class RevisionEntity extends GenericDalEntity<Integer> implements java.io.Serializable {
-
+	private static final long serialVersionUID = 6083002653146396595L;
 	private ProjectEntity projectEntity;
 	private int revisionNo;
 	private String author;
