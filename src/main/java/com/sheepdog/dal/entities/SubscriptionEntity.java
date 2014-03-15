@@ -6,7 +6,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+
 import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -17,9 +19,8 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "SUBSCRIPTION")
-public class SubscriptionEntity implements java.io.Serializable {
+public class SubscriptionEntity extends GenericDalEntity<Integer> implements java.io.Serializable {
 
-	private Integer id;
 	private UserEntity userEntity;
 	private FileEntity fileEntity;
 
@@ -29,17 +30,6 @@ public class SubscriptionEntity implements java.io.Serializable {
 	public SubscriptionEntity(UserEntity userEntity, FileEntity fileEntity) {
 		this.userEntity = userEntity;
 		this.fileEntity = fileEntity;
-	}
-
-	@Id
-	@GeneratedValue(strategy = IDENTITY)
-	@Column(name = "ID", unique = true, nullable = false)
-	public Integer getId() {
-		return this.id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)

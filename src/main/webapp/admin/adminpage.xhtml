@@ -24,12 +24,24 @@
 							<f:validateLength minimum="4" />
 						</p:inputText>
 
+						<h:outputLabel for="firstName" value="First Name: *" />
+						<p:inputText id="firstName" value="#{usersBean.firstName}"
+							required="true" label="First Name" />
+
+						<h:outputLabel for="lastName" value="Last Name: *" />
+						<p:inputText id="lastName" value="#{usersBean.lastName}"
+							required="true" label="Last Name" />
+
+						<h:outputLabel for="email" value="Email: *" />
+						<p:inputText id="email" value="#{usersBean.email}" required="true"
+							label="Email" />
+							
 						<h:outputLabel for="role" value="Role: *" />
 						<p:inputText id="role" value="#{usersBean.role}" required="true"
 							label="Role" />
 
 						<h:panelGroup />
-						<p:commandButton value="Add User" action="#{usersBean.saveUser}" />
+						<p:commandButton value="Add User" actionListener="#{usersBean.saveUser}" update="feedback"/>
 					</h:panelGrid>
 				</p:panel>
 			</h:form>

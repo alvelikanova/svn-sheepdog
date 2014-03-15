@@ -21,9 +21,8 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(name = "FILE", uniqueConstraints = @UniqueConstraint(columnNames = "QUALIFIED_NAME"))
-public class FileEntity implements java.io.Serializable {
+public class FileEntity extends GenericDalEntity<Integer> implements java.io.Serializable {
 
-	private Integer id;
 	private ProjectEntity projectEntity;
 	private RevisionEntity revisionEntity;
 	private String name;
@@ -51,17 +50,6 @@ public class FileEntity implements java.io.Serializable {
 		this.qualifiedName = qualifiedName;
 		this.creatorName = creatorName;
 		this.subscriptionEntities = subscriptionEntities;
-	}
-
-	@Id
-	@GeneratedValue(strategy = IDENTITY)
-	@Column(name = "ID", unique = true, nullable = false)
-	public Integer getId() {
-		return this.id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)

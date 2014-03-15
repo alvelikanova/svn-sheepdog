@@ -4,11 +4,15 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import javax.faces.application.FacesMessage;
+
 import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.sheepdog.business.domain.entities.Project;
+import com.sheepdog.business.domain.entities.User;
+import com.sheepdog.business.services.ProjectManagementService;
 import com.sheepdog.business.services.UserManagementService;
 import com.sheepdog.dal.exceptions.DaoException;
 import com.sheepdog.frontend.beans.templates.FeedbackBean;
@@ -19,7 +23,9 @@ public class UsersBean implements Serializable {
 	
 	private static final long serialVersionUID = 2819227216048472445L;
 	@Autowired
-	private UserManagementService ums;
+	private UserManagementService userManagementService;
+	@Autowired
+	private ProjectManagementService projectManagementService;
 	@Autowired
 	private FeedbackBean feedback;
 	private String login;
@@ -87,12 +93,21 @@ public class UsersBean implements Serializable {
 	}
 
 	public void saveUser() throws IOException {
-		feedback.feedback(FacesMessage.SEVERITY_INFO, "Save User", "Method was called");
+		try {
+			Project project = projectManagementService.getCurrentProject();
+			User user = new User(project, login, firstName, lastName, email, "12345", role);
+			userManagementService.saveUser(user);
+			feedback.feedback(FacesMessage.SEVERITY_INFO, "Save User", "User was saved with id: " +user.getId());
+		} catch (DaoException ex) {
+			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error", "Data access error");
+		} catch (Exception ex) {
+			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error", "Unknown error");
+		}
 	}
 	
 	public void deleteUser(Integer id) {
 		try {
-			ums.deleteUserById(id);
+			userManagementService.deleteUserById(id);
 			RequestContext.getCurrentInstance().update("form");
 			feedback.feedback(FacesMessage.SEVERITY_INFO, "Delete User", "User was deleted");
 		} catch (DaoException ex) {

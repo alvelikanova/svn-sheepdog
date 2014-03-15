@@ -6,7 +6,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+
 import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -17,9 +19,8 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "TWEET")
-public class TweetEntity implements java.io.Serializable {
+public class TweetEntity extends GenericDalEntity<Integer> implements java.io.Serializable {
 
-	private Integer id;
 	private RevisionEntity revisionEntity;
 	private String author;
 	private String tweet;
@@ -31,17 +32,6 @@ public class TweetEntity implements java.io.Serializable {
 		this.revisionEntity = revisionEntity;
 		this.author = author;
 		this.tweet = tweet;
-	}
-
-	@Id
-	@GeneratedValue(strategy = IDENTITY)
-	@Column(name = "ID", unique = true, nullable = false)
-	public Integer getId() {
-		return this.id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)

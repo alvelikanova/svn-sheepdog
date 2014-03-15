@@ -1,5 +1,11 @@
 package com.sheepdog.business.services;
 
-public interface TweetManagementService {
+import java.util.List;
 
+import com.sheepdog.business.domain.entities.Revision;
+import com.sheepdog.business.domain.entities.Tweet;
+
+public interface TweetManagementService {
+	List<Tweet> getTweetsByRevision(Revision revision);
+	void saveTweet(Tweet tweet);
 }
