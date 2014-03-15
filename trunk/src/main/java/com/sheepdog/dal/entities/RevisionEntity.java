@@ -4,11 +4,14 @@ package com.sheepdog.dal.entities;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+
 import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -20,9 +23,8 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "REVISION")
-public class RevisionEntity implements java.io.Serializable {
+public class RevisionEntity extends GenericDalEntity<Integer> implements java.io.Serializable {
 
-	private Integer id;
 	private ProjectEntity projectEntity;
 	private int revisionNo;
 	private String author;
@@ -48,17 +50,6 @@ public class RevisionEntity implements java.io.Serializable {
 		this.comment = comment;
 		this.tweetEntities = tweetEntities;
 		this.fileEntities = fileEntities;
-	}
-
-	@Id
-	@GeneratedValue(strategy = IDENTITY)
-	@Column(name = "ID", unique = true, nullable = false)
-	public Integer getId() {
-		return this.id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)

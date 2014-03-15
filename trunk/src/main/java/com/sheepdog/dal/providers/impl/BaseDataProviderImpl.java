@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.sheepdog.business.domain.entities.PersistentEntity;
+import com.sheepdog.dal.entities.GenericDalEntity;
 import com.sheepdog.dal.exceptions.DaoException;
 import com.sheepdog.infrastructure.services.MappingService;
 import com.sheepdog.utils.CollectionUtils;
@@ -28,7 +30,10 @@ import com.sheepdog.dal.providers.pagination.LoadOptions;
 import com.sheepdog.dal.providers.pagination.PagedList;
 
 @Repository
-public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implements PageableDataProvider<T, K, ID>{
+public abstract class BaseDataProviderImpl<T extends GenericDalEntity<ID>, 
+											K extends PersistentEntity<ID>, 
+											ID extends Serializable> 
+		implements PageableDataProvider<T, K, ID>{
 
 	protected static final Logger LOG = LoggerFactory.getLogger(BaseDataProviderImpl.class);
 
@@ -82,6 +87,7 @@ public abstract class BaseDataProviderImpl<T, K, ID extends Serializable> implem
 		try {
 			T dataEntity = mappingService.map(entity, dalEntityClass);
 			session.saveOrUpdate(dataEntity);
+			entity.setId(dataEntity.getId());
 		} catch (HibernateException ex) {
         	LOG.error("Hibernate error occured while creating or updating data entity", ex.getMessage());	
         	throw new DaoException(ex);

@@ -4,11 +4,14 @@ package com.sheepdog.dal.entities;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+
 import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -20,9 +23,8 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @Table(name = "PROJECT", uniqueConstraints = { @UniqueConstraint(columnNames = "NAME"),
 		@UniqueConstraint(columnNames = "URL") })
-public class ProjectEntity implements java.io.Serializable {
+public class ProjectEntity extends GenericDalEntity<Integer> implements java.io.Serializable {
 
-	private Integer id;
 	private String name;
 	private String url;
 	private Set<FileEntity> fileEntities = new HashSet<FileEntity>(0);
@@ -44,17 +46,6 @@ public class ProjectEntity implements java.io.Serializable {
 		this.fileEntities = fileEntities;
 		this.userEntities = userEntities;
 		this.revisionEntities = revisionEntities;
-	}
-
-	@Id
-	@GeneratedValue(strategy = IDENTITY)
-	@Column(name = "ID", unique = true, nullable = false)
-	public Integer getId() {
-		return this.id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
 	}
 
 	@Column(name = "NAME", unique = true, nullable = false)
