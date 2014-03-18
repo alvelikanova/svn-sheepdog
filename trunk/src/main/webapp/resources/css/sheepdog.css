@@ -13,4 +13,20 @@
 
 .tables {
 	margin: 5% 2% 0;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 12px !important;
+}
+
+.expandeTables {
+
+	height: 350px;
+}
+
+.tabMenu .ui-tabmenu {
+	float: right;
+}
+
+.ui-widget,.ui-widget .ui-widget {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 15px;
 }

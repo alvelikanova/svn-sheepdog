@@ -38,7 +38,7 @@
 			<column name="login">vl.bichev</column>
 			<column name="first_name">Bichev</column>
 			<column name="last_name">Vladimir</column>
-			<column name="email">Fvl.bichev@gmail.com</column>
+			<column name="email">vl.bichev@gmail.com</column>
 			<column name="password">RYCy98dlDdldbMUPwYAieAtjcOvD17H6zwg4dPUgxUM=</column>
 			<column name="project_id">1</column>
 		</insert>

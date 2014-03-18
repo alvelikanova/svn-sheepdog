@@ -33,7 +33,6 @@ public class MailServiceImpl implements MailService {
 	@Override
 	public synchronized void sendMailBySubscription(Map<Subscription, TypeOfFileChanges> necessarySubscriptions)
 			throws RefreshFailedException, IOException, TransformerException {
-		mailConnector.openConnection();
 
 		Map<User, Map<Subscription, TypeOfFileChanges>> subscriptions = new HashMap<>(0);
 
@@ -48,7 +47,6 @@ public class MailServiceImpl implements MailService {
 			mailConnector.sendSuscriptionMessage(entry.getKey(), entry.getValue());
 		}
 
-		mailConnector.closeConnection();
 	}
 
 	/*
@@ -60,12 +58,10 @@ public class MailServiceImpl implements MailService {
 	 */
 	@Override
 	public synchronized void sendMailByTweet(Tweet tweet, User user) throws RefreshFailedException, IOException,
-			TransformerException {
-		mailConnector.openConnection();
+			TransformerException {	
 
 		mailConnector.sendTweetMessage(user, tweet);
 
-		mailConnector.closeConnection();
 	}
 
 	/*

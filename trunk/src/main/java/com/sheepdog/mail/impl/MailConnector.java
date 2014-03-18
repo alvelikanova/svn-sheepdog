@@ -2,12 +2,16 @@ package com.sheepdog.mail.impl;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Date;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
 import javax.mail.SendFailedException;
 import javax.mail.Session;
+import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.security.auth.RefreshFailedException;
@@ -67,6 +71,12 @@ public class MailConnector {
 	@Value("${server.password}")
 	private String senderPassword;
 
+	@Value("${server.port}")
+	private String serverPort;
+
+	@Value("${server.enable.ssl}")
+	private String enableSSL;
+
 	/**
 	 * Path of Velocity HTML template for subscription email.
 	 */
@@ -98,11 +108,6 @@ public class MailConnector {
 	 * Velocity HTML template for tweet email.
 	 */
 	private Template tweetTemplate;
-
-	/**
-	 * Provides sending mail by SMTP protocols.
-	 */
-	private SMTPTransport mailSender;
 
 	/**
 	 * JavaMail session creates SMTPTransport and MimeMessage objects.
@@ -165,11 +170,16 @@ public class MailConnector {
 		try {
 			message.addRecipient(Message.RecipientType.TO, new InternetAddress(user.getEmail()));
 
+			message.setFrom(new InternetAddress("woof@svn-sheepdog.org"));
+
 			message.setSubject("SVN Sheepdog");
+
+			message.setSentDate(new Date());
 
 			message.setContent(w.toString(), "text/html");
 
-			mailSender.sendMessage(message, message.getAllRecipients());
+			Transport.send(message, message.getAllRecipients());
+
 		} catch (SendFailedException e) {
 			LOG.error(e.getLocalizedMessage());
 			throw new IOException();
@@ -197,8 +207,8 @@ public class MailConnector {
 	 */
 	public void sendTweetMessage(User user, Tweet tweet) throws IOException, TransformerException,
 			RefreshFailedException {
-		if (!mailSender.isConnected()) {
-			openConnection();
+		if (!isConfigured) {
+			setup();
 		}
 
 		context.put("user", user);
@@ -223,8 +233,8 @@ public class MailConnector {
 	 */
 	public void sendSuscriptionMessage(User user, Map<Subscription, TypeOfFileChanges> subscriptions)
 			throws IOException, TransformerException, RefreshFailedException {
-		if (!mailSender.isConnected()) {
-			openConnection();
+		if (!isConfigured) {
+			setup();
 		}
 
 		context.put("user", user);
@@ -242,14 +252,23 @@ public class MailConnector {
 	public void setup() throws RefreshFailedException {
 		isConfigured = false;
 
-		session = Session.getDefaultInstance(System.getProperties());
+		Properties props = new Properties();
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.host", host);
+		props.put("mail.smtp.port", serverPort);
 
-		try {
-			mailSender = (SMTPTransport) session.getTransport("smtps");
-		} catch (MessagingException e) {
-			LOG.error(e.getMessage() + " on create SMTPTransport object.");
-			throw new RefreshFailedException();
+		if ("true".equals(enableSSL)) {
+			props.put("mail.smtp.ssl.enable", "true");
+
+		} else {
+			props.put("mail.smtp.starttls.enable", "true");
 		}
+
+		session = Session.getInstance(props, new javax.mail.Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(senderLogin, senderPassword);
+			}
+		});
 
 		templateInit();
 
@@ -288,38 +307,4 @@ public class MailConnector {
 		}
 	}
 
-	/**
-	 * Connect to mail server
-	 * 
-	 * @throws RefreshFailedException
-	 *             if update process is failed. See log for more details.
-	 * 
-	 * @throws IOException
-	 *             if connection is failed.
-	 */
-	public synchronized void openConnection() throws IOException, RefreshFailedException {
-		if (!isConfigured) {
-			setup();
-		}
-		try {
-			mailSender.connect(host, senderLogin, senderPassword);
-		} catch (MessagingException e) {
-			LOG.error(e.getLocalizedMessage());
-			throw new IOException("Connect to host:" + host + "failed!");
-		}
-
-	}
-
-	/**
-	 * Close connection to host.
-	 */
-	public void closeConnection() {
-		if (mailSender != null) {
-			try {
-				mailSender.close();
-			} catch (MessagingException e) {
-				LOG.error(e.getLocalizedMessage());
-			}
-		}
-	}
 }
