@@ -74,7 +74,7 @@ public class Revision extends PersistentEntity<Integer> implements Comparable<Re
 
 		int compare = Integer.valueOf(this.revisionNo).compareTo(Integer.valueOf(o.getRevisionNo()));
 
-		return compare;
+		return (-1) * compare;
 	}
 
 }

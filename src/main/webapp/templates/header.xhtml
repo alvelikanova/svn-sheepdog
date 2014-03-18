@@ -11,31 +11,34 @@
 	<h:outputStylesheet name="css/sheepdog.css"></h:outputStylesheet>
 	<h:form>
 
-		<p:tabMenu activeIndex="#{tabHeaderBean.activeIndex}">
+		<p:graphicImage value="resources/images/dog.png" cache="false" />
 
-			<p:menuitem>
-				<p:graphicImage value="resources/images/dog.png" cache="true" />
-			</p:menuitem>
+
+		<p:tabMenu activeIndex="#{tabHeaderBean.activeIndex}"
+			styleClass="tabMenu">
 
 			<p:menuitem value="Admin"
-				action="#{tabHeaderBean.updateIndex(1, '/admin/adminpage.xhtml')}"
+				action="#{tabHeaderBean.updateIndex(0, '/admin/adminpage.xhtml')}"
 				rendered="${tabHeaderBean.admin}" />
 
 			<p:menuitem value="Changelog"
-				action="#{tabHeaderBean.updateIndex(2,'/protected/changelog.xhtml')}" />
+				action="#{tabHeaderBean.updateIndex(1,'/protected/changelog.xhtml')}" />
 
 			<p:menuitem value="Files"
-				action="#{tabHeaderBean.updateIndex(3,'/protected/files.xhtml')}" />
+				action="#{tabHeaderBean.updateIndex(2,'/protected/files.xhtml')}" />
 
 			<p:menuitem value="Subscriptions"
-				action="#{tabHeaderBean.updateIndex(4,'/protected/subscriptions.xhtml')}" />
+				action="#{tabHeaderBean.updateIndex(3,'/protected/subscriptions.xhtml')}" />
 
 			<p:menuitem value="Profile"
-				action="#{tabHeaderBean.updateIndex(5, '/protected/profile.xhtml')}" />
+				action="#{tabHeaderBean.updateIndex(4, '/protected/profile.xhtml')}" />
 
 			<p:menuitem value="LOGOUT" action="#{authenticationBean.doLogout}" />
 
 		</p:tabMenu>
+
+
+
 
 	</h:form>
 </h:body>

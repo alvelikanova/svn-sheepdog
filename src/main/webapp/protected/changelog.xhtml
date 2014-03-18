@@ -19,7 +19,7 @@
 			<p:dataTable id="changelog" var="rev"
 				value="#{changelogBean.dbRevisions}" paginator="true" rows="10"
 				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-				rowsPerPageTemplate="10,20,30" styleClass="tables">
+				rowsPerPageTemplate="10,20,30" styleClass="tables" emptyMessage="Load revisions...">
 
 				<f:facet name="header">
 					<p:commandButton
@@ -67,16 +67,17 @@
 
 				<p:rowExpansion id="changes">
 					<p:panelGrid columns="2">
-						<p:dataTable id="revFiles" var="file"
+						<p:dataTable id="revFiles" var="file" emptyMessage="Load files..."
 							value="#{changelogBean.files}"
 							selection="#{changelogBean.selectedFile}" selectionMode="single"
-							rowKey="#{file.key.name}" rows="10"
+							rowKey="#{file.key.name}" rows="10" paginator="true"
 							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
-							paginatorPosition="bottom">
+							paginatorPosition="bottom" styleClass="expandeTables">
 
 							<p:ajax event="rowSelect" update=":changelog_form:cont "
-								listener="#{fileContentBean.selectDT}"
-								oncomplete="PF('fileDialog').show()" />
+								listener="#{fileContentBean.clearContentDT}"
+								oncomplete="#{fileContentBean.selectDT()}"
+								onstart="PF('fileDialog').show()" />
 
 							<f:facet name="header">
 							Actions
@@ -100,7 +101,7 @@
 
 						<p:dataTable id="tweets" var="tweet" value="#{tweetBean.tweets}"
 							emptyMessage="No tweets for revision." style="height: 100%"
-							scrollable="true">
+							scrollable="true" styleClass="expandeTables">
 
 
 							<f:facet name="header">

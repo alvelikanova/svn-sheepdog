@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
 import org.primefaces.context.RequestContext;
@@ -19,6 +20,7 @@ import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.services.FileManagementService;
 import com.sheepdog.business.services.RevisionManagementService;
 import com.sheepdog.business.services.SubscriptionManagementService;
+import com.sheepdog.frontend.beans.templates.FeedbackBean;
 
 @Component(value = "subscriptionBean")
 @Scope("session")
@@ -36,17 +38,26 @@ public class SubscriptionBean {
 	@Autowired
 	private RevisionManagementService rms;
 
+	@Autowired
+	private FeedbackBean feedback;
+
 	private List<Subscription> subscriptions = new ArrayList<>(0);
 
 	public void deleteSubscription(File file) {
 
 		subscrService.deleteSubscription(lm.getCurrentUser(), file);
 
+		feedback.feedback(FacesMessage.SEVERITY_INFO, "Subscription was deleted", "Subscription on " + file.getName()
+				+ " was deleted");
+
 	}
 
 	public void deleteSubscription(Subscription subscription) {
 
 		subscrService.deleteSubscription(subscription);
+
+		feedback.feedback(FacesMessage.SEVERITY_INFO, "Subscription was deleted", "Subscription on "
+				+ subscription.getFile().getName() + " was deleted");
 
 	}
 
@@ -61,6 +72,9 @@ public class SubscriptionBean {
 
 		Set<Subscription> sub = new HashSet<>();
 		sub.add(new Subscription(lm.getCurrentUser(), dbFile));
+
+		feedback.feedback(FacesMessage.SEVERITY_INFO, "Subscription was created", "Subscription on " + dbFile.getName()
+				+ " was created");
 
 		subscrService.saveSubscriptions(sub);
 	}

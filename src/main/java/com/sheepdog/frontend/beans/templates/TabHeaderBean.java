@@ -22,7 +22,7 @@ public class TabHeaderBean implements Serializable {
 	@Autowired
 	private LoginManager lm;
 
-	private int activeIndex = 2;
+	private int activeIndex = 1;
 
 	private boolean admin = true;
 

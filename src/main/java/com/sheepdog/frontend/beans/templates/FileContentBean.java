@@ -51,42 +51,35 @@ public class FileContentBean {
 
 	private Set<String> revisions = new TreeSet<>();
 
-	private File file;
+	private File file = null;
 
 	// TODO set parameter User object of authenticated user
 
-	public void select(NodeSelectEvent se) {
+	public void select() {
 
-		FileTreeComposite ftc = (FileTreeComposite) se.getTreeNode().getData();
+		loadContent();
 
-		file = ftc.getFile();
-
-		if (file.isDir()) {
-			content = "This is directory.";
-		} else {
-			loadRevisions();
-			loadContent();
-		}
-		// RequestContext.getCurrentInstance().update(":file_form:cont");
+		RequestContext.getCurrentInstance().update("file_form:cont_dialog");
 	}
 
-	public void selectDT(SelectEvent se) {
+	public void selectDT() {
 
-		Entry entry = (Entry) se.getObject();
+		loadContent();
 
-		file = (File) entry.getKey();
-
-		if (file.isDir()) {
-			content = "This is directory.";
-		} else {
-			loadRevisions();
-			loadContent();
-		}
-		// RequestContext.getCurrentInstance().update(":changelog_form:cont");
+		RequestContext.getCurrentInstance().update("changelog_form:cont_dialog");
 
 	}
 
 	public void loadContent() {
+		if (file == null) {
+			return;
+		}
+
+		if (file.isDir()) {
+			content = "This is directory.";
+			return;
+		}
+		loadRevisions();
 
 		int revision = 0;
 		if (selectedRev != null) {
@@ -111,10 +104,11 @@ public class FileContentBean {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		System.out.println("VYZOV LOAD CONENTA");
 
 	}
 
-	// @Async
 	private void loadRevisions() {
 		Collection<Revision> fileRevisions = new LinkedList<>();
 
@@ -135,6 +129,27 @@ public class FileContentBean {
 			}
 
 		}
+
+	}
+
+	public void clearContentDT(SelectEvent se) {
+
+		content = "Loading content...";
+
+		Entry entry = (Entry) se.getObject();
+
+		file = (File) entry.getKey();
+
+		System.out.println("FILE INSTALLED");
+
+	}
+
+	public void clearContentTT(NodeSelectEvent se) {
+
+		content = "Loading content...";
+
+		FileTreeComposite ftc = (FileTreeComposite) se.getTreeNode().getData();
+		file = ftc.getFile();
 
 	}
 
