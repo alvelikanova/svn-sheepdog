@@ -23,12 +23,13 @@
 
 				<p:treeTable id="file_tree" value="#{fileTreeBean.root}"
 					selection="#{fileTreeBean.selectedNode}" var="ftc"
-					selectionMode="single" liveResize="true" styleClass="fileTreeTable"
-					emptyMessage="Loading files...">
+					selectionMode="single" liveResize="true"
+					styleClass="fileTreeTable tables" emptyMessage="Loading files...">
 
 					<p:ajax event="select" update=":file_form:cont "
-						listener="#{fileContentBean.select}"
-						oncomplete="PF('fileDialog').show()" />
+						listener="#{fileContentBean.clearContentTT}"
+						oncomplete="#{fileContentBean.select()}"
+						onstart="PF('fileDialog').show()" />
 
 					<f:facet name="header">
 						<p:toolbar style="margin: 0!important; width: 50%">
@@ -85,11 +86,14 @@
 						<f:facet name="header">  
                				Subscription 
            				</f:facet>
-
-						<p:selectBooleanCheckbox value="#{ftc.subscribed}">
-							<p:ajax update="subscr_column"
+						<p:selectBooleanButton id="checkbox" value="#{ftc.subscribed}" 
+							onIcon="ui-icon-mail-closed" offIcon="ui-icon-close" onLabel="Yes" offLabel="No">
+							<p:ajax update="checkbox"
 								listener="#{subscriptionBean.subscriptionCheck(ftc)}" />
-						</p:selectBooleanCheckbox>
+						</p:selectBooleanButton>
+
+
+
 					</p:column>
 
 
