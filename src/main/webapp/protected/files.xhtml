@@ -26,9 +26,8 @@
 					selectionMode="single" liveResize="true"
 					styleClass="fileTreeTable tables" emptyMessage="Loading files...">
 
-					<p:ajax event="select" update=":file_form:cont "
+					<p:ajax event="select" update=":dialog:cont,:dialog:fileName"
 						listener="#{fileContentBean.clearContentTT}"
-						oncomplete="#{fileContentBean.select()}"
 						onstart="PF('fileDialog').show()" />
 
 					<f:facet name="header">
@@ -86,8 +85,9 @@
 						<f:facet name="header">  
                				Subscription 
            				</f:facet>
-						<p:selectBooleanButton id="checkbox" value="#{ftc.subscribed}" 
-							onIcon="ui-icon-mail-closed" offIcon="ui-icon-close" onLabel="Yes" offLabel="No">
+						<p:selectBooleanButton id="checkbox" value="#{ftc.subscribed}"
+							onIcon="ui-icon-mail-closed" offIcon="ui-icon-close"
+							onLabel="Yes" offLabel="No">
 							<p:ajax update="checkbox"
 								listener="#{subscriptionBean.subscriptionCheck(ftc)}" />
 						</p:selectBooleanButton>
@@ -102,17 +102,19 @@
 				</p:treeTable>
 
 
-				<p:remoteCommand name="lazyload"
+				<p:remoteCommand name="lazyload" update="file_tree"
 					actionListener="#{fileTreeBean.loadData()}" autoRun="true">
 
 				</p:remoteCommand>
 
 
-				<ui:insert name="file_content">
-					<ui:include src="/templates/file_content.xhtml" />
-				</ui:insert>
+
 
 			</h:form>
+
+			<ui:insert name="file_content">
+				<ui:include src="/templates/file_content.xhtml" />
+			</ui:insert>
 
 			<ui:insert name="feedback">
 				<ui:include src="/templates/feedback.xhtml" />

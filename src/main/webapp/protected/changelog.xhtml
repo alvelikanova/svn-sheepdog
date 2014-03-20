@@ -19,7 +19,8 @@
 			<p:dataTable id="changelog" var="rev"
 				value="#{changelogBean.dbRevisions}" paginator="true" rows="10"
 				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-				rowsPerPageTemplate="10,20,30" styleClass="tables" emptyMessage="Load revisions...">
+				rowsPerPageTemplate="10,20,30" styleClass="tables"
+				emptyMessage="Load revisions...">
 
 				<f:facet name="header">
 					<p:commandButton
@@ -74,10 +75,11 @@
 							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
 							paginatorPosition="bottom" styleClass="expandeTables">
 
-							<p:ajax event="rowSelect" update=":changelog_form:cont "
+							<p:ajax event="rowSelect" update=":dialog:cont,:dialog:fileName"
 								listener="#{fileContentBean.clearContentDT}"
-								oncomplete="#{fileContentBean.selectDT()}"
 								onstart="PF('fileDialog').show()" />
+
+
 
 							<f:facet name="header">
 							Actions
@@ -149,15 +151,16 @@
 
 			<p:remoteCommand name="revload"
 				actionListener="#{changelogBean.loadRevisionFromDB()}"
-				autoRun="true">
+				autoRun="true" update="changelog">
 
 			</p:remoteCommand>
 
-			<ui:insert name="file_content">
-				<ui:include src="/templates/file_content.xhtml" />
-			</ui:insert>
-
 		</h:form>
+
+		<ui:insert name="file_content">
+			<ui:include src="/templates/file_content.xhtml" />
+		</ui:insert>
+
 		<ui:insert name="feedback">
 			<ui:include src="/templates/feedback.xhtml" />
 		</ui:insert>

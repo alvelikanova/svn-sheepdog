@@ -118,7 +118,6 @@ public class TreeTableBean implements Serializable {
 
 		}
 
-		RequestContext.getCurrentInstance().update("file_form:file_tree");
 		feedback.feedback(FacesMessage.SEVERITY_INFO, "Files are loaded", "Actual state on :" + new Date());
 	}
 

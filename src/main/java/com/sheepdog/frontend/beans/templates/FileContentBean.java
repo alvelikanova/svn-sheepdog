@@ -2,17 +2,14 @@ package com.sheepdog.frontend.beans.templates;
 
 import java.io.IOException;
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeSet;
 
-import javax.faces.model.SelectItem;
+import javax.faces.event.ValueChangeEvent;
 
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +19,6 @@ import org.springframework.stereotype.Component;
 import com.sheepdog.business.domain.entities.File;
 import com.sheepdog.business.domain.entities.FileTreeComposite;
 import com.sheepdog.business.domain.entities.Revision;
-import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
 import com.sheepdog.business.services.svn.SVNFileService;
 import com.sheepdog.business.services.svn.SVNRevisionService;
@@ -43,32 +39,20 @@ public class FileContentBean {
 
 	private String content;
 
-	private Integer selectedRev;
+	private Revision selectedRev;
 
 	private Long lastRev;
 
 	// private List<Revision> revisions = new ArrayList<>(0);
 
-	private Set<String> revisions = new TreeSet<>();
+	// private List<SelectItem> revisions = new ArrayList<>();
+	private Map<String, Revision> revisions = new LinkedHashMap<>();
+
+	// private Map<String, Revision> revisions = new TreeMap<>();
 
 	private File file = null;
 
-	// TODO set parameter User object of authenticated user
-
-	public void select() {
-
-		loadContent();
-
-		RequestContext.getCurrentInstance().update("file_form:cont_dialog");
-	}
-
-	public void selectDT() {
-
-		loadContent();
-
-		RequestContext.getCurrentInstance().update("changelog_form:cont_dialog");
-
-	}
+	private String fileName = "";
 
 	public void loadContent() {
 		if (file == null) {
@@ -79,11 +63,14 @@ public class FileContentBean {
 			content = "This is directory.";
 			return;
 		}
-		loadRevisions();
+
+		if (revisions.isEmpty()) {
+			loadRevisions();
+		}
 
 		int revision = 0;
 		if (selectedRev != null) {
-			revision = selectedRev;
+			revision = selectedRev.getRevisionNo();
 		}
 		if (revision == 0) {
 			revision = -1;
@@ -104,16 +91,14 @@ public class FileContentBean {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		System.out.println("VYZOV LOAD CONENTA");
 
 	}
 
 	private void loadRevisions() {
-		Collection<Revision> fileRevisions = new LinkedList<>();
+		Collection<Revision> fileRevisions = new TreeSet<>();
 
 		try {
-			fileRevisions.addAll(revService.getRevisionsByFile(User.getUpdateUser(), file));// TODO
+			fileRevisions.addAll(revService.getRevisionsByFile(loginManager.getCurrentUser(), file));// TODO
 		} catch (RepositoryAuthenticationExceptoin e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -125,31 +110,45 @@ public class FileContentBean {
 
 		if (fileRevisions != null) {
 			for (Revision r : fileRevisions) {
-				revisions.add(String.valueOf(r.getRevisionNo()));
+				revisions.put(String.valueOf(r.getRevisionNo()), r);
 			}
 
 		}
+
 
 	}
 
 	public void clearContentDT(SelectEvent se) {
 
-		content = "Loading content...";
+		content = "Loading content...\nPlease wait...";
 
 		Entry entry = (Entry) se.getObject();
 
 		file = (File) entry.getKey();
 
-		System.out.println("FILE INSTALLED");
+		fileName = file.getName();
+
+		revisions.clear();
 
 	}
 
 	public void clearContentTT(NodeSelectEvent se) {
 
-		content = "Loading content...";
+		content = "Loading content...\nPlease wait...";
 
 		FileTreeComposite ftc = (FileTreeComposite) se.getTreeNode().getData();
 		file = ftc.getFile();
+
+		fileName = file.getName();
+
+		revisions.clear();
+
+	}
+
+	public void loadContentRev(ValueChangeEvent event) {
+		content = "Loading content...\nPlease wait...";
+
+		loadContent();
 
 	}
 
@@ -158,6 +157,7 @@ public class FileContentBean {
 	}
 
 	public void setContent(String content) {
+
 		this.content = content;
 	}
 
@@ -173,19 +173,28 @@ public class FileContentBean {
 		this.lastRev = lastRev;
 	}
 
-	public Integer getSelectedRev() {
+	public Revision getSelectedRev() {
 		return selectedRev;
 	}
 
-	public void setSelectedRev(Integer selectedRev) {
+	public void setSelectedRev(Revision selectedRev) {
 		this.selectedRev = selectedRev;
 	}
 
-	public Set<String> getRevisions() {
+	public Map<String, Revision> getRevisions() {
+
 		return revisions;
 	}
 
-	public void setRevisions(Set<String> revisions) {
+	public void setRevisions(Map<String, Revision> revisions) {
 		this.revisions = revisions;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 }

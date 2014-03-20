@@ -8,36 +8,58 @@
 	xmlns:p="http://primefaces.org/ui">
 <h:head />
 <h:body>
+	<h:form id="dialog">
+		<p:dialog header="File Menu" widgetVar="fileDialog" showEffect="clip"
+			hideEffect="drop" modal="true" dynamic="true"
+			style="margin: auto; width: 1000px; height: 600px" id="cont_dialog"
+			position="center" onShow="load()">
 
-	<p:dialog header="File Menu" widgetVar="fileDialog" dynamic="true"
-		showEffect="clip" hideEffect="drop" modal="true"
-		style="width: 80%!important; height:70%!important" id="cont_dialog">
+			<p:remoteCommand name="load"
+				actionListener="#{fileContentBean.loadContent()}"
+				update="cont,selectMenu" />
 
-		<f:facet name="header">
-			<p:panelGrid columns="2">
+
+
+			<f:facet name="header">
+
 				<p:panelGrid columns="2">
-					<h:outputText value="Revision: " />
+
+					<h:outputText value="File: " styleClass="fileContentHeaderLabels" />
+					<h:outputText id="fileName" value="#{fileContentBean.fileName}"
+						styleClass="fileContentHeaderLabels" />
+
+					<h:outputText value="Revision: "
+						styleClass="fileContentHeaderLabels" />
 
 					<p:selectOneMenu id="selectMenu"
-						value="#{fileContentBean.selectedRev}" effect="fade">
-						<p:ajax event="change" update="cont"
-							listener="#{fileContentBean.loadContent}" />
+						value="#{fileContentBean.selectedRev}" effect="fade"
+						valueChangeListener="#{fileContentBean.loadContentRev}"
+						styleClass="fileContentHeaderLabels">
+						<p:ajax event="change" update="cont" />
 
-						<f:selectItem itemLabel="Select Revision" itemValue="#{null}" />
+						<f:selectItem itemLabel="select revision" itemValue="" />
 						<f:selectItems value="#{fileContentBean.revisions}" />
 					</p:selectOneMenu>
+
+					<p:remoteCommand name="load"
+						actionListener="#{fileContentBean.loadContent()}" update="cont" />
+
+
 				</p:panelGrid>
+			</f:facet>
 
-			</p:panelGrid>
-		</f:facet>
-
-		<p:inputTextarea id="cont" value="#{fileContentBean.content}"
-			autoResize="false" readonly="true" style="margin:2%!important" />
-
-
-	</p:dialog>
+			<p:inputTextarea id="cont" value="#{fileContentBean.content}"
+				autoResize="false" readonly="true" scrollHeight="350"
+				style="height: 100%; width:100%  ">
 
 
+
+			</p:inputTextarea>
+
+
+		</p:dialog>
+
+	</h:form>
 
 </h:body>
 </html>
