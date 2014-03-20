@@ -1,7 +1,6 @@
 package com.sheepdog.initializer;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -84,8 +83,8 @@ public class Initializer {
 		Project mainProject = projectService.getCurrentProject();
 
 		if (reset.equals("true")) {
-			reloadProject(mainProject);
 			cleanDB();
+			reloadProject(mainProject);
 		}
 
 		else if (mainProject == null || !mainProject.getName().equals(projectName)
@@ -96,15 +95,15 @@ public class Initializer {
 	}
 
 	private void reloadProject(Project mainProject) {
-		// if (mainProject != null) {
-		// projectService.deleteCurrentProject();
-		// }
-		// Project newProject = new Project(projectName, repoUrl);
-		// projectService.saveProject(newProject); TODO
+
+		Project modifiedProject = projectService.getCurrentProject();
+		modifiedProject.setName(projectName);
+		modifiedProject.setUrl(repoUrl);
+		projectService.saveProject(modifiedProject);
 
 		User.getUpdateUser().setProject(projectService.getCurrentProject());
 
-		// LOG.info("Was added new project: " + newProject.getName());
+		LOG.info("Was modified project: " + modifiedProject.getName());
 	}
 
 	private void createConnections() {

@@ -9,7 +9,7 @@
 		context="initial">
 		<insert tableName="project">
 			<column name="id">1</column>
-			<column name="name">SVN-Sheepdog</column>
+			<column name="name">svn-sheepdog</column>
 			<column name="url">https://svn-sheepdog.googlecode.com/svn/trunk/
 			</column>
 		</insert>
@@ -39,7 +39,8 @@
 			<column name="first_name">Bichev</column>
 			<column name="last_name">Vladimir</column>
 			<column name="email">vl.bichev@gmail.com</column>
-			<column name="password">RYCy98dlDdldbMUPwYAieAtjcOvD17H6zwg4dPUgxUM=</column>
+			<column name="password">RYCy98dlDdldbMUPwYAieAtjcOvD17H6zwg4dPUgxUM=
+			</column>
 			<column name="project_id">1</column>
 		</insert>
 
@@ -49,7 +50,8 @@
 			<column name="first_name">Velikanova</column>
 			<column name="last_name">Alena</column>
 			<column name="email">velikanova.alenka@gmail.com</column>
-			<column name="password">8+roLW3uCSW+guKJatWVhCu3C729yLtgfe2nWTJkpbc=</column>
+			<column name="password">8+roLW3uCSW+guKJatWVhCu3C729yLtgfe2nWTJkpbc=
+			</column>
 			<column name="project_id">1</column>
 		</insert>
 
@@ -59,7 +61,8 @@
 			<column name="first_name">Ivan</column>
 			<column name="last_name">Arkhipov</column>
 			<column name="email">ivan.spread@gmail.com</column>
-			<column name="password">CngEXOKkIu2Z2jo3I3lBMs2jn7jwj0VZ/kEJO+NPRIQ=</column>
+			<column name="password">CngEXOKkIu2Z2jo3I3lBMs2jn7jwj0VZ/kEJO+NPRIQ=
+			</column>
 			<column name="project_id">1</column>
 		</insert>
 
@@ -69,7 +72,8 @@
 			<column name="first_name">Shemetova</column>
 			<column name="last_name">Lubov</column>
 			<column name="email">slastena.pro@gmail.com</column>
-			<column name="password">scrKhbUQk091cav3dqHc3N0SEBPpLqLGSfC3Cg61vPs=</column>
+			<column name="password">scrKhbUQk091cav3dqHc3N0SEBPpLqLGSfC3Cg61vPs=
+			</column>
 			<column name="project_id">1</column>
 		</insert>
 
@@ -79,7 +83,8 @@
 			<column name="first_name">Nazin</column>
 			<column name="last_name">Sergey</column>
 			<column name="email">sirjant0038@gmail.com</column>
-			<column name="password">y+xROPHpMmsqWjsPby67hqqi/4eeUTiUWOlfjOrOL5A=</column>
+			<column name="password">y+xROPHpMmsqWjsPby67hqqi/4eeUTiUWOlfjOrOL5A=
+			</column>
 			<column name="project_id">1</column>
 		</insert>
 
@@ -121,7 +126,7 @@
 		<insert tableName="file">
 			<column name="id">1</column>
 			<column name="name">sqltool.rc</column>
-			<column name="qualified_name">SVN-Sheepdog/support/hsqldb_bat/sqltool.rc
+			<column name="qualified_name">svn-sheepdog/support/hsqldb_bat/sqltool.rc
 			</column>
 			<column name="creator_name">Bichev</column>
 			<column name="revision_id">1</column>
@@ -131,7 +136,7 @@
 		<insert tableName="file">
 			<column name="id">2</column>
 			<column name="name">pom.xml</column>
-			<column name="qualified_name">SVN-Sheepdog/pom.xml
+			<column name="qualified_name">svn-sheepdog/pom.xml
 			</column>
 			<column name="creator_name">Bichev</column>
 			<column name="revision_id">1</column>
@@ -141,7 +146,7 @@
 		<insert tableName="file">
 			<column name="id">3</column>
 			<column name="name">sheepdog_relations.png</column>
-			<column name="qualified_name">SVN-Sheepdog/support/sheepdog_relations.png
+			<column name="qualified_name">svn-sheepdog/support/sheepdog_relations.png
 			</column>
 			<column name="creator_name">Bichev</column>
 			<column name="revision_id">1</column>
