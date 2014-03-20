@@ -88,16 +88,4 @@ public class UserDataProviderImpl extends BaseDataProviderImpl<UserEntity,User,I
 			throw new DaoException(ex);
 		}
 	}
-	
-//	public void changePassword(User user, String password) {
-//		UserEntity userEntity = null;
-//		Criteria cr = sessionFactory.getCurrentSession()
-//				.createCriteria(UserEntity.class).
-//				add(Restrictions.eq("LOGIN", user.getLogin()));
-//		cr.setMaxResults(1);
-//		userEntity = (UserEntity) cr.uniqueResult();
-//		user.setPassword(password);
-//		merge(user,UserEntity.class);
-//	}
-	
 }

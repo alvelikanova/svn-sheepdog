@@ -113,20 +113,6 @@ public abstract class BaseDataProviderImpl<T extends GenericDalEntity<ID>,
 			throw new DaoException(ex);
 		}
 	}
-	
-//	public void merge(K entity, T dalEntity, Class<T> dalEntityClass)
-//	{
-//		Session session = sessionFactory.getCurrentSession();
-//
-//		try {
-//			dalEntity = mappingService.map(entity, dalEntityClass);
-//			session.merge(dalEntity);
-//			
-//		} catch (Exception ex) {
-//			LOG.error("Error creating or updating data entity", ex.getMessage());
-//			throw new DaoException(ex);
-//		}
-//	}
 
 	@Transactional
 	@Override
