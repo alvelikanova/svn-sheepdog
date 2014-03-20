@@ -26,7 +26,7 @@ public class TweetDataProviderImpl extends BaseDataProviderImpl<TweetEntity,Twee
 		try {
 			Session session = sessionFactory.getCurrentSession();
 			Criteria crtweets = session.createCriteria(TweetEntity.class).
-					add(Restrictions.eq("revisionEntity.id", revision.getId()));
+					add(Restrictions.eq("revision.id", revision.getId()));
 			List <TweetEntity> te_list = crtweets.list();
 			for (TweetEntity te : te_list) {
 				Tweet tweet = mappingService.map(te, Tweet.class);

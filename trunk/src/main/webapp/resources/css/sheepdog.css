@@ -1,7 +1,3 @@
-.headerMenuItems {
-	margin-right: 0;
-}
-
 .ui-menu .ui-menuitem {
 	float: right !important;
 }
@@ -18,15 +14,19 @@
 }
 
 .expandeTables {
-
 	height: 350px;
 }
 
-.tabMenu .ui-tabmenu {
-	float: right;
-}
-
-.ui-widget,.ui-widget .ui-widget {
+.ui-widget .ui-widget .ui-widget {
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: 15px;
+}
+
+.tab .ui-tabmenu .ui-tabmenu-nav li {
+	float: right !important;
+}
+
+.fileContentHeaderLabels {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 17px;
 }

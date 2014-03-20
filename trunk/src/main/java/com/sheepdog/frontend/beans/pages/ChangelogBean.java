@@ -10,7 +10,6 @@ import java.util.TreeSet;
 
 import javax.faces.application.FacesMessage;
 
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.ToggleEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,7 +107,6 @@ public class ChangelogBean implements Serializable {
 		dbRevisions.clear();
 		dbRevisions.addAll(revSet);
 
-		RequestContext.getCurrentInstance().update("changelog_form:changelog");
 	}
 
 	public List<Revision> getDbRevisions() {

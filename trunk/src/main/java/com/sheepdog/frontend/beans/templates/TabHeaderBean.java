@@ -43,7 +43,6 @@ public class TabHeaderBean implements Serializable {
 		setActiveIndex(index.intValue());
 
 		return url + "?faces-redirect=true";
-		// return url;TODO
 	}
 
 	public int getActiveIndex() {
