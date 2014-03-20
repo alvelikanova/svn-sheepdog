@@ -1,11 +1,13 @@
 package com.sheepdog.frontend.beans.users;
 
-import java.io.IOException;
-import java.io.Serializable;
-
 import javax.faces.application.FacesMessage;
 
-import org.primefaces.context.RequestContext;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authc.credential.CredentialsMatcher;
+import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -16,55 +18,67 @@ import com.sheepdog.business.services.ProjectManagementService;
 import com.sheepdog.business.services.UserManagementService;
 import com.sheepdog.dal.exceptions.DaoException;
 import com.sheepdog.frontend.beans.templates.FeedbackBean;
+import com.sheepdog.security.HibernateRealm;
 import com.sheepdog.utils.PasswordUtils;
 
-@Component
+@Component(value = "profileBean")
 @Scope("session")
-public class UsersBean implements Serializable {
-
-	private static final long serialVersionUID = 2819227216048472445L;
+public class ProfileBean {
 	@Autowired
 	private UserManagementService userManagementService;
+	
 	@Autowired
 	private ProjectManagementService projectManagementService;
+	
 	@Autowired
 	private FeedbackBean feedback;
+	
+	@Autowired
+	private CredentialsMatcher credentialsMatcher;
+	
 	private String login;
-	private String role;
 	private String firstName;
 	private String lastName;
 	private String email;
 	private String oldPassword;
 	private String newPassword;
-
-	public void saveUser() throws IOException {
+	
+	public void loadFields(String principal) {
 		try {
+			User user = userManagementService.getUserByLogin(principal);
+			if (user!=null) {
+				login = user.getLogin();
+				firstName = user.getFirstName();
+				lastName = user.getLastName();
+				email = user.getEmail();
+			} else {
+				feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error", "User was not found");
+			}
+		} catch (DaoException ex) {
+			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error",
+					"Data access error");
+		} catch (Exception ex) {
+			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error",
+					"Unknown error");
+		}
+	}
+	
+	public void changeUserInfo() {
+		try {
+			if (!checkPassword(login, oldPassword)) {
+				feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error", "You have entered wrong old password");
+				return;
+			}
+			User user = userManagementService.getUserByLogin(login);
 			Project project = projectManagementService.getCurrentProject();
-			String default_pass = "12345";
-			String hashed_pass = PasswordUtils.hashPassword(default_pass, login);
-			User user = new User(project, login, firstName, lastName,
-					email, hashed_pass, role);
-			userManagementService.saveUser(user);
-			RequestContext.getCurrentInstance().update("form");
-			feedback.feedback(FacesMessage.SEVERITY_INFO, "Save User",
-					"User was saved with id: " + user.getId());
-		} catch (DaoException ex) {
-			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error",
-					"Data access error");
-		} catch (Exception ex) {
-			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error",
-					"Unknown error");
-		} finally {
-			resetFields();
-		}
-	}
-
-	public void deleteUser(Integer id) {
-		try {
-			userManagementService.deleteUserById(id);
-			RequestContext.getCurrentInstance().update("form");
-			feedback.feedback(FacesMessage.SEVERITY_INFO, "Delete User",
-					"User was deleted");
+			user.setEmail(email);
+			user.setFirstName(firstName);
+			user.setLastName(lastName);
+			user.setProject(project);
+			String hashed_password = PasswordUtils.hashPassword(newPassword, login);
+			user.setPassword(hashed_password);
+			userManagementService.updateUser(user);
+			feedback.feedback(FacesMessage.SEVERITY_INFO, "Update", "Profile data was updated");
 		} catch (DaoException ex) {
 			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error",
 					"Data access error");
@@ -74,30 +88,23 @@ public class UsersBean implements Serializable {
 		}
 	}
 
-	public void resetFields() {
-		login = "";
-		role = "";
-		firstName = "";
-		lastName = "";
-		email = "";
-		oldPassword = "";
-		newPassword = "";
+	public boolean checkPassword(String principal, String credential) {
+		User user = userManagementService.getUserByLogin(principal);
+		String hashedPass = user.getPassword();
+		AuthenticationToken token = new UsernamePasswordToken(principal, credential);
+		AuthenticationInfo info = new SimpleAuthenticationInfo(
+				principal, hashedPass, 
+				ByteSource.Util.bytes(user.getLogin()), HibernateRealm.class.getName());
+		
+		return credentialsMatcher.doCredentialsMatch(token, info);
 	}
-
+	
 	public String getLogin() {
 		return login;
 	}
 
 	public void setLogin(String login) {
 		this.login = login;
-	}
-
-	public String getRole() {
-		return role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
 	}
 
 	public String getFirstName() {
@@ -139,5 +146,4 @@ public class UsersBean implements Serializable {
 	public void setNewPassword(String newPassword) {
 		this.newPassword = newPassword;
 	}
-
 }

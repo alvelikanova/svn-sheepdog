@@ -13,10 +13,7 @@
 	<ui:define name="content">
 		<div>
 			<h:form id="addform">
-				<p:panel id="panel" header="New User" style="margin-bottom:10px;">
-					<ui:insert name="feedback">
-						<ui:include src="/templates/feedback.xhtml" />
-					</ui:insert>
+				<p:panel id="panel" header="New User">
 					<h:panelGrid columns="2">
 						<h:outputLabel for="login" value="Login: *" />
 						<p:inputText id="login" value="#{usersBean.login}" required="true"
@@ -41,7 +38,7 @@
 							label="Role" />
 
 						<h:panelGroup />
-						<p:commandButton value="Add User" actionListener="#{usersBean.saveUser}" update="feedback"/>
+						<p:commandButton value="Add User" actionListener="#{usersBean.saveUser}" update=":feedback"/>
 					</h:panelGrid>
 				</p:panel>
 			</h:form>

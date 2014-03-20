@@ -2,7 +2,6 @@ package com.sheepdog.business.services.impl;
 
 import java.util.List;
 
-import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,17 +30,22 @@ public class UserManagementServiceImpl implements UserManagementService {
 
 	@Override
 	public void saveUser(User user) {
-		String password = user.getPassword();
-		String login = user.getLogin();
-		if (login==null || password==null) return;
-		String hashedPasswordBase64 = new Sha256Hash(password, login, 1024).toBase64();
-		user.setPassword(hashedPasswordBase64);
 		userDataProvider.save(user, UserEntity.class);
 	}
 
 	@Override
 	public void deleteUserById(Integer id) {
 		userDataProvider.deleteUserById(id);
+	}
+
+	@Override
+	public User getUserByEmail(String email) {
+		return userDataProvider.getUserByEmail(email);
+	}
+
+	@Override
+	public void updateUser(User user) {
+		userDataProvider.merge(user, UserEntity.class);
 	}
 
 }
