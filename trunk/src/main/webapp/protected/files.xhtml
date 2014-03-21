@@ -36,7 +36,7 @@
 								<p:commandButton
 									actionListener="#{fileTreeBean.setNeedToReload()}"
 									action="#{fileTreeBean.loadData()}" icon="ui-icon-refresh"
-									title="Refresh" />
+									title="Refresh" update="file_tree" />
 								<p:separator />
 								<p:commandButton actionListener="#{fileTreeBean.expandeAll()}"
 									update="file_tree" icon="ui-icon-plus" title="Expande all" />

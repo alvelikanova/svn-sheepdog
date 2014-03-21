@@ -54,7 +54,7 @@ public class TweetBean {
 
 	public void loadTweets(Revision revision) {
 		List<Tweet> list = new ArrayList<>();
-		// tms.getTweetsByRevision(revision);
+		// tms.getTweetsByRevision(revision); TODO
 
 		if (list == null) {
 			tweets = new ArrayList<Tweet>(0);
@@ -72,20 +72,24 @@ public class TweetBean {
 
 		tms.saveTweet(tweet);
 
-		User user = ums.getUserByLogin(revision.getAuthor());// TODO EMAIL
-																// SERACH
-		user = ums.getUserByLogin("ivan.spread");// TODO
+		User user = ums.getUserByLogin(revision.getAuthor());
 
-		try {
-			mailService.sendMailByTweet(tweet, user);// TODO
-		} catch (RefreshFailedException e) {
-			LOG.warn("Failed to send tweet notification to user : " + user.getLogin());
-		} catch (IOException e) {
-			LOG.warn("Failed to send tweet notification to user : " + user.getLogin() + ". Connection problem.");
-		} catch (TransformerException e) {
-			LOG.warn("Failed to send tweet notification to user : " + user.getLogin() + ". Template merging is failed.");
+		if (user == null) {
+			user = ums.getUserByEmail(revision.getAuthor());
 		}
+		if (user != null) {
 
+			try {
+				mailService.sendMailByTweet(tweet, user);
+			} catch (RefreshFailedException e) {
+				LOG.warn("Failed to send tweet notification to user : " + user.getLogin());
+			} catch (IOException e) {
+				LOG.warn("Failed to send tweet notification to user : " + user.getLogin() + ". Connection problem.");
+			} catch (TransformerException e) {
+				LOG.warn("Failed to send tweet notification to user : " + user.getLogin()
+						+ ". Template merging is failed.");
+			}
+		}
 	}
 
 	public List<Tweet> getTweets() {

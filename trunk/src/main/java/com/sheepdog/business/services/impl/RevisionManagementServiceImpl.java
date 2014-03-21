@@ -40,7 +40,9 @@ public class RevisionManagementServiceImpl implements RevisionManagementService 
 	@Override
 	public void saveRevisions(Set<Revision> r) {
 		for (Revision revision : r) {
-			revisionDataProvider.save(revision, RevisionEntity.class);
+			if (r != null) {
+				revisionDataProvider.save(revision, RevisionEntity.class);
+			}
 		}
 	}
 
