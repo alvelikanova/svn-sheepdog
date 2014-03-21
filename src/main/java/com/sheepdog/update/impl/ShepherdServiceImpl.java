@@ -5,13 +5,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.security.auth.RefreshFailedException;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.TransformerException;
@@ -20,8 +17,6 @@ import org.hibernate.HibernateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -106,7 +101,7 @@ public class ShepherdServiceImpl implements ShepherdService {
 	/**
 	 * Fresh information about repository changes.
 	 */
-	private Map<Revision, Map<File, TypeOfFileChanges>> newRevisionsAndFiles;
+	private Map<Revision, Map<File, TypeOfFileChanges>> newRevisionsAndFiles = new TreeMap<>();
 
 	/**
 	 * Required UPDATE_USER.
@@ -146,6 +141,7 @@ public class ShepherdServiceImpl implements ShepherdService {
 				LOG.info("Update is required.");
 
 				loadRevisions(currentRevision);
+				LOG.info("New revisions were loaded");
 				revisionManagementService.saveRevisions(newRevisionsAndFiles.keySet());
 				LOG.info("New revisions were saved.");
 
@@ -215,12 +211,16 @@ public class ShepherdServiceImpl implements ShepherdService {
 	private void loadRevisions(long currentRevision) throws RefreshFailedException {
 		newRevisionsAndFiles.clear();
 		Set<Revision> newRevisionsSet = new HashSet<>(0);
+		Map<File, TypeOfFileChanges> newRevFiles = new HashMap<>(0);
 
 		try {
 			newRevisionsSet = svnRevisionService.getRevisions(updateUser, currentRevision + 1, -1);
-
 			for (Revision r : newRevisionsSet) {
-				newRevisionsAndFiles.put(r, svnFileService.getFilesByRevision(updateUser, r));
+
+				newRevFiles = svnFileService.getFilesByRevision(updateUser, r);
+
+				newRevisionsAndFiles.put(r, newRevFiles);
+
 			}
 
 		} catch (RepositoryAuthenticationExceptoin e) {
@@ -232,6 +232,9 @@ public class ShepherdServiceImpl implements ShepherdService {
 		} catch (IOException e) {
 			LOG.error("Connection to repository failed by UPDATE_USER");
 			throw new RefreshFailedException();
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOG.error("loadRevisions EXCEPTION");
 		}
 
 	}
@@ -307,7 +310,7 @@ public class ShepherdServiceImpl implements ShepherdService {
 		if (!tempFiles.containsValue(TypeOfFileChanges.ADDED)) {
 			return subscriptions;
 		}
-
+		LOG.info("Revision have added files.");
 		for (Map.Entry<File, TypeOfFileChanges> entry : tempFiles.entrySet()) {
 			if (TypeOfFileChanges.ADDED.equals(entry.getValue())) {
 				fileManagementService.saveFile(entry.getKey());

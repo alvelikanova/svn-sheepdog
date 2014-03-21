@@ -68,7 +68,7 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 	@Override
 	public Set<Revision> getRevisions(User user, long startRevision, long endRevision) throws IOException,
 			RepositoryAuthenticationExceptoin, IllegalArgumentException {
-		Set<Revision> revisions = new HashSet<>();
+		Set<Revision> revisions = new HashSet<>(0);
 
 		Collection logEntries = null;
 
@@ -90,6 +90,10 @@ public class SVNRevisionServiceImpl implements SVNRevisionService {
 			}
 			revisions.add(new Revision(user.getProject(), (int) logEntry.getRevision(), logEntry.getAuthor(), logEntry
 					.getMessage(), logEntry.getDate()));
+		}
+
+		if (revisions == null || revisions.isEmpty()) {
+			return new HashSet<Revision>(0);
 		}
 
 		return revisions;

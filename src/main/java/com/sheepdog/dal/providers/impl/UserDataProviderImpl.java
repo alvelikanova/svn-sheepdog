@@ -16,22 +16,24 @@ import com.sheepdog.dal.exceptions.DaoException;
 import com.sheepdog.dal.providers.UserDataProvider;
 
 @Repository
-public class UserDataProviderImpl extends BaseDataProviderImpl<UserEntity,User,Integer> implements UserDataProvider{
+public class UserDataProviderImpl extends BaseDataProviderImpl<UserEntity, User, Integer> implements UserDataProvider {
 
 	@Transactional
 	@Override
 	public User getUserByLogin(String login) throws DaoException {
 		User user = null;
-		try{
-		Criteria cr = sessionFactory.getCurrentSession()
-				.createCriteria(UserEntity.class).add(Restrictions.eq("login", login));
-		cr.setMaxResults(1);
-		UserEntity userEntity = (UserEntity) cr.uniqueResult();
-		user =	mappingService.map(userEntity, User.class);
+		try {
+			Criteria cr = sessionFactory.getCurrentSession().createCriteria(UserEntity.class)
+					.add(Restrictions.eq("login", login));
+			cr.setMaxResults(1);
+			UserEntity userEntity = (UserEntity) cr.uniqueResult();
+			if (userEntity != null) {
+				user = mappingService.map(userEntity, User.class);
+			}
 		} catch (HibernateException ex) {
-        	LOG.error("Hibernate error occured while getting user by login", ex.getMessage());
-        	throw new DaoException(ex);
-		} catch (Exception ex){
+			LOG.error("Hibernate error occured while getting user by login", ex.getMessage());
+			throw new DaoException(ex);
+		} catch (Exception ex) {
 			LOG.error("Unknown error occured while getting user by login", ex.getMessage());
 			throw new DaoException(ex);
 		}
@@ -42,15 +44,17 @@ public class UserDataProviderImpl extends BaseDataProviderImpl<UserEntity,User,I
 	@Override
 	public User getUserByEmail(String email) throws DaoException {
 		User user = null;
-		try{
-		Criteria cr = sessionFactory.getCurrentSession()
-				.createCriteria(UserEntity.class).add(Restrictions.eq("email", email));
-		cr.setMaxResults(1);
-		UserEntity userEntity = (UserEntity) cr.uniqueResult();
-		user =	mappingService.map(userEntity, User.class);
+		try {
+			Criteria cr = sessionFactory.getCurrentSession().createCriteria(UserEntity.class)
+					.add(Restrictions.eq("email", email));
+			cr.setMaxResults(1);
+			UserEntity userEntity = (UserEntity) cr.uniqueResult();
+			if (userEntity != null) {
+				user = mappingService.map(userEntity, User.class);
+			}
 		} catch (HibernateException ex) {
-        	LOG.error("Hibernate error occured while getting user by email", ex.getMessage());
-        	throw new DaoException(ex);
+			LOG.error("Hibernate error occured while getting user by email", ex.getMessage());
+			throw new DaoException(ex);
 		} catch (Exception ex) {
 			LOG.error("Unknown error occured while getting user by email", ex.getMessage());
 			throw new DaoException(ex);
@@ -61,7 +65,7 @@ public class UserDataProviderImpl extends BaseDataProviderImpl<UserEntity,User,I
 	@Transactional
 	@Override
 	public void changePassword(User user, String password) {
-		//TODO for Alena - possible error. Entity in detached state
+		// TODO for Alena - possible error. Entity in detached state
 		user.setPassword(password);
 		merge(user, UserEntity.class);
 	}
@@ -71,18 +75,18 @@ public class UserDataProviderImpl extends BaseDataProviderImpl<UserEntity,User,I
 	public void deleteUserById(Integer id) throws DaoException {
 		try {
 			Session session = sessionFactory.getCurrentSession();
-			Criteria crsubscr = session.createCriteria(SubscriptionEntity.class)
-					.add(Restrictions.eq("userEntity.id", id));
+			Criteria crsubscr = session.createCriteria(SubscriptionEntity.class).add(
+					Restrictions.eq("userEntity.id", id));
 			List<SubscriptionEntity> related_subs = crsubscr.list();
-			for(SubscriptionEntity se: related_subs) {
+			for (SubscriptionEntity se : related_subs) {
 				session.delete(se);
 			}
 			Criteria cr = session.createCriteria(UserEntity.class).add(Restrictions.eq("id", id));
 			UserEntity userEntity = (UserEntity) cr.uniqueResult();
 			session.delete(userEntity);
 		} catch (HibernateException ex) {
-        	LOG.error("Hibernate error occured while deleting user by id", ex.getMessage());
-        	throw new DaoException(ex);
+			LOG.error("Hibernate error occured while deleting user by id", ex.getMessage());
+			throw new DaoException(ex);
 		} catch (Exception ex) {
 			LOG.error("Unknown error occured while deleting user by id", ex.getMessage());
 			throw new DaoException(ex);

@@ -71,6 +71,8 @@ public class Initializer {
 
 		dbCheck();
 
+		User.getUpdateUser().setProject(projectService.getCurrentProject());
+
 		createConnections();
 
 		checkDBRevisions();
@@ -100,8 +102,6 @@ public class Initializer {
 		modifiedProject.setName(projectName);
 		modifiedProject.setUrl(repoUrl);
 		projectService.saveProject(modifiedProject);
-
-		User.getUpdateUser().setProject(projectService.getCurrentProject());
 
 		LOG.info("Was modified project: " + modifiedProject.getName());
 	}

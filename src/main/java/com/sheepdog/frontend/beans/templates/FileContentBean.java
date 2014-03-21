@@ -79,8 +79,7 @@ public class FileContentBean {
 		try {
 			content = fileService.getFileContent(loginManager.getCurrentUser(), file, revision);
 		} catch (InvalidParameterException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			content = "That file is not containing a text.";
 		} catch (RepositoryAuthenticationExceptoin e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -98,7 +97,7 @@ public class FileContentBean {
 		Collection<Revision> fileRevisions = new TreeSet<>();
 
 		try {
-			fileRevisions.addAll(revService.getRevisionsByFile(loginManager.getCurrentUser(), file));// TODO
+			fileRevisions.addAll(revService.getRevisionsByFile(loginManager.getCurrentUser(), file));
 		} catch (RepositoryAuthenticationExceptoin e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -114,7 +113,6 @@ public class FileContentBean {
 			}
 
 		}
-
 
 	}
 
