@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.security.auth.RefreshFailedException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,9 +16,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.TransformerException;
 
+import org.hibernate.HibernateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.sheepdog.business.domain.entities.File;
 import com.sheepdog.business.domain.entities.Revision;
@@ -43,9 +51,9 @@ import com.sheepdog.update.ShepherdService;
  * @author Ivan Arkhipov
  * 
  */
-
-@WebServlet(name="ShepherdService", urlPatterns={"/shepherdService"})
-public class ShepherdServiceImpl extends HttpServlet implements ShepherdService {
+@Controller
+@RequestMapping(value = "/shepherdService")
+public class ShepherdServiceImpl implements ShepherdService {
 
 	/**
 	 * Logger object.
@@ -108,11 +116,13 @@ public class ShepherdServiceImpl extends HttpServlet implements ShepherdService 
 	public ShepherdServiceImpl() {
 
 	}
-	
-	@Override
-	public void doPost(HttpServletRequest request, HttpServletResponse response) 
-		throws ServletException, IOException {
-		LOG.info("Post-Commit Hook success. Starting lookOn() method...........");
+
+	@RequestMapping(method = RequestMethod.POST)
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		LOG.info("\n=================================================\n"
+				+ "Post-Commit Hook success. Starting lookOn() method..........."
+				+ "\n===============================================\n");
 		lookOn();
 	}
 
@@ -123,7 +133,7 @@ public class ShepherdServiceImpl extends HttpServlet implements ShepherdService 
 	 */
 	@Override
 	public void lookOn() {
-		long currentRevision = 0;
+		int currentRevision = 0;
 
 		try {
 			currentRevision = revisionManagementService.getCurrentRevision().getRevisionNo();
@@ -133,16 +143,22 @@ public class ShepherdServiceImpl extends HttpServlet implements ShepherdService 
 
 		try {
 			if (checkUpdates(currentRevision)) {
-				loadRevisions(currentRevision);
+				LOG.info("Update is required.");
 
+				loadRevisions(currentRevision);
 				revisionManagementService.saveRevisions(newRevisionsAndFiles.keySet());
+				LOG.info("New revisions were saved.");
 
 				subscribeManagement();
+			} else {
+				LOG.info("Update is not required.");
 			}
 		} catch (RefreshFailedException e) {
 			LOG.error("UPDATE PROCESS IS FAILED! SEE LOG FOR MORE DETAILS!");
+		} catch (HibernateException e) {
+			LOG.error("UPDATE PROCESS IS FAILED! DB PROBLEM!");
 		} catch (Exception e) {
-			LOG.error("UPDATE PROCESS IS FAILED! UNKNOWN PROBLEM!");
+			LOG.error("UPDATE PROCESS IS FAILED! UNKNOWN PROBLEM!" + e.getMessage());
 		}
 	}
 
@@ -159,7 +175,7 @@ public class ShepherdServiceImpl extends HttpServlet implements ShepherdService 
 	 *             failed, or number of latest repository revision is less then
 	 *             number of current revision in DB.
 	 */
-	private boolean checkUpdates(long currentRevision) throws RefreshFailedException {
+	private boolean checkUpdates(int currentRevision) throws RefreshFailedException {
 
 		Revision latestRepositoryRevision = new Revision();
 		latestRepositoryRevision.setRevisionNo(0);
@@ -206,6 +222,7 @@ public class ShepherdServiceImpl extends HttpServlet implements ShepherdService 
 			for (Revision r : newRevisionsSet) {
 				newRevisionsAndFiles.put(r, svnFileService.getFilesByRevision(updateUser, r));
 			}
+
 		} catch (RepositoryAuthenticationExceptoin e) {
 			LOG.error("UPDATE_USER is fail repository authentication.");
 			throw new RefreshFailedException();
@@ -239,6 +256,10 @@ public class ShepherdServiceImpl extends HttpServlet implements ShepherdService 
 		for (Revision r : newRevisionsAndFiles.keySet()) {
 
 			tempUser = userManagementService.getUserByLogin(r.getAuthor());
+
+			if (tempUser == null) {
+				tempUser = userManagementService.getUserByEmail(r.getAuthor());
+			}
 
 			if (tempUser != null) {
 				newSubscriptions.putAll(subscribeNewFiles(newRevisionsAndFiles.get(r), tempUser));
@@ -289,8 +310,11 @@ public class ShepherdServiceImpl extends HttpServlet implements ShepherdService 
 
 		for (Map.Entry<File, TypeOfFileChanges> entry : tempFiles.entrySet()) {
 			if (TypeOfFileChanges.ADDED.equals(entry.getValue())) {
-				subscriptions.put(new Subscription(user, entry.getKey()), TypeOfFileChanges.ADDED);
-//				fileManagementService.saveFile(entry.getKey()); TODO
+				fileManagementService.saveFile(entry.getKey());
+
+				subscriptions.put(
+						new Subscription(user, fileManagementService.getFileByQualifiedName(entry.getKey()
+								.getQualifiedName())), TypeOfFileChanges.ADDED);
 			}
 		}
 		return subscriptions;
