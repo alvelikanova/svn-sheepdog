@@ -47,6 +47,7 @@
 			<value>
 				/admin/** = roles["admin"]
 				/javax.faces.resource/** = anon
+				/shepherdService = anon
 				/** = authc
 			</value>
 		</property>
