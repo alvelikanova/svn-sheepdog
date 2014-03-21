@@ -17,7 +17,8 @@ import com.sheepdog.dal.exceptions.DaoException;
 import com.sheepdog.dal.providers.TweetDataProvider;
 
 @Repository
-public class TweetDataProviderImpl extends BaseDataProviderImpl<TweetEntity,Tweet,Integer> implements TweetDataProvider{
+public class TweetDataProviderImpl extends BaseDataProviderImpl<TweetEntity, Tweet, Integer> implements
+		TweetDataProvider {
 
 	@Transactional
 	@Override
@@ -25,9 +26,9 @@ public class TweetDataProviderImpl extends BaseDataProviderImpl<TweetEntity,Twee
 		List<Tweet> tweets = new ArrayList<Tweet>();
 		try {
 			Session session = sessionFactory.getCurrentSession();
-			Criteria crtweets = session.createCriteria(TweetEntity.class).
-					add(Restrictions.eq("revision.id", revision.getId()));
-			List <TweetEntity> te_list = crtweets.list();
+			Criteria crtweets = session.createCriteria(TweetEntity.class).add(
+					Restrictions.eq("revisionEntity.id", revision.getId()));
+			List<TweetEntity> te_list = crtweets.list();
 			for (TweetEntity te : te_list) {
 				Tweet tweet = mappingService.map(te, Tweet.class);
 				tweets.add(tweet);
