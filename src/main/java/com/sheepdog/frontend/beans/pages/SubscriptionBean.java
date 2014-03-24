@@ -98,9 +98,7 @@ public class SubscriptionBean {
 	}
 
 	public boolean isSubscribed(File file) {
-		if (subscriptions.size() == 0) {
-			subscriptions.addAll(subscrService.getSubscriptionsByUser(lm.getCurrentUser()));
-		}
+
 		for (Subscription s : subscriptions) {
 			if (file.getQualifiedName().equals(s.getFile().getQualifiedName())) {
 
