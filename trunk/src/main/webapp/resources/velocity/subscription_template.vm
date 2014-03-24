@@ -1,13 +1,14 @@
 <html>
+ 
 	#set($subject = "Some subscribed files was updated!")
 	
 <body>
 <h1 style = "color: #FFFFFF; text-align: center; background-color:#009966;width: 50%; margin: auto">
-Hello, ${user.firstName} ${user.lastName}! $subject</h1>
+Hello, ${user.firstName} ${user.lastName}!<br>$subject</h1>
 
-<p style = "color: #009966; text-align: center; width: 50%; margin: auto; font-size: 15px;">
+<p style = "color: #009966; text-align: left; width: 50%; margin: auto; font-size: 15px;">
 
-<ul style = "color: #009966; text-align: center; width: 50%; margin: auto; font-size: 15px;">
+<ul style = "color: #009966; text-align: left; width: 50%; margin: auto; font-size: 15px;">
 #foreach( $s in $subscriptions.keySet() )
 	#set($revision = $s.getFile().getRevision())
     <li>File: $s.getFile().getName() $subscriptions.get($s).toString() in revision $revision.getRevisionNo() by $revision.getAuthor() </li>

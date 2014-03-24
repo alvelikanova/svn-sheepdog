@@ -172,7 +172,7 @@ public class MailConnector {
 
 			message.setFrom(new InternetAddress("woof@svn-sheepdog.org"));
 
-			message.setSubject("SVN Sheepdog");
+			message.setSubject("SVN Sheepdog","UTF8");
 
 			message.setSentDate(new Date());
 
@@ -286,13 +286,15 @@ public class MailConnector {
 
 			ve.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
 			ve.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+			ve.setProperty("input.encoding", "UTF8");
+			ve.setProperty("output.encoding", "UTF8");
 
 			ve.init();
 
 			context = new VelocityContext();
 
-			subscriptionTemplate = ve.getTemplate(subscriptionTemplatePath);
-			tweetTemplate = ve.getTemplate(tweetTemplatePath);
+			subscriptionTemplate = ve.getTemplate(subscriptionTemplatePath, "UTF-8");
+			tweetTemplate = ve.getTemplate(tweetTemplatePath, "UTF-8");
 
 			isConfigured = true;
 		} catch (ResourceNotFoundException e) {
