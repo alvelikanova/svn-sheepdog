@@ -58,7 +58,7 @@ public class MailServiceImpl implements MailService {
 	 */
 	@Override
 	public synchronized void sendMailByTweet(Tweet tweet, User user) throws RefreshFailedException, IOException,
-			TransformerException {	
+			TransformerException {
 
 		mailConnector.sendTweetMessage(user, tweet);
 

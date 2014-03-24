@@ -11,6 +11,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.sample.dal.entities.SubjectEntity;
 import com.sheepdog.business.domain.entities.File;
 import com.sheepdog.business.domain.entities.Subscription;
 import com.sheepdog.business.domain.entities.User;
@@ -61,7 +62,8 @@ public class SubscriptionDataProviderImpl extends BaseDataProviderImpl<Subscript
 	@Transactional
 	@Override
 	public List<Subscription> getSubscriptionsByQualifiedName(String qualifiedName) throws DaoException {
-		List<Subscription> sublist = null;
+		List<Subscription> sublist = new ArrayList<>(0);
+		List<SubscriptionEntity> entityList = new ArrayList<>(0);
 		try {
 			Session session = sessionFactory.getCurrentSession();
 
@@ -70,10 +72,14 @@ public class SubscriptionDataProviderImpl extends BaseDataProviderImpl<Subscript
 					Restrictions.eq("qualifiedName", qualifiedName));
 			FileEntity fe = (FileEntity) crfile.uniqueResult();
 
+			if (fe == null) {
+				return new ArrayList<Subscription>(0);
+			}
+
 			// load subscriptions by file's id
 			Criteria crsub = session.createCriteria(SubscriptionEntity.class).add(
 					Restrictions.eq("fileEntity.id", fe.getId()));
-			sublist = crsub.list();
+			entityList = crsub.list();
 		} catch (HibernateException ex) {
 			LOG.error("Hibernate error occured while getting subscriptions by qualified name", ex.getMessage());
 			throw new DaoException(ex);
@@ -82,6 +88,11 @@ public class SubscriptionDataProviderImpl extends BaseDataProviderImpl<Subscript
 			ex.printStackTrace();
 			throw new DaoException(ex);
 		}
+
+		for (SubscriptionEntity se : entityList) {
+			sublist.add(mappingService.map(se, Subscription.class));
+		}
+
 		return sublist;
 	}
 

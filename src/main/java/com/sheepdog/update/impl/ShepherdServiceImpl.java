@@ -156,6 +156,8 @@ public class ShepherdServiceImpl implements ShepherdService {
 		} catch (Exception e) {
 			LOG.error("UPDATE PROCESS IS FAILED! UNKNOWN PROBLEM!" + e.getMessage());
 		}
+		
+		LOG.info("Update is over\n====================================================================");
 	}
 
 	/**
@@ -276,12 +278,15 @@ public class ShepherdServiceImpl implements ShepherdService {
 					for (Subscription s : tempSubscriptions) {
 						necessarySubscriptions.put(s, entry.getValue());
 					}
+					entry.getKey().setRevision(r);
 					fileManagementService.updateFilesRevision(entry.getKey());
 				}
 			}
 		}
 
 		subscriptionManagementService.saveSubscriptions(newSubscriptions.keySet());
+
+		necessarySubscriptions.putAll(newSubscriptions);
 
 		try {
 			mailService.sendMailBySubscription(necessarySubscriptions);
