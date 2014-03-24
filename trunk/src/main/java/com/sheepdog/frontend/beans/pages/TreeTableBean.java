@@ -112,6 +112,8 @@ public class TreeTableBean implements Serializable {
 					"Check your profile or contact to your administrator.");
 		}
 
+		subscrBean.reloadSubscriptions();
+
 		for (FileTreeComposite ftc : rootFTC.getChilds()) {
 
 			printComposite(ftc, root);
