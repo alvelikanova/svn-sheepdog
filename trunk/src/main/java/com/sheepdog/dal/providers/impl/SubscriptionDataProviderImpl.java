@@ -79,6 +79,7 @@ public class SubscriptionDataProviderImpl extends BaseDataProviderImpl<Subscript
 			throw new DaoException(ex);
 		} catch (Exception ex) {
 			LOG.error("Unknown error occured while getting subscriptions by qualified name", ex.getMessage());
+			ex.printStackTrace();
 			throw new DaoException(ex);
 		}
 		return sublist;
