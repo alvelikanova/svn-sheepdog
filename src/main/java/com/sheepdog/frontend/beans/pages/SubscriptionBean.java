@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 
 import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Component;
 import com.sheepdog.business.domain.entities.File;
 import com.sheepdog.business.domain.entities.FileTreeComposite;
 import com.sheepdog.business.domain.entities.Subscription;
-import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.services.FileManagementService;
 import com.sheepdog.business.services.RevisionManagementService;
 import com.sheepdog.business.services.SubscriptionManagementService;

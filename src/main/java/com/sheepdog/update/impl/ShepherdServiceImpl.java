@@ -311,16 +311,28 @@ public class ShepherdServiceImpl implements ShepherdService {
 			return subscriptions;
 		}
 		LOG.info("Revision have added files.");
+
+		File newFile = null;
 		for (Map.Entry<File, TypeOfFileChanges> entry : tempFiles.entrySet()) {
 			if (TypeOfFileChanges.ADDED.equals(entry.getValue())) {
-				fileManagementService.saveFile(entry.getKey());
+				newFile = prepareFile(entry.getKey());
 
-				subscriptions.put(
-						new Subscription(user, fileManagementService.getFileByQualifiedName(entry.getKey()
-								.getQualifiedName())), TypeOfFileChanges.ADDED);
+				subscriptions.put(new Subscription(user, newFile), TypeOfFileChanges.ADDED);
 			}
 		}
 		return subscriptions;
 	}
 
+	private File prepareFile(File file) {
+		if (file == null) {
+			return null;
+		}
+		File newFile = fileManagementService.getFileByQualifiedName(file.getQualifiedName());
+
+		if (newFile == null) {
+			fileManagementService.saveFile(file);
+			newFile = fileManagementService.getFileByQualifiedName(file.getQualifiedName());
+		}
+		return newFile;
+	}
 }
