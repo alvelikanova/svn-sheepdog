@@ -12,7 +12,7 @@
 	</ui:define>
 
 	<ui:define name="content">
-		<div>
+		<div class="panel">
 			<f:event listener="#{profileBean.loadFields(request.remoteUser)}" type="preRenderView" />
 			<h:form id="form">
 				<p:panel id="panel" header="User Profile: #{profileBean.login}">
