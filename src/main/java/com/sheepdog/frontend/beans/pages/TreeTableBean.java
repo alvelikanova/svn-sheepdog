@@ -76,6 +76,8 @@ public class TreeTableBean implements Serializable {
 
 	private Collection<TreeNode> files = new LinkedList<>();
 
+	private String actualState = "";
+
 	private boolean needToReload = true;
 
 	public void loadData() {
@@ -120,7 +122,8 @@ public class TreeTableBean implements Serializable {
 
 		}
 
-		feedback.feedback(FacesMessage.SEVERITY_INFO, "Files are loaded", "Actual state on :" + new Date());
+		actualState = (new Date()).toString();
+		feedback.feedback(FacesMessage.SEVERITY_INFO, "Files are loaded", "");
 	}
 
 	private void printComposite(FileTreeComposite ftc, TreeNode parent) {
@@ -200,6 +203,14 @@ public class TreeTableBean implements Serializable {
 
 	public void setNeedToReload() {
 		this.needToReload = true;
+	}
+
+	public String getActualState() {
+		return actualState;
+	}
+
+	public void setActualState(String actualState) {
+		this.actualState = actualState;
 	}
 
 }

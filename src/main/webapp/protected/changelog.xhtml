@@ -19,14 +19,26 @@
 			<p:dataTable id="changelog" var="rev"
 				value="#{changelogBean.dbRevisions}" paginator="true" rows="10"
 				paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-				rowsPerPageTemplate="10,20,30" styleClass="tables"
+				rowsPerPageTemplate="10,20,30" styleClass="tables text"
 				emptyMessage="Load revisions...">
 
 				<f:facet name="header">
-					<p:commandButton
-						actionListener="#{changelogBean.loadRevisionFromDB()}"
-						update="changelog" icon="ui-icon-refresh" title="Refresh"
-						style="float: left" />
+					<p:toolbar>
+
+						<p:toolbarGroup align="left">
+							<p:commandButton
+								actionListener="#{changelogBean.loadRevisionFromDB()}"
+								update="changelog" icon="ui-icon-refresh" title="Refresh" />
+						</p:toolbarGroup>
+
+						<p:toolbarGroup align="right" styleClass="text">
+							<h:outputText value="Actual state: " />
+							<h:outputText value="${changelogBean.actualState}" />
+						</p:toolbarGroup>
+
+
+					</p:toolbar>
+
 				</f:facet>
 
 				<p:ajax event="rowToggle"
@@ -75,7 +87,8 @@
 							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
 							paginatorPosition="bottom" styleClass="expandeTables">
 
-							<p:ajax event="rowSelect" update=":dialog:cont,:dialog:fileName"
+							<p:ajax event="rowSelect"
+								update=":dialog:cont,:dialog:fileName,:dialog:selectMenu"
 								listener="#{fileContentBean.clearContentDT}"
 								onstart="PF('fileDialog').show()" />
 

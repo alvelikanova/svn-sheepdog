@@ -1,34 +1,34 @@
-.ui-menu .ui-menuitem {
-	float: right !important;
-}
-
-.fileTreeTable {
-	text-align: center;
-	margin: 5% 2% 0;
-}
-
 .tables {
-	margin: 5% 2% 0;
+	margin: 2% 2% 0;
+}
+
+.text {
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: 12px !important;
+	text-align: center;
+}
+
+.textBig {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 17px;
+	text-align: left;
 }
 
 .expandeTables {
 	height: 350px;
-}
-
-.ui-widget .ui-widget .ui-widget {
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-size: 15px;
+	min-width: 350px;
 }
 
 .tab .ui-tabmenu .ui-tabmenu-nav li {
 	float: right !important;
 }
 
-.fileContentHeaderLabels {
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-size: 17px;
+.buttonAlign {
+	text-align: center !important;
+}
+
+.tabMenu {
+	margin: auto;
 }
 
 .panel {

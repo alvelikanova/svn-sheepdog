@@ -24,14 +24,14 @@
 				<p:treeTable id="file_tree" value="#{fileTreeBean.root}"
 					selection="#{fileTreeBean.selectedNode}" var="ftc"
 					selectionMode="single" liveResize="true"
-					styleClass="fileTreeTable tables" emptyMessage="Loading files...">
+					styleClass="tables text" emptyMessage="Loading files...">
 
 					<p:ajax event="select" update=":dialog:cont,:dialog:fileName"
 						listener="#{fileContentBean.clearContentTT}"
 						onstart="PF('fileDialog').show()" />
 
 					<f:facet name="header">
-						<p:toolbar style="margin: 0!important; width: 50%">
+						<p:toolbar>
 							<p:toolbarGroup align="left">
 								<p:commandButton
 									actionListener="#{fileTreeBean.setNeedToReload()}"
@@ -43,6 +43,13 @@
 								<p:commandButton actionListener="#{fileTreeBean.collapseAll()}"
 									update="file_tree" icon="ui-icon-minus" title="Collapse all" />
 
+							</p:toolbarGroup>
+
+
+							<p:toolbarGroup align="right" styleClass="text">
+								<h:outputText value="Actual state: " />
+
+								<h:outputText value="${fileTreeBean.actualState}" />
 							</p:toolbarGroup>
 						</p:toolbar>
 
@@ -81,13 +88,13 @@
 						<h:outputText value="#{ftc.lastDate}" />
 					</p:column>
 
-					<p:column id="subscr_column">
+					<p:column id="subscr_column" styleClass="buttonAlign">
 						<f:facet name="header">  
                				Subscription 
            				</f:facet>
 						<p:selectBooleanButton id="checkbox" value="#{ftc.subscribed}"
 							onIcon="ui-icon-mail-closed" offIcon="ui-icon-close"
-							onLabel="Yes" offLabel="No">
+							onLabel="Yes" offLabel="No" rendered="#{ftc.file.dir == false}">
 							<p:ajax update="checkbox"
 								listener="#{subscriptionBean.subscriptionCheck(ftc)}" />
 						</p:selectBooleanButton>
