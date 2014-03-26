@@ -8,8 +8,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeSet;
 
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +41,9 @@ public class FileContentBean {
 
 	private String content;
 
-	private Revision selectedRev;
+	// private Revision selectedRev;
+
+	private String selectedRev = "";
 
 	private Long lastRev;
 
@@ -55,6 +59,7 @@ public class FileContentBean {
 	private String fileName = "";
 
 	public void loadContent() {
+	
 		if (file == null) {
 			return;
 		}
@@ -69,8 +74,8 @@ public class FileContentBean {
 		}
 
 		int revision = 0;
-		if (selectedRev != null) {
-			revision = selectedRev.getRevisionNo();
+		if (selectedRev != null && !"".equals(selectedRev)) {
+			revision = Integer.parseInt(selectedRev);
 		}
 		if (revision == 0) {
 			revision = -1;
@@ -126,6 +131,8 @@ public class FileContentBean {
 
 		fileName = file.getName();
 
+		selectedRev = "";
+
 		revisions.clear();
 
 	}
@@ -139,14 +146,14 @@ public class FileContentBean {
 
 		fileName = file.getName();
 
+		selectedRev = "";
+
 		revisions.clear();
 
 	}
 
-	public void loadContentRev(ValueChangeEvent event) {
+	public void clearContent() {
 		content = "Loading content...\nPlease wait...";
-
-		loadContent();
 
 	}
 
@@ -171,11 +178,11 @@ public class FileContentBean {
 		this.lastRev = lastRev;
 	}
 
-	public Revision getSelectedRev() {
+	public String getSelectedRev() {
 		return selectedRev;
 	}
 
-	public void setSelectedRev(Revision selectedRev) {
+	public void setSelectedRev(String selectedRev) {
 		this.selectedRev = selectedRev;
 	}
 

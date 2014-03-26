@@ -24,29 +24,25 @@
 
 				<p:panelGrid columns="2">
 
-					<h:outputText value="File: " styleClass="fileContentHeaderLabels" />
+					<h:outputText value="File: " styleClass="textBig" />
 					<h:outputText id="fileName" value="#{fileContentBean.fileName}"
-						styleClass="fileContentHeaderLabels" />
+						styleClass="textBig" />
 
-					<h:outputText value="Revision: "
-						styleClass="fileContentHeaderLabels" />
-
+					<h:outputText value="Revision: " styleClass="textBig" />
 					<p:selectOneMenu id="selectMenu"
 						value="#{fileContentBean.selectedRev}" effect="fade"
-						valueChangeListener="#{fileContentBean.loadContentRev}"
-						styleClass="fileContentHeaderLabels">
-						<p:ajax event="change" update="cont" />
-
-						<f:selectItem itemLabel="select revision" itemValue="" />
+						styleClass="text" style="text-align:left!important">
+						<f:selectItem itemLabel="last revision" itemValue="" />
 						<f:selectItems value="#{fileContentBean.revisions}" />
+						<p:ajax event="change"
+							listener="#{fileContentBean.clearContent()}"
+							update="cont,selectMenu" oncomplete="load()" />
+
 					</p:selectOneMenu>
-
-					<p:remoteCommand name="load"
-						actionListener="#{fileContentBean.loadContent()}" update="cont" />
-
 
 				</p:panelGrid>
 			</f:facet>
+
 
 			<p:inputTextarea id="cont" value="#{fileContentBean.content}"
 				autoResize="false" readonly="true" scrollHeight="350"

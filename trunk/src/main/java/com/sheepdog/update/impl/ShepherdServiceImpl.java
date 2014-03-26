@@ -156,7 +156,7 @@ public class ShepherdServiceImpl implements ShepherdService {
 		} catch (Exception e) {
 			LOG.error("UPDATE PROCESS IS FAILED! UNKNOWN PROBLEM!" + e.getMessage());
 		}
-		
+
 		LOG.info("Update is over\n====================================================================");
 	}
 

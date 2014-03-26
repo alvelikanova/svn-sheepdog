@@ -66,6 +66,11 @@ public class Revision extends PersistentEntity<Integer> implements Comparable<Re
 	}
 
 	@Override
+	public String toString() {
+		return String.valueOf(revisionNo);
+	}
+
+	@Override
 	public int compareTo(Revision o) {
 
 		if (this == o) {

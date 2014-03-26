@@ -3,6 +3,7 @@ package com.sheepdog.frontend.beans.pages;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,6 +62,8 @@ public class ChangelogBean implements Serializable {
 
 	private Map.Entry<File, TypeOfFileChanges> selectedFile = null;
 
+	private String actualState = "";
+
 	private void loadRevisionFiles(ToggleEvent event) {
 
 		User user = lm.getCurrentUser();
@@ -107,6 +110,8 @@ public class ChangelogBean implements Serializable {
 		dbRevisions.clear();
 		dbRevisions.addAll(revSet);
 
+		actualState = (new Date()).toString();
+
 	}
 
 	public List<Revision> getDbRevisions() {
@@ -123,6 +128,14 @@ public class ChangelogBean implements Serializable {
 
 	public void setSelectedFile(Map.Entry<File, TypeOfFileChanges> selectedFile) {
 		this.selectedFile = selectedFile;
+	}
+
+	public String getActualState() {
+		return actualState;
+	}
+
+	public void setActualState(String actualState) {
+		this.actualState = actualState;
 	}
 
 }
