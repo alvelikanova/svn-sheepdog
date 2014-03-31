@@ -22,13 +22,16 @@ public class TweetDataProviderImpl extends BaseDataProviderImpl<TweetEntity, Twe
 
 	@Transactional
 	@Override
-	public List<Tweet> getTweetsByRevision(Revision revision) throws DaoException {
+	public List<Tweet> getTweetsByRevision(Integer revisionID) throws DaoException {
+
+		System.out.println("TWEET REEEEEEV " + revisionID);
 		List<Tweet> tweets = new ArrayList<Tweet>();
 		try {
 			Session session = sessionFactory.getCurrentSession();
 			Criteria crtweets = session.createCriteria(TweetEntity.class).add(
-					Restrictions.eq("revisionEntity.id", revision.getId()));
+					Restrictions.eq("revisionEntity.id", revisionID));
 			List<TweetEntity> te_list = crtweets.list();
+			System.out.println("SIZE " + te_list.size());
 			for (TweetEntity te : te_list) {
 				Tweet tweet = mappingService.map(te, Tweet.class);
 				tweets.add(tweet);

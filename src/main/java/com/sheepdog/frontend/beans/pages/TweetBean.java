@@ -9,6 +9,7 @@ import javax.faces.context.FacesContext;
 import javax.security.auth.RefreshFailedException;
 import javax.xml.transform.TransformerException;
 
+import org.primefaces.context.RequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,9 +53,9 @@ public class TweetBean {
 
 	private List<Tweet> tweets;
 
-	public void loadTweets(Revision revision) {
-		List<Tweet> list = new ArrayList<>();
-		// tms.getTweetsByRevision(revision); TODO
+	public void loadTweets(Integer revisionID) {
+
+		List<Tweet> list = tms.getTweetsByRevision(revisionID);
 
 		if (list == null) {
 			tweets = new ArrayList<Tweet>(0);
@@ -63,12 +64,11 @@ public class TweetBean {
 	}
 
 	public void saveTweet(Revision revision) {
-
-		feedback.feedback(FacesMessage.SEVERITY_INFO, "SEND", tweetMessage);
-
 		Tweet tweet = new Tweet(revision, lm.getCurrentUser().getLogin(), tweetMessage);
 
 		tweetMessage = "";
+		tweets.add(tweet);
+		RequestContext.getCurrentInstance().update("changelog_form:tweets");
 
 		tms.saveTweet(tweet);
 
