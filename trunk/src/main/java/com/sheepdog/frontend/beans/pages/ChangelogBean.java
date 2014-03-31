@@ -92,8 +92,17 @@ public class ChangelogBean implements Serializable {
 
 	public void loadFilesAndTweets(ToggleEvent event) {
 		loadRevisionFiles(event);
+		Revision rev = (Revision) event.getData();
 
-		tweetBean.loadTweets((Revision) event.getData());
+		Integer revision = -1;
+		try {
+			revision = Integer.parseInt(String.valueOf(rev.getId()));
+		} catch (ClassCastException e) {
+			LOG.warn("Wrong revision id" + String.valueOf(rev.getId()));
+			return;
+		}
+
+		tweetBean.loadTweets(revision);
 
 	}
 

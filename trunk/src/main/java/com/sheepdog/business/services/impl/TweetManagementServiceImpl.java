@@ -16,9 +16,10 @@ public class TweetManagementServiceImpl implements TweetManagementService {
 
 	@Autowired
 	TweetDataProvider tweetDataProvider;
+
 	@Override
-	public List<Tweet> getTweetsByRevision(Revision revision) {
-		return tweetDataProvider.getTweetsByRevision(revision);
+	public List<Tweet> getTweetsByRevision(Integer revisionID) {
+		return tweetDataProvider.getTweetsByRevision(revisionID);
 	}
 
 	@Override

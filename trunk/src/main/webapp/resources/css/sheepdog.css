@@ -15,8 +15,8 @@
 }
 
 .expandeTables {
-	height: 350px;
-	min-width: 350px;
+	height: 100%;
+	width: 100%;
 }
 
 .tab .ui-tabmenu .ui-tabmenu-nav li {
