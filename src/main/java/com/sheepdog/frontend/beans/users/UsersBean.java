@@ -62,7 +62,6 @@ public class UsersBean implements Serializable {
 	public void deleteUser(Integer id) {
 		try {
 			userManagementService.deleteUserById(id);
-			RequestContext.getCurrentInstance().update("form");
 			feedback.feedback(FacesMessage.SEVERITY_INFO, "Delete User",
 					"User was deleted");
 		} catch (DaoException ex) {

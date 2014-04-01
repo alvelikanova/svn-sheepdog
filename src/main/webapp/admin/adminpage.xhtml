@@ -38,7 +38,7 @@
 							label="Role" />
 
 						<h:panelGroup />
-						<p:commandButton value="Add User" actionListener="#{usersBean.saveUser}" update=":feedback"/>
+						<p:commandButton value="Add User" actionListener="#{usersBean.saveUser}" update=":feedback, :form:userTable"/>
 					</h:panelGrid>
 				</p:panel>
 			</h:form>
@@ -78,6 +78,7 @@
 						<p:column>
 							<p:commandButton value="Delete"
 								rendered="#{not request.remoteUser.equals(user.login)}"
+								update=":form:userTable"
 								icon="ui-icon-circle-close"
 								actionListener="#{usersBean.deleteUser(user.id)}">
 								<p:confirm header="Confirmation" message="Are you sure?"

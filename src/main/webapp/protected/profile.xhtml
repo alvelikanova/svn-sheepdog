@@ -45,7 +45,9 @@
 
 						<p:commandButton value="Change data" 
 							actionListener="#{profileBean.changeUserInfo}" update=":feedback"/>
-						<p:commandButton value="Verify SVN" />
+						<p:commandButton value="Verify SVN" 
+							actionListener="#{profileBean.verifySVN}" update=":feedback"/>
+						
 					</h:panelGrid>
 				</p:panel>
 			</h:form>
