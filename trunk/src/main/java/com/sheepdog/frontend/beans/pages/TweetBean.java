@@ -2,10 +2,10 @@ package com.sheepdog.frontend.beans.pages;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.security.auth.RefreshFailedException;
 import javax.xml.transform.TransformerException;
 
@@ -22,7 +22,6 @@ import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.services.TweetManagementService;
 import com.sheepdog.business.services.UserManagementService;
 import com.sheepdog.frontend.beans.templates.FeedbackBean;
-import com.sheepdog.initializer.Initializer;
 import com.sheepdog.mail.MailService;
 
 @Component(value = "tweetBean")
@@ -53,6 +52,8 @@ public class TweetBean {
 
 	private List<Tweet> tweets;
 
+	private Map<Tweet, User> notificationTweets = new HashMap<>(0);
+
 	public void loadTweets(Integer revisionID) {
 
 		List<Tweet> list = tms.getTweetsByRevision(revisionID);
@@ -68,7 +69,7 @@ public class TweetBean {
 
 		tweetMessage = "";
 		tweets.add(tweet);
-		RequestContext.getCurrentInstance().update("changelog_form:tweets");
+		RequestContext.getCurrentInstance().update("changelog_form:changelog:tweets");
 
 		tms.saveTweet(tweet);
 
@@ -79,15 +80,28 @@ public class TweetBean {
 		}
 		if (user != null) {
 
+			notificationTweets.put(tweet, user);
+
+		}
+	}
+
+	public void sendTweetNotification() {
+
+		for (Map.Entry<Tweet, User> entry : notificationTweets.entrySet()) {
+
 			try {
-				mailService.sendMailByTweet(tweet, user);
+				mailService.sendMailByTweet(entry.getKey(), entry.getValue());
+				notificationTweets.remove(entry.getKey());
 			} catch (RefreshFailedException e) {
-				LOG.warn("Failed to send tweet notification to user : " + user.getLogin());
+				LOG.warn("Failed to send tweet notification to user : " + entry.getValue().getLogin());
 			} catch (IOException e) {
-				LOG.warn("Failed to send tweet notification to user : " + user.getLogin() + ". Connection problem.");
+				LOG.warn("Failed to send tweet notification to user : " + entry.getValue().getLogin()
+						+ ". Connection problem.");
 			} catch (TransformerException e) {
-				LOG.warn("Failed to send tweet notification to user : " + user.getLogin()
+				LOG.warn("Failed to send tweet notification to user : " + entry.getValue().getLogin()
 						+ ". Template merging is failed.");
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 	}
