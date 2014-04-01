@@ -1,5 +1,7 @@
 package com.sheepdog.frontend.beans.users;
 
+import java.io.IOException;
+
 import javax.faces.application.FacesMessage;
 
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -14,8 +16,11 @@ import org.springframework.stereotype.Component;
 
 import com.sheepdog.business.domain.entities.Project;
 import com.sheepdog.business.domain.entities.User;
+import com.sheepdog.business.exceptions.InvalidURLException;
+import com.sheepdog.business.exceptions.RepositoryAuthenticationExceptoin;
 import com.sheepdog.business.services.ProjectManagementService;
 import com.sheepdog.business.services.UserManagementService;
+import com.sheepdog.business.services.svn.SVNProjectFacade;
 import com.sheepdog.dal.exceptions.DaoException;
 import com.sheepdog.frontend.beans.templates.FeedbackBean;
 import com.sheepdog.security.HibernateRealm;
@@ -35,6 +40,9 @@ public class ProfileBean {
 	
 	@Autowired
 	private CredentialsMatcher credentialsMatcher;
+	
+	@Autowired
+	private SVNProjectFacade svnProjectFacade;
 	
 	private String login;
 	private String firstName;
@@ -63,6 +71,19 @@ public class ProfileBean {
 		}
 	}
 	
+	public void verifySVN() {
+		User user = userManagementService.getUserByLogin(login);
+		try {
+			if (svnProjectFacade.addSVNProjectConnection(user)) {
+				feedback.feedback(FacesMessage.SEVERITY_INFO, "Verify SVN", "Your profile was successfully verified");
+			} else {
+				feedback.feedback(FacesMessage.SEVERITY_WARN, "Verify SVN", "Could not verify your profile. Please contact your administrator");
+			}
+		} catch (InvalidURLException | IllegalArgumentException
+				| RepositoryAuthenticationExceptoin | IOException e) {
+			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Verify SVN", "An error occured. Please contact your administrator");
+		}
+	}
 	public void changeUserInfo() {
 		try {
 			if (!checkPassword(login, oldPassword)) {
