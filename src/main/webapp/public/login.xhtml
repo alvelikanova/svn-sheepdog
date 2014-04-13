@@ -6,21 +6,22 @@
 <h:head>
 </h:head>
 <h:body>
+	<h:outputStylesheet name="css/login.css"></h:outputStylesheet>
 	<h:form id="login">
-		<p:panel header="Login" style="margin-bottom:20%;">
+		<p:panel header="Login">
 			<p:growl id="msgs" showDetail="true" sticky="true" />
-			<h:panelGrid columns="2" style="margin: auto">
-				<h:outputLabel for="username" value="Username: *" />
+			<h:panelGrid columns="2">
+				<h:outputLabel styleClass="outputLabel" for="username" value="Username: *" />
 				<p:inputText id="username" value="#{authenticationBean.username}"
 					required="true" label="Username">
 					<f:validateLength minimum="2" />
 				</p:inputText>
 
-				<h:outputLabel for="password" value="Password: *" />
+				<h:outputLabel styleClass="outputLabel" for="password" value="Password: *" />
 				<p:password id="password" value="#{authenticationBean.password}"
 					required="true" label="Password" />
 
-				<h:outputLabel for="rememberMe" value="Remember Me" />
+				<h:outputLabel styleClass="outputLabel" for="rememberMe" value="Remember Me" />
 				<p:selectBooleanCheckbox id="rememberMe"
 					value="#{authenticationBean.remember}" />
 

@@ -1,11 +1,8 @@
 package com.sheepdog.frontend.beans.pages;
 
-import java.io.IOException;
 import java.io.Serializable;
 
 import javax.faces.application.FacesMessage;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -28,7 +25,8 @@ import com.sheepdog.frontend.beans.templates.FeedbackBean;
 public class LoginManager implements Serializable {
 
 	private static final long serialVersionUID = 6003658343558553848L;
-	private static final Logger LOG = LoggerFactory.getLogger(LoginManager.class);
+	private static final Logger LOG = LoggerFactory
+			.getLogger(LoginManager.class);
 	private String username;
 	private String password;
 	private boolean remember;
@@ -68,38 +66,33 @@ public class LoginManager implements Serializable {
 		this.remember = remember;
 	}
 
-	public void doLogin() {
+	public String doLogin() {
 		Subject subject = SecurityUtils.getSubject();
 
-		UsernamePasswordToken token = new UsernamePasswordToken(getUsername(), getPassword(), isRemember());
+		String URL = null;
+		UsernamePasswordToken token = new UsernamePasswordToken(getUsername(),
+				getPassword(), isRemember());
 
 		try {
 			subject.login(token);
-			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-			ec.redirect(ec.getRequestContextPath());
-			// if (subject.hasRole("admin")) {
-			// FacesContext.getCurrentInstance().getExternalContext().redirect("admin/index.xhtml");
-			// }
-			// else {
-			// FacesContext.getCurrentInstance().getExternalContext().redirect("index.xhtml");
-			// }
-
+			URL = "/protected/changelog.xhtml?faces-redirect=true";
 			currentUser = ums.getUserByLogin(getUsername());
 
 			isAdmin = "admin".equals(currentUser.getRole());
 
 		} catch (UnknownAccountException ex) {
-			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Authentication error", "Unknown account");
+			feedback.feedback(FacesMessage.SEVERITY_ERROR,
+					"Authentication error", "Unknown account");
 		} catch (IncorrectCredentialsException ex) {
-			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Authentication error", "Wrong password");
+			feedback.feedback(FacesMessage.SEVERITY_ERROR,
+					"Authentication error", "Wrong password");
 		} catch (AuthenticationException e) {
-			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Authentication error", "Authentication failed");
-		} catch (IOException ex) {
-			LOG.error(ex.getMessage(), ex);
+			feedback.feedback(FacesMessage.SEVERITY_ERROR,
+					"Authentication error", "Authentication failed");
 		} finally {
 			token.clear();
 		}
-
+		return URL;
 	}
 
 	public String doLogout() {
