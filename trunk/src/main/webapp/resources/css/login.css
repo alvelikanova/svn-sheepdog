@@ -1,0 +1,16 @@
+.ui-widget, .ui-widget .ui-widget {
+    font-size: 90%;
+}
+
+.ui-panel-title {
+	font-size: 12pt;
+	font-weight: bold;
+	color: grey;
+}
+.ui-panel-content .ui-widget-content {
+
+}
+.outputLabel {
+	font-size: 11pt;
+	color: black;
+}
