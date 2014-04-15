@@ -12,6 +12,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sheepdog.business.domain.entities.PersistentEntity;
 import com.sheepdog.dal.entities.GenericDalEntity;
+import com.sheepdog.dal.exceptions.ConstraintViolationDaoException;
 import com.sheepdog.dal.exceptions.DaoException;
 import com.sheepdog.infrastructure.services.MappingService;
 import com.sheepdog.utils.CollectionUtils;
@@ -88,6 +90,9 @@ public abstract class BaseDataProviderImpl<T extends GenericDalEntity<ID>,
 			T dataEntity = mappingService.map(entity, dalEntityClass);
 			session.saveOrUpdate(dataEntity);
 			entity.setId(dataEntity.getId());
+		} catch (ConstraintViolationException ex) {
+			LOG.error("Constraint violation error occured while creating or updating data entity", ex.getMessage());	
+        	throw new ConstraintViolationDaoException(ex.getMessage(), ex, ex.getConstraintName());
 		} catch (HibernateException ex) {
         	LOG.error("Hibernate error occured while creating or updating data entity", ex.getMessage());	
         	throw new DaoException(ex);
