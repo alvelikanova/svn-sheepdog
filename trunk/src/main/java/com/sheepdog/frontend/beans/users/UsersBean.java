@@ -6,6 +6,7 @@ import java.io.Serializable;
 import javax.faces.application.FacesMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +17,6 @@ import com.sheepdog.business.services.UserManagementService;
 import com.sheepdog.dal.exceptions.ConstraintViolationDaoException;
 import com.sheepdog.dal.exceptions.DaoException;
 import com.sheepdog.frontend.beans.templates.FeedbackBean;
-import com.sheepdog.utils.DefaultProperties;
 import com.sheepdog.utils.PasswordUtils;
 
 @Component
@@ -30,8 +30,6 @@ public class UsersBean implements Serializable {
 	private ProjectManagementService projectManagementService;
 	@Autowired
 	private FeedbackBean feedback;
-	@Autowired
-	private DefaultProperties defaultProperties;
 	private String login;
 	private String role;
 	private String firstName;
@@ -39,11 +37,12 @@ public class UsersBean implements Serializable {
 	private String email;
 	private String oldPassword;
 	private String newPassword;
+	@Value("${defaultPassword}")
+	private String defaultPassword;
 
 	public void saveUser() throws IOException {
 		try {
 			Project project = projectManagementService.getCurrentProject();
-			String defaultPassword = defaultProperties.getDefaultPassword();
 			String hashedPassword = PasswordUtils.hashPassword(defaultPassword, login);
 			User user = new User(project, login, firstName, lastName,
 					email, hashedPassword, role);

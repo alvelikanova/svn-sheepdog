@@ -39,8 +39,5 @@
 
 	<bean
 		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
-		
-  	<bean id="defaultProperties" class="com.sheepdog.utils.DefaultProperties">
-		<property name="defaultPassword" value="12345"/>
-	</bean>
+
 </beans>
