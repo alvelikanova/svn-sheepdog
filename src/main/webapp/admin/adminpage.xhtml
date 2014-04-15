@@ -31,7 +31,9 @@
 
 						<h:outputLabel for="email" value="Email: *" />
 						<p:inputText id="email" value="#{usersBean.email}" required="true"
-							label="Email" />
+							label="Email">
+							<f:validator validatorId="emailValidator" />
+						</p:inputText>
 							
 						<h:outputLabel for="role" value="Role: *" />
 						<p:inputText id="role" value="#{usersBean.role}" required="true"
