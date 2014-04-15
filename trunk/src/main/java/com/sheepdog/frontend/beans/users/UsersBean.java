@@ -5,7 +5,6 @@ import java.io.Serializable;
 
 import javax.faces.application.FacesMessage;
 
-import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -14,8 +13,10 @@ import com.sheepdog.business.domain.entities.Project;
 import com.sheepdog.business.domain.entities.User;
 import com.sheepdog.business.services.ProjectManagementService;
 import com.sheepdog.business.services.UserManagementService;
+import com.sheepdog.dal.exceptions.ConstraintViolationDaoException;
 import com.sheepdog.dal.exceptions.DaoException;
 import com.sheepdog.frontend.beans.templates.FeedbackBean;
+import com.sheepdog.utils.DefaultProperties;
 import com.sheepdog.utils.PasswordUtils;
 
 @Component
@@ -29,6 +30,8 @@ public class UsersBean implements Serializable {
 	private ProjectManagementService projectManagementService;
 	@Autowired
 	private FeedbackBean feedback;
+	@Autowired
+	private DefaultProperties defaultProperties;
 	private String login;
 	private String role;
 	private String firstName;
@@ -40,22 +43,29 @@ public class UsersBean implements Serializable {
 	public void saveUser() throws IOException {
 		try {
 			Project project = projectManagementService.getCurrentProject();
-			String default_pass = "12345";
-			String hashed_pass = PasswordUtils.hashPassword(default_pass, login);
+			String defaultPassword = defaultProperties.getDefaultPassword();
+			String hashedPassword = PasswordUtils.hashPassword(defaultPassword, login);
 			User user = new User(project, login, firstName, lastName,
-					email, hashed_pass, role);
+					email, hashedPassword, role);
 			userManagementService.saveUser(user);
-			RequestContext.getCurrentInstance().update("form");
 			feedback.feedback(FacesMessage.SEVERITY_INFO, "Save User",
-					"User was saved with id: " + user.getId());
+					"User was saved");
+			resetFields();
+		} catch (ConstraintViolationDaoException ex) {
+			String field = ex.getConstraintField();
+			if (field!=null) {
+				feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error",
+						"User with this " + field + " already exists");
+			} else {
+				feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error",
+						"Error saving user");
+			}
 		} catch (DaoException ex) {
 			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error",
-					"Data access error");
+					"Error saving user");
 		} catch (Exception ex) {
 			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error",
 					"Unknown error");
-		} finally {
-			resetFields();
 		}
 	}
 
@@ -138,5 +148,4 @@ public class UsersBean implements Serializable {
 	public void setNewPassword(String newPassword) {
 		this.newPassword = newPassword;
 	}
-
 }
