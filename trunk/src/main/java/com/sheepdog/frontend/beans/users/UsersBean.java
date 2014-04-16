@@ -5,6 +5,8 @@ import java.io.Serializable;
 
 import javax.faces.application.FacesMessage;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -22,6 +24,7 @@ import com.sheepdog.utils.PasswordUtils;
 @Component
 @Scope("session")
 public class UsersBean implements Serializable {
+	private static final Logger LOG = LoggerFactory.getLogger(UsersBean.class);
 
 	private static final long serialVersionUID = 2819227216048472445L;
 	@Autowired
@@ -59,12 +62,15 @@ public class UsersBean implements Serializable {
 				feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error",
 						"Error saving user");
 			}
+			LOG.error("Constraint violation error occured while trying to save user");
 		} catch (DaoException ex) {
 			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error",
 					"Error saving user");
+			LOG.error("Data access error occured while trying to save user");
 		} catch (Exception ex) {
 			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error",
 					"Unknown error");
+			LOG.error("Unknown error occured while trying to save user");
 		}
 	}
 
