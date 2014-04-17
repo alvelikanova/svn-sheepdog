@@ -2,7 +2,11 @@ package com.sheepdog.frontend.beans.users;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 
 import org.slf4j.Logger;
@@ -43,6 +47,8 @@ public class UsersBean implements Serializable {
 	@Value("${defaultPassword}")
 	private String defaultPassword;
 
+	private List<String> roles = Arrays.asList("admin","user");
+	
 	public void saveUser() throws IOException {
 		try {
 			Project project = projectManagementService.getCurrentProject();
@@ -89,15 +95,19 @@ public class UsersBean implements Serializable {
 	}
 
 	public void resetFields() {
-		login = "";
-		role = "";
-		firstName = "";
-		lastName = "";
-		email = "";
-		oldPassword = "";
-		newPassword = "";
+		login = null;
+		role = null;
+		firstName = null;
+		lastName = null;
+		email = null;
+		oldPassword = null;
+		newPassword = null;
 	}
 
+	public List<String> getRoles() {
+		return roles;
+	}
+	
 	public String getLogin() {
 		return login;
 	}

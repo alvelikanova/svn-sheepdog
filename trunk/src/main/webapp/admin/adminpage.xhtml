@@ -36,11 +36,14 @@
 						</p:inputText>
 							
 						<h:outputLabel for="role" value="Role: *" />
-						<p:inputText id="role" value="#{usersBean.role}" required="true"
-							label="Role" />
+						<p:selectOneMenu id="role" value="#{usersBean.role}" required="true">  
+			                <f:selectItem itemLabel="Assign role..." itemValue="" />  
+			                <f:selectItems value="#{usersBean.getRoles()}" />  
+			            </p:selectOneMenu>
 
 						<h:panelGroup />
-						<p:commandButton value="Add User" actionListener="#{usersBean.saveUser}" update=":feedback, :form:userTable, :addform"/>
+						<p:commandButton value="Add User" actionListener="#{usersBean.saveUser}" update=":feedback, :form:userTable, :addform">
+						</p:commandButton>
 					</h:panelGrid>
 				</p:panel>
 			</h:form>
