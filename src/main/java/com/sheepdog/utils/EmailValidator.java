@@ -17,7 +17,7 @@ public class EmailValidator implements Validator {
 	public void validate(FacesContext facesContext, UIComponent component, Object value)
 			throws ValidatorException {
 		String email = value.toString();
-		Pattern pattern = Pattern.compile("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
+		Pattern pattern = Pattern.compile("[a-zA-Z]+[-0-9a-zA-Z._]+@[a-zA-Z]+[-0-9a-zA-Z._]+\\.[a-zA-Z]{2,4}");
 		Matcher matcher = pattern.matcher(email);
         
         //Check whether match is found
