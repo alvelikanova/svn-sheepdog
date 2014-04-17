@@ -80,89 +80,94 @@
 
 				<p:rowExpansion id="changes">
 					<p:panelGrid columns="2">
+						<p:column>
+							<div class="changeDetails">
+								<p:dataTable id="revFiles" var="file"
+									emptyMessage="Load files..." value="#{changelogBean.files}"
+									selection="#{changelogBean.selectedFile}"
+									selectionMode="single" rowKey="#{file.key.name}" rows="10"
+									paginator="true"
+									paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+									paginatorPosition="bottom" styleClass="expandeTables"
+									liveResize="true">
 
-						<p:dataTable id="revFiles" var="file" emptyMessage="Load files..."
-							value="#{changelogBean.files}"
-							selection="#{changelogBean.selectedFile}" selectionMode="single"
-							rowKey="#{file.key.name}" rows="10" paginator="true"
-							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
-							paginatorPosition="bottom" styleClass="expandeTables"
-							liveResize="true">
-
-							<p:ajax event="rowSelect"
-								update=":dialog:cont,:dialog:fileName,:dialog:selectMenu"
-								listener="#{fileContentBean.clearContentDT}"
-								onstart="PF('fileDialog').show()" />
+									<p:ajax event="rowSelect"
+										update=":dialog:cont,:dialog:fileName,:dialog:selectMenu"
+										listener="#{fileContentBean.clearContentDT}"
+										onstart="PF('fileDialog').show()" />
 
 
 
-							<f:facet name="header">
+									<f:facet name="header">
 							Actions
 							</f:facet>
 
-							<p:column>
-								<f:facet name="header">
+									<p:column>
+										<f:facet name="header">
 							Changed File
 							</f:facet>
-								<h:outputText value="#{file.key.name}" />
-							</p:column>
+										<h:outputText value="#{file.key.name}" />
+									</p:column>
 
-							<p:column>
-								<f:facet name="header">
+									<p:column>
+										<f:facet name="header">
 							Action
 							</f:facet>
-								<h:outputText value="#{file.value}" />
-							</p:column>
+										<h:outputText value="#{file.value}" />
+									</p:column>
 
-						</p:dataTable>
+								</p:dataTable>
+							</div>
+						</p:column>
+						<p:column>
+							<div class="tweetTable">
+								<p:dataTable id="tweets" var="tweet" value="#{tweetBean.tweets}"
+									emptyMessage="No tweets for revision." scrollable="true"
+									styleClass="expandeTables">
 
 
-
-
-						<p:dataTable id="tweets" var="tweet" value="#{tweetBean.tweets}"
-							emptyMessage="No tweets for revision." scrollable="true"
-							styleClass="expandeTables">
-
-
-							<f:facet name="header">
+									<f:facet name="header">
 								Tweets
 							</f:facet>
 
-							<p:column>
-								<f:facet name="header">
+									<p:column style="width: 20%">
+										<f:facet name="header">
 							Author
 							</f:facet>
-								<h:outputText value="#{tweet.author}" />
-							</p:column>
+										<h:outputText value="#{tweet.author}" />
+									</p:column>
 
-							<p:column>
-								<f:facet name="header">
+									<p:column>
+										<f:facet name="header">
 							Tweet
 							</f:facet>
-								<h:outputText value="#{tweet.tweet}"
-									style="text-align: left!important" />
-							</p:column>
+										<p:inputTextarea value="#{tweet.tweet}"
+											style="text-align: left!important; width: 90%" maxlength="140"
+											autoResize="true" readonly="true" />
+									</p:column>
 
-							<f:facet name="footer">
-								<p:panelGrid columns="1" style="text-align: left">
-									<p:inputTextarea id="inputTweet" requiredMessage="true"
-										rows="150" style="with: 80%; height: 100px"
-										title="Your tweet here" value="${tweetBean.tweetMessage}" />
-
-
-									<p:commandButton ajax="true"
-										actionListener="${tweetBean.saveTweet(rev)}" value="Send"
-										update="tweets,inputTweet" oncomplete="sendNotif()" />
-
-									<p:remoteCommand name="sendNotif"
-										actionListener="#{tweetBean.sendTweetNotification()}">
-										</p:remoteCommand>
-								</p:panelGrid>
+									<f:facet name="footer">
+										<p:panelGrid columns="1" style="text-align: left">
+											<p:inputTextarea id="inputTweet" requiredMessage="true"
+												maxlength="140" style="width: 90%; height: 40px"
+												title="Your tweet here" value="${tweetBean.tweetMessage}" />
 
 
-							</f:facet>
+											<p:commandButton ajax="true"
+												actionListener="${tweetBean.saveTweet(rev)}" value="Send"
+												update="tweets,inputTweet" oncomplete="sendNotif()" />
 
-						</p:dataTable>
+											<p:remoteCommand name="sendNotif"
+												actionListener="#{tweetBean.sendTweetNotification()}">
+											</p:remoteCommand>
+										</p:panelGrid>
+
+
+									</f:facet>
+
+								</p:dataTable>
+							</div>
+						</p:column>
 
 					</p:panelGrid>
 
