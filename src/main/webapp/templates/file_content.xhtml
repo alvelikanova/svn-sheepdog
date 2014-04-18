@@ -7,6 +7,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:p="http://primefaces.org/ui">
 <h:head />
+
+
 <h:body>
 	<h:form id="dialog">
 		<p:dialog header="File Menu" widgetVar="fileDialog" showEffect="clip"
@@ -18,7 +20,7 @@
 				actionListener="#{fileContentBean.loadContent()}"
 				update="cont,selectMenu" />
 
-
+			
 
 			<f:facet name="header">
 
@@ -43,14 +45,21 @@
 				</p:panelGrid>
 			</f:facet>
 
+			<pre name="code" class="java">
+			public void
+			</pre>
 
+			<pre name="code" class="#{fileContentBean.typeOfContent}">
 			<p:inputTextarea id="cont" value="#{fileContentBean.content}"
-				autoResize="false" readonly="true" scrollHeight="350"
-				style="height: 100%; width:100%  ">
+					autoResize="false" readonly="true" scrollHeight="350"
+					style="height: 100%; width:100%  ">
+
+</p:inputTextarea>
+			
+			
+			</pre>
 
 
-
-			</p:inputTextarea>
 
 
 		</p:dialog>

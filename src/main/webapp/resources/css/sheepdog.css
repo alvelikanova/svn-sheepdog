@@ -16,7 +16,6 @@
 
 .expandeTables {
 	height: 100%;
-	width: 50%;
 }
 
 .tab .ui-tabmenu .ui-tabmenu-nav li {
@@ -42,7 +41,7 @@
 	font-size: 12px !important;
 }
 
-.changeDetails .ui-widget-content {
+.changeDetails {
 	padding-top: 5px;
 	vertical-align: top;
 }
