@@ -80,7 +80,7 @@
 
 				<p:rowExpansion id="changes">
 					<p:panelGrid columns="2">
-						<p:column>
+						<p:column style="width:50%">
 							<div class="changeDetails">
 								<p:dataTable id="revFiles" var="file"
 									emptyMessage="Load files..." value="#{changelogBean.files}"
@@ -95,8 +95,6 @@
 										update=":dialog:cont,:dialog:fileName,:dialog:selectMenu"
 										listener="#{fileContentBean.clearContentDT}"
 										onstart="PF('fileDialog').show()" />
-
-
 
 									<f:facet name="header">
 							Actions
@@ -119,7 +117,7 @@
 								</p:dataTable>
 							</div>
 						</p:column>
-						<p:column>
+						<p:column style="width:50%">
 							<div class="tweetTable">
 								<p:dataTable id="tweets" var="tweet" value="#{tweetBean.tweets}"
 									emptyMessage="No tweets for revision." scrollable="true"
@@ -142,8 +140,8 @@
 							Tweet
 							</f:facet>
 										<p:inputTextarea value="#{tweet.tweet}"
-											style="text-align: left!important; width: 90%" maxlength="140"
-											autoResize="true" readonly="true" />
+											style="text-align: left!important; width: 90%"
+											maxlength="140" autoResize="false" readonly="true" rows="140" />
 									</p:column>
 
 									<f:facet name="footer">
