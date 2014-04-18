@@ -60,14 +60,8 @@ public class UsersBean implements Serializable {
 					"User was saved");
 			resetFields();
 		} catch (ConstraintViolationDaoException ex) {
-			String field = ex.getConstraintField();
-			if (field!=null) {
-				feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error",
-						"User with this " + field + " already exists");
-			} else {
-				feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error",
-						"Error saving user");
-			}
+			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error",
+						"User with such profile information already exists");
 			LOG.error("Constraint violation error occured while trying to save user");
 		} catch (DaoException ex) {
 			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error",

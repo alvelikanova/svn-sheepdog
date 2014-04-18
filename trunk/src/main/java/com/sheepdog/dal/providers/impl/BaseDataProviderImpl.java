@@ -16,7 +16,6 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +25,6 @@ import com.sheepdog.dal.exceptions.ConstraintViolationDaoException;
 import com.sheepdog.dal.exceptions.DaoException;
 import com.sheepdog.infrastructure.services.MappingService;
 import com.sheepdog.utils.CollectionUtils;
-import com.sheepdog.utils.DaoUtils;
 import com.sheepdog.dal.providers.pagination.FilterOption;
 import com.sheepdog.dal.providers.pagination.SortOption;
 import com.sheepdog.dal.providers.base.PageableDataProvider;
@@ -46,9 +44,6 @@ public abstract class BaseDataProviderImpl<T extends GenericDalEntity<ID>,
 	
 	@Autowired
 	protected MappingService mappingService;
-	
-	@Value("${database}")
-	private String databaseName;
 	
 	@Transactional
 	@Override
@@ -97,14 +92,7 @@ public abstract class BaseDataProviderImpl<T extends GenericDalEntity<ID>,
 			entity.setId(dataEntity.getId());
 		} catch (ConstraintViolationException ex) {
 			LOG.error("Constraint violation error occured while creating or updating data entity", ex.getMessage());
-			String constraintName = ex.getConstraintName();
-			if ("mysql".equals(databaseName)) {
-				Throwable cause = ex.getCause();
-				if (cause!=null) {
-					constraintName = DaoUtils.getConstraintName(cause.getMessage());
-				}
-			}
-        	throw new ConstraintViolationDaoException(ex.getMessage(), ex, constraintName);
+        	throw new ConstraintViolationDaoException(ex);
 		} catch (HibernateException ex) {
         	LOG.error("Hibernate error occured while creating or updating data entity", ex.getMessage());	
         	throw new DaoException(ex);
