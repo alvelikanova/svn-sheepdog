@@ -13,44 +13,58 @@
 
 	<ui:define name="content">
 		<div class="panel">
-			<f:event listener="#{profileBean.loadFields(request.remoteUser)}" type="preRenderView" />
-			<h:form id="form">
-				<p:panel id="panel" header="User Profile: #{profileBean.login}">
-					<h:panelGrid columns="2">
+			<f:event listener="#{profileBean.loadFields(request.remoteUser)}"
+				type="preRenderView" />
 
-						<h:outputLabel for="firstName" value="First Name: *" />
-						<p:inputText id="firstName" value="#{profileBean.firstName}"
-							required="true" label="First Name" />
+			<p:tabView orientation="left">
 
-						<h:outputLabel for="lastName" value="Last Name: *" />
-						<p:inputText id="lastName" value="#{profileBean.lastName}"
-							required="true" label="Last Name" />
+				<p:tab title="Change data">
+					<h:form id="changedataform">
+						<h:panelGrid columns="2" cellpadding="10">
+							<h:outputLabel for="firstName" value="First Name: *" />
+							<p:inputText id="firstName" value="#{profileBean.firstName}"
+								required="true" label="First Name" />
 
-						<h:outputLabel for="email" value="Email: *" />
-						<p:inputText id="email" value="#{profileBean.email}" required="true"
-							label="Email" />
+							<h:outputLabel for="lastName" value="Last Name: *" />
+							<p:inputText id="lastName" value="#{profileBean.lastName}"
+								required="true" label="Last Name" />
 
-						<h:outputLabel for="oldPassword" value="Old password: *" />
-						<p:password id="oldPassword" value="#{profileBean.oldPassword}"
-							required="true" label="Old password" />
+							<h:outputLabel for="email" value="Email: *" />
+							<p:inputText id="email" value="#{profileBean.email}"
+								required="true" label="Email" />
 
-						<h:outputLabel for="newPassword1" value="New password: *" />
-						<p:password id="newPassword1" match="newPassword2"
-							value="#{profileBean.newPassword}" required="true"
-							label="New password" />
+							<p:commandButton value="Change data"
+								actionListener="#{profileBean.changeUserInfo}"
+								update=":feedback" />
+						</h:panelGrid>
+					</h:form>
+				</p:tab>
 
-						<h:outputLabel for="newPassword2" value="Confirm new password: *" />
-						<p:password id="newPassword2" value="#{profileBean.newPassword}"
-							required="true" label="Confirm new password" />
+				<p:tab title="Change password/Verify SVN">
+					<h:form id="changepassform">
+						<h:panelGrid columns="2" cellpadding="10">
+							<h:outputLabel for="oldPassword" value="Old password: *" />
+							<p:password id="oldPassword" value="#{profileBean.oldPassword}"
+								required="true" label="Old password" />
 
-						<p:commandButton value="Change data" 
-							actionListener="#{profileBean.changeUserInfo}" update=":feedback"/>
-						<p:commandButton value="Verify SVN" 
-							actionListener="#{profileBean.verifySVN}" update=":feedback"/>
-						
-					</h:panelGrid>
-				</p:panel>
-			</h:form>
+							<h:outputLabel for="newPassword1" value="New password: *" />
+							<p:password id="newPassword1" match="newPassword2"
+								value="#{profileBean.newPassword}" required="true"
+								label="New password" />
+
+							<h:outputLabel for="newPassword2" value="Confirm new password: *" />
+							<p:password id="newPassword2" value="#{profileBean.newPassword}"
+								required="true" label="Confirm new password" />
+
+							<p:commandButton value="Change password"
+								actionListener="#{profileBean.changePassword}" update=":feedback" />
+							<p:commandButton value="Verify SVN"
+								actionListener="#{profileBean.verifySVN}" update=":feedback" />
+						</h:panelGrid>
+					</h:form>
+				</p:tab>
+
+			</p:tabView>
 
 			<ui:insert name="feedback">
 				<ui:include src="/templates/feedback.xhtml" />
