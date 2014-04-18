@@ -11,7 +11,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sample.dal.entities.SubjectEntity;
+
 import com.sheepdog.business.domain.entities.File;
 import com.sheepdog.business.domain.entities.Subscription;
 import com.sheepdog.business.domain.entities.User;
