@@ -276,8 +276,10 @@ public class ShepherdServiceImpl implements ShepherdService {
 
 				if (!tempSubscriptions.isEmpty()) {
 					for (Subscription s : tempSubscriptions) {
+						s.getFile().setRevision(r);
 						necessarySubscriptions.put(s, entry.getValue());
 					}
+					
 					entry.getKey().setRevision(r);
 					fileManagementService.updateFilesRevision(entry.getKey());
 				}
