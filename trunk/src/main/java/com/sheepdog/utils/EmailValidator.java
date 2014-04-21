@@ -17,6 +17,7 @@ public class EmailValidator implements Validator {
 	public void validate(FacesContext facesContext, UIComponent component, Object value)
 			throws ValidatorException {
 		String email = value.toString();
+		email = email.trim();
 		Pattern pattern = Pattern.compile("[a-zA-Z]+[-0-9a-zA-Z._]+@[a-zA-Z]+[-0-9a-zA-Z._]+\\.[a-zA-Z]{2,4}");
 		Matcher matcher = pattern.matcher(email);
         
@@ -25,7 +26,7 @@ public class EmailValidator implements Validator {
         
         if (!matchFound) {
             FacesMessage message = new FacesMessage();
-            message.setDetail("Email not valid");
+            message.setDetail("You should provide an email that contains letters, digits, hyphen and underscore only");
             message.setSummary("Email not valid");
             message.setSeverity(FacesMessage.SEVERITY_WARN);
             throw new ValidatorException(message);

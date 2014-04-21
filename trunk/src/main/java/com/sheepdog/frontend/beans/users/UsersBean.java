@@ -2,11 +2,9 @@ package com.sheepdog.frontend.beans.users;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 
 import org.slf4j.Logger;
@@ -28,22 +26,24 @@ import com.sheepdog.utils.PasswordUtils;
 @Component
 @Scope("session")
 public class UsersBean implements Serializable {
-	private static final Logger LOG = LoggerFactory.getLogger(UsersBean.class);
 
 	private static final long serialVersionUID = 2819227216048472445L;
+	
+	private static final Logger LOG = LoggerFactory.getLogger(UsersBean.class);
+	
 	@Autowired
 	private UserManagementService userManagementService;
 	@Autowired
 	private ProjectManagementService projectManagementService;
 	@Autowired
 	private FeedbackBean feedback;
+	
 	private String login;
 	private String role;
 	private String firstName;
 	private String lastName;
 	private String email;
-	private String oldPassword;
-	private String newPassword;
+	
 	@Value("${defaultPassword}")
 	private String defaultPassword;
 
@@ -69,7 +69,7 @@ public class UsersBean implements Serializable {
 			LOG.error("Data access error occured while trying to save user");
 		} catch (Exception ex) {
 			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error",
-					"Unknown error");
+					"Error saving user");
 			LOG.error("Unknown error occured while trying to save user");
 		}
 	}
@@ -94,10 +94,8 @@ public class UsersBean implements Serializable {
 		firstName = null;
 		lastName = null;
 		email = null;
-		oldPassword = null;
-		newPassword = null;
 	}
-
+	
 	public List<String> getRoles() {
 		return roles;
 	}
@@ -140,21 +138,5 @@ public class UsersBean implements Serializable {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public String getOldPassword() {
-		return oldPassword;
-	}
-
-	public void setOldPassword(String oldPassword) {
-		this.oldPassword = oldPassword;
-	}
-
-	public String getNewPassword() {
-		return newPassword;
-	}
-
-	public void setNewPassword(String newPassword) {
-		this.newPassword = newPassword;
 	}
 }

@@ -10,6 +10,8 @@ import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.util.ByteSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -28,6 +30,7 @@ import com.sheepdog.utils.PasswordUtils;
 @Component(value = "profileBean")
 @Scope("session")
 public class ProfileBean {
+	private static final Logger LOG = LoggerFactory.getLogger(ProfileBean.class);
 	@Autowired
 	private UserManagementService userManagementService;
 
@@ -58,16 +61,15 @@ public class ProfileBean {
 				firstName = user.getFirstName();
 				lastName = user.getLastName();
 				email = user.getEmail();
-			} else {
-				feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error",
-						"User was not found");
 			}
 		} catch (DaoException ex) {
 			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error",
-					"Data access error");
+					"Failed to load profile data");
+			LOG.error("Data access error occured while loading fields");
 		} catch (Exception ex) {
 			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error",
-					"Unknown error");
+					"Failed to load profile data");
+			LOG.error("Error occured while loading fields");
 		}
 	}
 
@@ -85,6 +87,7 @@ public class ProfileBean {
 				| RepositoryAuthenticationExceptoin | IOException e) {
 			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Verify SVN",
 					"An error occured. Please contact your administrator");
+			LOG.error("Error occured while verifying SVN");
 		}
 	}
 
@@ -100,9 +103,11 @@ public class ProfileBean {
 		} catch (DaoException ex) {
 			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error",
 					"Error occured while updating profile data");
+			LOG.error("Data access error occured while updating profile data");
 		} catch (Exception ex) {
 			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error",
 					"Error occured while updating profile data");
+			LOG.error("Error occured while updating profile data");
 		}
 	}
 
@@ -125,9 +130,11 @@ public class ProfileBean {
 		} catch (DaoException ex) {
 			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error",
 					"Error occured while changing password");
+			LOG.error("Data access error occured while changing password");
 		} catch (Exception ex) {
 			feedback.feedback(FacesMessage.SEVERITY_ERROR, "Error",
 					"Error occured while changing password");
+			LOG.error("Error occured while changing password");
 		}
 	}
 
