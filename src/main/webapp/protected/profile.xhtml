@@ -31,7 +31,9 @@
 
 							<h:outputLabel for="email" value="Email: *" />
 							<p:inputText id="email" value="#{profileBean.email}"
-								required="true" label="Email" />
+								required="true" label="Email">
+								<f:validator validatorId="emailValidator" />
+							</p:inputText>
 
 							<p:commandButton value="Change data"
 								actionListener="#{profileBean.changeUserInfo}"
