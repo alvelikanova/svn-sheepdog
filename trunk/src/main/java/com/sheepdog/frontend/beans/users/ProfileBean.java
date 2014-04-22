@@ -23,6 +23,7 @@ import com.sheepdog.business.services.ProjectManagementService;
 import com.sheepdog.business.services.UserManagementService;
 import com.sheepdog.business.services.svn.SVNProjectFacade;
 import com.sheepdog.dal.exceptions.DaoException;
+import com.sheepdog.frontend.beans.pages.LoginManager;
 import com.sheepdog.frontend.beans.templates.FeedbackBean;
 import com.sheepdog.security.HibernateRealm;
 import com.sheepdog.utils.PasswordUtils;
@@ -53,6 +54,9 @@ public class ProfileBean {
 	private String oldPassword;
 	private String newPassword;
 
+	@Autowired
+	LoginManager loginBean;
+	
 	public void loadFields(String principal) {
 		try {
 			User user = userManagementService.getUserByLogin(principal);
@@ -98,6 +102,12 @@ public class ProfileBean {
 			user.setFirstName(firstName);
 			user.setLastName(lastName);
 			userManagementService.updateUser(user);
+			User currentUser = loginBean.getCurrentUser();
+			if (currentUser!=null) {
+				currentUser.setEmail(email);
+				currentUser.setFirstName(firstName);
+				currentUser.setLastName(lastName);
+			}
 			feedback.feedback(FacesMessage.SEVERITY_INFO, "Update",
 					"Profile data was updated");
 		} catch (DaoException ex) {
@@ -125,6 +135,10 @@ public class ProfileBean {
 					login);
 			user.setPassword(hashed_password);
 			userManagementService.updateUser(user);
+			User currentUser = loginBean.getCurrentUser();
+			if (currentUser!=null) {
+				currentUser.setPassword(hashed_password);
+			}
 			feedback.feedback(FacesMessage.SEVERITY_INFO, "Update",
 					"Password was changed");
 		} catch (DaoException ex) {
