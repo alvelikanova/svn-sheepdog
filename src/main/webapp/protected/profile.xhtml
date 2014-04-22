@@ -23,21 +23,26 @@
 						<h:panelGrid columns="2" cellpadding="10">
 							<h:outputLabel for="firstName" value="First Name: *" />
 							<p:inputText id="firstName" value="#{profileBean.firstName}"
-								required="true" label="First Name" />
+								required="true" label="First Name">
+								<f:converter converterId="userInputConverter" />
+							</p:inputText>
 
 							<h:outputLabel for="lastName" value="Last Name: *" />
 							<p:inputText id="lastName" value="#{profileBean.lastName}"
-								required="true" label="Last Name" />
+								required="true" label="Last Name">
+								<f:converter converterId="userInputConverter" />
+							</p:inputText>
 
 							<h:outputLabel for="email" value="Email: *" />
 							<p:inputText id="email" value="#{profileBean.email}"
 								required="true" label="Email">
+								<f:converter converterId="userInputConverter" />
 								<f:validator validatorId="emailValidator" />
 							</p:inputText>
 
 							<p:commandButton value="Change data"
 								actionListener="#{profileBean.changeUserInfo}"
-								update=":feedback" />
+								update=":feedback, changedataform" />
 						</h:panelGrid>
 					</h:form>
 				</p:tab>
@@ -47,21 +52,27 @@
 						<h:panelGrid columns="2" cellpadding="10">
 							<h:outputLabel for="oldPassword" value="Old password: *" />
 							<p:password id="oldPassword" value="#{profileBean.oldPassword}"
-								required="true" label="Old password" />
+								required="true" label="Old password">
+								<f:converter converterId="userInputConverter" />
+							</p:password>
 
 							<h:outputLabel for="newPassword1" value="New password: *" />
 							<p:password id="newPassword1" match="newPassword2"
 								value="#{profileBean.newPassword}" required="true"
-								label="New password" />
+								label="New password">
+								<f:converter converterId="userInputConverter" />
+							</p:password>
 
 							<h:outputLabel for="newPassword2" value="Confirm new password: *" />
 							<p:password id="newPassword2" value="#{profileBean.newPassword}"
-								required="true" label="Confirm new password" />
+								required="true" label="Confirm new password">
+								<f:converter converterId="userInputConverter" />
+							</p:password>
 
 							<p:commandButton value="Change password"
-								actionListener="#{profileBean.changePassword}" update=":feedback" />
+								actionListener="#{profileBean.changePassword}" update=":feedback, changepassform" />
 							<p:commandButton value="Verify SVN"
-								actionListener="#{profileBean.verifySVN}" update=":feedback" />
+								actionListener="#{profileBean.verifySVN}" update=":feedback, changepassform" />
 						</h:panelGrid>
 					</h:form>
 				</p:tab>

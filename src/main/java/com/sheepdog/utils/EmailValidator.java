@@ -7,6 +7,8 @@ import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,7 +16,7 @@ import java.util.regex.Pattern;
 public class EmailValidator implements Validator {
 
 	@Override
-	public void validate(FacesContext facesContext, UIComponent component, Object value)
+	public void validate(FacesContext context, UIComponent component, Object value)
 			throws ValidatorException {
 		String email = value.toString();
 		email = email.trim();
@@ -26,8 +28,11 @@ public class EmailValidator implements Validator {
         
         if (!matchFound) {
             FacesMessage message = new FacesMessage();
-            message.setDetail("You should provide an email that contains letters, digits, hyphen and underscore only");
-            message.setSummary("Email not valid");
+			String messageBundle = context.getApplication().getMessageBundle();
+			Locale locale = context.getViewRoot().getLocale();
+			ResourceBundle bundle = ResourceBundle.getBundle(messageBundle, locale);
+            message.setDetail(bundle.getString("emailValidation_detail"));
+            message.setSummary(bundle.getString("emailValidation"));
             message.setSeverity(FacesMessage.SEVERITY_WARN);
             throw new ValidatorException(message);
         }
