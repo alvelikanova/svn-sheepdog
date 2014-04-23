@@ -112,22 +112,18 @@ public class ShepherdServiceImpl implements ShepherdService {
 
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-		LOG.info("\n=================================================\n"
-				+ "Post-Commit Hook success. Starting lookOn() method..........."
-				+ "\n===============================================\n");
-		lookOn();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see com.sheepdog.update.ShepherdService#lookOn()
 	 */
+	@RequestMapping(method = RequestMethod.POST)
 	@Override
 	public void lookOn() {
+		LOG.info("\n=================================================\n"
+				+ "Post-Commit Hook success. Starting lookOn() method..........."
+				+ "\n===============================================\n");
+		
 		int currentRevision = 0;
 
 		try {
