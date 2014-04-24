@@ -25,7 +25,7 @@ public class UserInputConverter implements Converter {
 			ResourceBundle bundle = ResourceBundle.getBundle(messageBundle, locale);
             message.setDetail(component.getId() + ": " + bundle.getString("emptyFieldValidation_detail"));
             message.setSummary(bundle.getString("emptyFieldValidation"));
-            message.setSeverity(FacesMessage.SEVERITY_WARN);
+            message.setSeverity(FacesMessage.SEVERITY_ERROR);
             throw new ConverterException(message);
 		}
 		return field;
