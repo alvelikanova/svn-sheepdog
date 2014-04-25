@@ -71,9 +71,14 @@
 
 							<p:commandButton value="Change password"
 								actionListener="#{profileBean.changePassword}" update=":feedback, changepassform" />
-							<p:commandButton value="Verify SVN"
-								actionListener="#{profileBean.verifySVN}" update=":feedback, changepassform" />
 						</h:panelGrid>
+					</h:form>
+					<p:separator/>
+					<h:form>
+						<p:panel id="verifysvnpanel" style="border: none; padding: 10;">
+						<p:commandButton value="Verify SVN"
+								actionListener="#{profileBean.verifySVN}" update=":feedback" />
+						</p:panel>
 					</h:form>
 				</p:tab>
 
