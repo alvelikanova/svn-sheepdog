@@ -8,7 +8,7 @@
 	</welcome-file-list>
 
 	<session-config>
-		<session-timeout>10</session-timeout>
+		<session-timeout>80</session-timeout>
 	</session-config>
 
 	<!-- Spring Framework Integration -->

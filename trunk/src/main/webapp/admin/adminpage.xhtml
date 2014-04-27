@@ -58,9 +58,9 @@
 			<h:form id="form">
 				<p:panel id="panel" header="List of users">
 					<p:dataTable var="user" value="#{lazyUsersDataModel}"
-						paginator="true" rows="5"
+						paginator="true" rows="10"
 						paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-						rowsPerPageTemplate="1,2,5" id="userTable" lazy="true" styleClass="table-users">
+						rowsPerPageTemplate="5,10,15" id="userTable" lazy="true" styleClass="table-users">
 
 						<p:column headerText="Login" sortBy="login"
 							filterBy="#{user.login}">
