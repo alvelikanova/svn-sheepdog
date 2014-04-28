@@ -1,1 +1,2 @@
 TEST COMMIT0000
+new message
